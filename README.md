@@ -1,1 +1,1 @@
-# querygrid
+# QueryGrid
