@@ -1,31 +1,40 @@
 package main
 
 import (
-	"os"
 	"strings"
 
-	"github.com/devylab/querygrid/src/common/constants"
-	"github.com/devylab/querygrid/src/middlewares"
+	"github.com/devylab/querygrid/pkg/config"
+	"github.com/devylab/querygrid/pkg/database"
+	"github.com/devylab/querygrid/pkg/middlewares"
+	"github.com/devylab/querygrid/pkg/utils"
+	"github.com/devylab/querygrid/routes"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	gin.SetMode(constants.GinMode)
+	conf := config.LoadConfig()
+
+	// DATABASE CONNECTION
+	dbCon := database.Connect(conf)
+	defer dbCon.DB.Close()
+
+	gin.SetMode(conf.Mode) // TODO: fix this
 	router := gin.Default()
 	router.Use(gzip.Gzip(gzip.DefaultCompression))
 	// router.SetTrustedProxies(strings.Split(constants.TrustedProxies, ","))
-	router.Use(middlewares.Secure())
+	router.Use(middlewares.Secure(conf.AppEnv))
 
 	config := cors.DefaultConfig()
-	corsArr := strings.Split(constants.CorsOrigins, ",")
+	corsArr := strings.Split(conf.CorsOrigins, ",")
 	config.AllowOrigins = corsArr
 	router.Use(cors.New(config))
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = constants.Port
-	}
-	panic(router.Run(":" + port))
+	publicRoute := router.Group("/")
+
+	routes := routes.NewRoute(publicRoute, router)
+	routes.MapUrls()
+
+	panic(router.Run(utils.GetPort(conf.Port)))
 }
