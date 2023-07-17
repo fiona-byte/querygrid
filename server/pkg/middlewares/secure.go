@@ -3,13 +3,13 @@ package middlewares
 import (
 	"net/http"
 
-	"github.com/devylab/querygrid/src/common/constants"
-	"github.com/devylab/querygrid/src/common/logger"
+	"github.com/devylab/querygrid/pkg/constants"
+	"github.com/devylab/querygrid/pkg/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/unrolled/secure"
 )
 
-func Secure() gin.HandlerFunc {
+func Secure(env string) gin.HandlerFunc {
 	secureMiddleware := secure.New(secure.Options{
 		AllowedHosts:          []string{""}, // TODO: setup allowed hosts
 		AllowedHostsAreRegex:  true,
@@ -24,7 +24,7 @@ func Secure() gin.HandlerFunc {
 		ContentTypeNosniff:    true,
 		BrowserXssFilter:      true,
 		ContentSecurityPolicy: "script-src $NONCE",
-		IsDevelopment:         constants.IsDevelopment,
+		IsDevelopment:         env != "production",
 	})
 	return func(c *gin.Context) {
 		err := secureMiddleware.Process(c.Writer, c.Request)
