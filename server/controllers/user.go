@@ -2,22 +2,23 @@ package controllers
 
 import (
 	"github.com/devylab/querygrid/models"
+	"github.com/gin-gonic/gin"
 )
 
-type BaseHandler struct {
+type UserHandler struct {
 	userRepo models.UserRepository
 }
 
-func NewBaseHandler(userRepo models.UserRepository) *BaseHandler {
-	return &BaseHandler{
+func NewUserHandler(userRepo models.UserRepository) *UserHandler {
+	return &UserHandler{
 		userRepo: userRepo,
 	}
 }
 
-// func (h *BaseHandler) HelloWorld(w http.ResponseWriter, r *http.Request) {
-// 	if user, err := h.userRepo.FindByID(1); err != nil {
-// 		fmt.Println("Error", user)
-// 	}
+func (h *UserHandler) CreateUser(c *gin.Context) {
+	// if user, err := h.userRepo.FindByID(1); err != nil {
+	// 	fmt.Println("Error", user)
+	// }
 
-// 	w.Write([]byte("Hello, World"))
-// }
+	// w.Write([]byte("Hello, World"))
+}
