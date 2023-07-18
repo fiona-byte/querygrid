@@ -33,7 +33,7 @@ func main() {
 
 	publicRoute := router.Group("/")
 
-	routes := routes.NewRoute(publicRoute, router)
+	routes := routes.NewRoute(publicRoute, router, dbCon)
 	routes.MapUrls()
 
 	panic(router.Run(utils.GetPort(conf.Port)))
