@@ -13,10 +13,11 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
-    project: true,
     tsconfigRootDir: __dirname,
+    project: './tsconfig.json',
   },
   plugins: ['react-refresh'],
+  ignorePatterns: ['vite.config.ts', '.eslintrc.cjs'],
   rules: {
     'react-refresh/only-export-components': [
       'warn',
@@ -24,4 +25,4 @@ module.exports = {
     ],
     '@typescript-eslint/no-non-null-assertion': 'off',
   },
-}
+};
