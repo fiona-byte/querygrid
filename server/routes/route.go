@@ -25,6 +25,5 @@ func (r *route) MapUrls() {
 }
 
 func NotFound(c *gin.Context) {
-	// restErr := resterror.NotFound("Route Not Found")
-	// c.SecureJSON(restErr.Status, restErr)
+	c.File("index.html")
 }
