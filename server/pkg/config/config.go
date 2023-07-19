@@ -11,7 +11,6 @@ type Config struct {
 	CorsOrigins    string `mapstructure:"CORS_ORIGINS"`
 	TrustedProxies string `mapstructure:"TRUSTED_PROXIES"`
 	DatabaseUrl    string `mapstructure:"DATABASE_URL"`
-	Mode           string `mapstructure:"MODE"`
 	Port           string `mapstructure:"PORT"`
 }
 

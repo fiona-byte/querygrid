@@ -10,8 +10,19 @@ import (
 	"github.com/devylab/querygrid/routes"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/gzip"
+	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 )
+
+func ginMode(conf config.Config) {
+	if conf.AppEnv == "production" {
+		gin.SetMode(gin.ReleaseMode)
+	} else if conf.AppEnv == "test" {
+		gin.SetMode(gin.TestMode)
+	} else {
+		gin.SetMode(gin.DebugMode)
+	}
+}
 
 func main() {
 	conf := config.LoadConfig()
@@ -20,7 +31,7 @@ func main() {
 	dbCon := database.Connect(conf)
 	defer dbCon.DB.Close()
 
-	gin.SetMode(conf.Mode) // TODO: fix this
+	ginMode(conf)
 	router := gin.Default()
 	router.Use(gzip.Gzip(gzip.DefaultCompression))
 	// router.SetTrustedProxies(strings.Split(constants.TrustedProxies, ","))
@@ -30,6 +41,8 @@ func main() {
 	corsArr := strings.Split(conf.CorsOrigins, ",")
 	config.AllowOrigins = corsArr
 	router.Use(cors.New(config))
+
+	router.Use(static.Serve("/", static.LocalFile("./admin", true)))
 
 	publicRoute := router.Group("/")
 
