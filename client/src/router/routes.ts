@@ -6,10 +6,23 @@ type RouterType = {
   element: LoadableComponent<unknown>;
 };
 
-export const routes: RouterType[] = [
+export const dashboard: RouterType[] = [
   {
-    path: '/',
-    element: loadable(() => import('../pages/overview')),
+    path: '',
+    element: loadable(() => import('../pages/dashboard/overview')),
     title: 'overview',
+  },
+  {
+    path: 'tables',
+    element: loadable(() => import('../pages/dashboard/tables')),
+    title: 'tables',
+  },
+];
+
+export const page: RouterType[] = [
+  {
+    path: 'login',
+    element: loadable(() => import('../pages/authentication/login')),
+    title: 'login',
   },
 ];
