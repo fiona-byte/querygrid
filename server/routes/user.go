@@ -9,5 +9,5 @@ func (r *route) UserRoutes() {
 	userRepo := repositories.NewUserRepo(r.db)
 	controller := controllers.NewUserHandler(userRepo)
 
-	r.public.POST("/oauth/register", controller.CreateUser)
+	r.public.POST("/user", controller.Create)
 }

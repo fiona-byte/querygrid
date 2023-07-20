@@ -11,6 +11,9 @@ var (
 	TwentyMinutes time.Duration = 1200000000000
 	ThirtyDays    time.Duration = 259200000000000
 	SixMonths     time.Duration = 15768000000000000
+	ACTIVE                      = "active"
+	PENDING                     = "pending"
+	DEACTIVATED                 = "deactivated"
 
 	ServerError = "something went wrong"
 )

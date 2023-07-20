@@ -1,7 +1,10 @@
 package controllers
 
 import (
+	"net/http"
+
 	"github.com/devylab/querygrid/models"
+	"github.com/devylab/querygrid/pkg/resterror"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,10 +18,22 @@ func NewUserHandler(userRepo models.UserRepository) *UserHandler {
 	}
 }
 
-func (h *UserHandler) CreateUser(c *gin.Context) {
-	// if user, err := h.userRepo.FindByID(1); err != nil {
-	// 	fmt.Println("Error", user)
-	// }
+func (h *UserHandler) Create(c *gin.Context) {
+	var newUser models.NewUser
+	if err := c.ShouldBindJSON(&newUser); err != nil {
+		restErr := resterror.BadJSONRequest()
+		c.SecureJSON(restErr.Status, restErr)
+		return
+	}
 
-	// w.Write([]byte("Hello, World"))
+	if err := h.userRepo.Create(newUser); err != nil {
+		c.SecureJSON(err.Status, err)
+		return
+	}
+
+	c.SecureJSON(http.StatusCreated, &gin.H{
+		"status":  http.StatusCreated,
+		"message": "Account Created",
+		"data":    nil,
+	})
 }

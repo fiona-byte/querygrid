@@ -29,5 +29,5 @@ func Connect(config config.Config) *Database {
 	if err != nil {
 		panic(err.Error())
 	}
-	return &Database{db}
+	return &Database{DB: db}
 }
