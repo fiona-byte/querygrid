@@ -1,13 +1,15 @@
 import { Outlet } from 'react-router-dom';
-import AppSidebar from '../components/appSidebar';
+import Toolbar from '../components/toolbar';
+import Sidebar from '../components/sidebar';
 
 const DashboardLayout = () => {
   return (
     <div className="flex flex-row h-[100%]">
       {/* app sidebar */}
-      <AppSidebar />
+      <Toolbar />
 
       {/* sidebar */}
+      <Sidebar />
 
       {/* main layout */}
       <div>

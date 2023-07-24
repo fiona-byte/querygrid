@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { Link } from 'react-router-dom';
 import { Plus } from 'lucide-react';
+import { clsx } from 'clsx';
 
 const apps = [
   { id: 1, link: '/789782' },
@@ -13,40 +14,39 @@ const apps = [
 type AppLink = {
   children: ReactNode;
   link: string;
-  className: string;
+  className?: string;
 };
 
 const AppLink = ({ children, link, className }: AppLink) => {
   return (
-    <Link to={link} className={className}>
+    <Link
+      to={link}
+      className={clsx(
+        'border-2 border-white flex items-center justify-center w-9 h-9 rounded',
+        className
+      )}
+    >
       {children}
     </Link>
   );
 };
 
-const AppSidebar = () => {
+const Toolbar = () => {
   return (
-    <div className="w-[60px] h-[100%] bg-purple-900 flex flex-col px-1 py-4 items-center">
+    <div className="w-[60px] h-[100%] bg-toolbar flex flex-col px-0.5 py-4 items-center">
       <PerfectScrollbar>
         {apps.map((app) => (
-          <AppLink
-            className="border-2 border-white flex items-center justify-center w-[40px] h-[40px] rounded mb-2"
-            key={app.id}
-            link={app.link}
-          >
-            <Plus color="white" size={32} />
+          <AppLink key={app.id} className="mb-2" link={app.link}>
+            <Plus color="white" size={28} />
           </AppLink>
         ))}
       </PerfectScrollbar>
 
-      <AppLink
-        className="border-2 border-white flex items-center justify-center w-[40px] h-[40px] rounded"
-        link="/create"
-      >
-        <Plus color="white" size={32} />
+      <AppLink link="/create">
+        <Plus color="white" size={28} />
       </AppLink>
     </div>
   );
 };
 
-export default AppSidebar;
+export default Toolbar;
