@@ -26,7 +26,8 @@ export const ThemeContext = createContext<ThemeContext>({
 
 const ThemeProvider = ({ children }: ThemeProps) => {
   const { theme: themeMode, setThemeMode } = useThemeStore((state) => state);
-  const [theme, setTheme] = useState<Theme>(getTheme(themeMode));
+  const currentTheme = getTheme(themeMode);
+  const [theme, setTheme] = useState<Theme>(currentTheme);
 
   const changeTheme = useCallback(
     (themeMode: ThemeMode) => {

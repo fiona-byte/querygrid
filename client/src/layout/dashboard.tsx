@@ -1,10 +1,11 @@
 import { Outlet } from 'react-router-dom';
+import Box from '@mui/material/Box';
 import Toolbar from '../components/toolbar';
 import Sidebar from '../components/sidebar';
 
 const DashboardLayout = () => {
   return (
-    <div className="flex flex-row h-[100%]">
+    <Box sx={{ display: 'flex', height: '100%' }}>
       {/* app sidebar */}
       <Toolbar />
 
@@ -17,7 +18,7 @@ const DashboardLayout = () => {
 
         <Outlet />
       </div>
-    </div>
+    </Box>
   );
 };
 
