@@ -43,6 +43,7 @@ func main() {
 	router.Use(cors.New(config))
 
 	router.Use(static.Serve("/", static.LocalFile("./admin", true)))
+	router.Use(static.Serve("/locales", static.LocalFile("./locales", true)))
 
 	publicRoute := router.Group("/")
 
