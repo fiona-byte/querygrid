@@ -24,8 +24,8 @@ func init() {
 	zapLogger = zap.New(core, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel))
 }
 
-func Error(message string, err string) {
-	zapLogger.Error(message, zap.String("error", err))
+func Error(message string, err interface{}) {
+	zapLogger.Error(message, zap.Any("error", err))
 }
 
 func Info(message string) {

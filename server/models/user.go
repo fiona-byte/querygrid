@@ -26,7 +26,18 @@ type NewUser struct {
 	Email     string `json:"email"`
 }
 
+type LoginUser struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type LoginResp struct {
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+	Secret       string `json:"secret"`
+}
+
 type UserRepository interface {
-	FindByID(ID int) (*User, error)
 	Create(user NewUser) *resterror.RestError
+	Login(user LoginUser) (*LoginResp, *resterror.RestError)
 }

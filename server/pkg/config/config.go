@@ -12,6 +12,7 @@ type Config struct {
 	TrustedProxies string `mapstructure:"TRUSTED_PROXIES"`
 	DatabaseUrl    string `mapstructure:"DATABASE_URL"`
 	Port           string `mapstructure:"PORT"`
+	JWTSecret      string `mapstructure:"JWT_SECRET"`
 }
 
 func LoadConfig() (config Config) {

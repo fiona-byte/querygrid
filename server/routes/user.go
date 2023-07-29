@@ -6,8 +6,9 @@ import (
 )
 
 func (r *route) UserRoutes() {
-	userRepo := repositories.NewUserRepo(r.db)
-	controller := controllers.NewUserHandler(userRepo)
+	userRepo := repositories.NewUserRepo(r.db, r.conf)
+	controller := controllers.NewUserHandler(userRepo, r.conf)
 
-	r.public.POST("/user", controller.Create)
+	// r.public.POST("/users/user", controller.Create)
+	r.public.POST("/users/login", controller.Login)
 }

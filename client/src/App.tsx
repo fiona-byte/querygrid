@@ -8,6 +8,7 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import 'react-perfect-scrollbar/dist/css/styles.css';
+import ToastProvider from './contexts/toastContext';
 
 const queryClient = new QueryClient();
 
@@ -16,8 +17,10 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <InternationalizationProvider>
-          <CssBaseline />
-          <Router />
+          <ToastProvider>
+            <CssBaseline />
+            <Router />
+          </ToastProvider>
         </InternationalizationProvider>
       </ThemeProvider>
     </QueryClientProvider>
