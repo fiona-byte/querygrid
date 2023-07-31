@@ -44,7 +44,6 @@ const ToastProvider = ({ children }: ToastProps) => {
 
   const triggerToast = useCallback(
     (toast: Toast) => {
-      console.log(toast);
       setToaster({ ...toast, show: true });
     },
     [toaster]

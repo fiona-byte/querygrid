@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
     email       varchar unique not null,
     password    varchar not null,
     status      status  not null,
+    role_id     varchar NOT NULL REFERENCES roles(id),
     created_at  timestamp NOT NULL default now(),
     updated_at  timestamp NOT NULL default now()
 );

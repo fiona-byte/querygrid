@@ -9,13 +9,15 @@ import (
 )
 
 type Claims struct {
-	User string `json:"user"`
+	User   string `json:"user"`
+	Secret string `json:"secret"`
 	jwt.RegisteredClaims
 }
 
-func GenerateJWT(id string, secret string, expirationTime time.Time) (string, *resterror.RestError) {
+func GenerateJWT(id, sck, secret string, expirationTime time.Time) (string, *resterror.RestError) {
 	claims := &Claims{
-		User: id,
+		User:   id,
+		Secret: sck,
 		RegisteredClaims: jwt.RegisteredClaims{
 			// In JWT, the expiry time is expressed as unix milliseconds
 			ExpiresAt: jwt.NewNumericDate(expirationTime),

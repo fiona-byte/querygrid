@@ -82,13 +82,14 @@ func (r *UserRepo) Login(login models.LoginUser) (*models.LoginResp, *resterror.
 	}
 
 	expirationTime := time.Now().Add(5 * time.Minute)
-	accessToken, accessTokenErr := jwt.GenerateJWT(user.ID, r.config.JWTSecret, expirationTime)
+	secret := utils.GenerateRandomToken(25)
+	accessToken, accessTokenErr := jwt.GenerateJWT(user.ID, secret, r.config.JWTSecret, expirationTime)
 	if accessTokenErr != nil {
 		return nil, accessTokenErr
 	}
 
 	expirationTime2 := time.Now().Add(100 * time.Minute)
-	refreshToken, refreshTokenErr := jwt.GenerateJWT(user.ID, r.config.JWTSecret, expirationTime2)
+	refreshToken, refreshTokenErr := jwt.GenerateJWT(user.ID, secret, r.config.JWTSecret, expirationTime2)
 	if refreshTokenErr != nil {
 		return nil, refreshTokenErr
 	}
@@ -96,6 +97,6 @@ func (r *UserRepo) Login(login models.LoginUser) (*models.LoginResp, *resterror.
 	return &models.LoginResp{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
-		Secret:       utils.GenerateRandomToken(25),
+		Secret:       secret,
 	}, nil
 }
