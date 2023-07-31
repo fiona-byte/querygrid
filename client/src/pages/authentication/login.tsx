@@ -11,6 +11,7 @@ import * as yup from 'yup';
 import { useMutation } from '@tanstack/react-query';
 import userServices from '../../services/userServices';
 import { useToaster } from '../../hooks/useToaster';
+import { utils } from '../../utils';
 
 const schema = yup
   .object({
@@ -37,8 +38,8 @@ const Login = () => {
         const message = error?.response?.data?.errors || 'something went wrong';
         toaster.triggerToast({ message, type: 'error' });
       },
-      onSuccess: (data) => {
-        console.log(data);
+      onSuccess: () => {
+        utils.setAuthentication();
       },
     }
   );
@@ -74,6 +75,8 @@ const Login = () => {
                 label="Email Address"
                 autoComplete="email"
                 autoFocus
+                error={!!errors.email}
+                helperText={errors.email?.message}
                 {...field}
               />
             )}
@@ -89,6 +92,8 @@ const Login = () => {
                 label="Password"
                 type="password"
                 id="password"
+                error={!!errors.password}
+                helperText={errors.password?.message}
                 {...field}
               />
             )}

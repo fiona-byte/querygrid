@@ -18,5 +18,6 @@ var (
 	REFRESH_TOKEN_KEY               = "urqt"
 	SECRET_KEY                      = "bhsq"
 
-	ServerError = "something went wrong"
+	ServerError  = "something went wrong"
+	InvalidToken = "invalid token"
 )
