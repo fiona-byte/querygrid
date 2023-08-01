@@ -70,3 +70,19 @@ func (h *UserHandler) Login(c *gin.Context) {
 		"data":    nil,
 	})
 }
+
+func (h *UserHandler) CurrentUser(c *gin.Context) {
+	userID := c.MustGet("userID").(string)
+
+	data, err := h.userRepo.CurrentUser(userID)
+	if err != nil {
+		c.SecureJSON(err.Status, err)
+		return
+	}
+
+	c.SecureJSON(http.StatusOK, &gin.H{
+		"status":  http.StatusOK,
+		"message": "Me",
+		"data":    data,
+	})
+}

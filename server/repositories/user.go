@@ -100,3 +100,15 @@ func (r *UserRepo) Login(login models.LoginUser) (*models.LoginResp, *resterror.
 		Secret:       secret,
 	}, nil
 }
+
+func (r *UserRepo) CurrentUser(userID string) (models.User, *resterror.RestError) {
+	ctx := context.Background()
+	var user models.User
+	err := r.connect.DB.NewSelect().Model(&user).Relation("Role").Where("usr.id = ?", userID).Scan(ctx)
+	if err != nil {
+		logger.Error("Error getting current user data", err)
+		return user, resterror.InternalServerError()
+	}
+
+	return user, nil
+}

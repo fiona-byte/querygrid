@@ -17,6 +17,7 @@ func Authentication(config config.Config) gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": constants.InvalidToken})
 			return
 		}
+
 		if secret, err = c.Cookie(constants.SECRET_KEY); err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": constants.InvalidToken})
 			return
@@ -33,7 +34,7 @@ func Authentication(config config.Config) gin.HandlerFunc {
 			return
 		}
 
-		c.Set("userID", data.ID)
+		c.Set("userID", data.User)
 		c.Next()
 	}
 }

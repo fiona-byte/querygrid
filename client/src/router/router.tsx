@@ -1,6 +1,7 @@
 import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import { dashboard, page } from './routes';
 import DashboardLayout from '../layout/dashboard';
+import AuthUserProvider from '../contexts/authUserContext';
 
 const Router = () => {
   const dashboardRoutes = dashboard.map(({ path, title, element: Element }) => (
@@ -16,7 +17,14 @@ const Router = () => {
       <Routes>
         {pageRoutes}
 
-        <Route path="/:app" element={<DashboardLayout />}>
+        <Route
+          path="/:app"
+          element={
+            <AuthUserProvider>
+              <DashboardLayout />
+            </AuthUserProvider>
+          }
+        >
           {dashboardRoutes}
         </Route>
 
