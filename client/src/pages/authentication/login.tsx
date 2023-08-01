@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
@@ -22,6 +23,7 @@ const schema = yup
 type FormData = yup.InferType<typeof schema>;
 
 const Login = () => {
+  const navigate = useNavigate();
   const toaster = useToaster();
   const {
     control,
@@ -40,6 +42,7 @@ const Login = () => {
       },
       onSuccess: () => {
         utils.setAuthentication();
+        navigate('/hhhh');
       },
     }
   );

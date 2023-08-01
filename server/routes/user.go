@@ -11,4 +11,5 @@ func (r *route) UserRoutes() {
 
 	// r.public.POST("/users/user", controller.Create)
 	r.public.POST("/users/login", controller.Login)
+	r.private.GET("/users/me", controller.CurrentUser)
 }

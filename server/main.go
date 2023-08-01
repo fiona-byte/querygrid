@@ -46,8 +46,10 @@ func main() {
 	router.Use(static.Serve("/locales", static.LocalFile("./locales", true)))
 
 	publicRoute := router.Group("/api")
+	privateRoute := router.Group("/api")
+	privateRoute.Use(middlewares.Authentication(conf))
 
-	routes := routes.NewRoute(publicRoute, router, dbCon, conf)
+	routes := routes.NewRoute(publicRoute, privateRoute, router, dbCon, conf)
 	routes.MapUrls()
 
 	panic(router.Run(utils.GetPort(conf.Port)))
