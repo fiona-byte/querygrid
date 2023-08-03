@@ -7,4 +7,8 @@ export const utils = {
     const item = localStorage.getItem('user-authentication');
     return item === 'true';
   },
+
+  clearAuthentication: () => {
+    localStorage.removeItem('user-authentication');
+  },
 };

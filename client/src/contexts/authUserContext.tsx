@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ReactNode, createContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import userServices from '../services/userServices';
+import { utils } from '../utils';
 
 type Role = {
   id: string;
@@ -35,12 +36,17 @@ const AuthUserProvider = ({ children }: { children?: ReactNode }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const redirect = () => {
+    utils.clearAuthentication();
+    navigate('/login');
+  };
+
   const userQuery = useQuery(['me'], userServices.me, {
     retry: false,
     refetchOnWindowFocus: false,
     onError(error: any) {
       if (error?.response?.data?.message === 'invalid token') {
-        navigate('/login');
+        redirect();
       } else {
         //
       }
@@ -51,7 +57,9 @@ const AuthUserProvider = ({ children }: { children?: ReactNode }) => {
   });
 
   useEffect(() => {
-    userQuery.refetch().finally(() => setLoading(false));
+    const isAuthenticated = utils.getAuthentication();
+    if (isAuthenticated) userQuery.refetch().finally(() => setLoading(false));
+    else redirect();
   }, [location]);
 
   return (

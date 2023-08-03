@@ -2,10 +2,12 @@ package controllers
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/devylab/querygrid/models"
 	"github.com/devylab/querygrid/pkg/config"
 	"github.com/devylab/querygrid/pkg/constants"
+	"github.com/devylab/querygrid/pkg/jwt"
 	"github.com/devylab/querygrid/pkg/resterror"
 	"github.com/devylab/querygrid/pkg/utils"
 	"github.com/gin-gonic/gin"
@@ -84,5 +86,59 @@ func (h *UserHandler) CurrentUser(c *gin.Context) {
 		"status":  http.StatusOK,
 		"message": "Me",
 		"data":    data,
+	})
+}
+
+func (h *UserHandler) Refresh(c *gin.Context) {
+	origin := c.GetHeader("origin")
+	var refreshToken, secret string
+	var err error
+
+	if secret, err = c.Cookie(constants.SECRET_KEY); err != nil {
+		c.SecureJSON(http.StatusBadRequest, gin.H{"message": constants.InvalidToken})
+		return
+	}
+
+	if refreshToken, err = c.Cookie(constants.REFRESH_TOKEN_KEY); err != nil {
+		c.SecureJSON(http.StatusBadRequest, gin.H{"message": constants.InvalidToken})
+		return
+	}
+
+	data, verifyErr := jwt.VerifyJWT(refreshToken, h.config.JWTSecret)
+	if verifyErr != nil {
+		c.SecureJSON(http.StatusBadRequest, gin.H{"message": constants.InvalidToken})
+		return
+	}
+
+	if data.Secret != secret {
+		c.SecureJSON(http.StatusBadRequest, gin.H{"message": constants.InvalidToken})
+		return
+	}
+
+	expirationTime := time.Now().Add(5 * time.Minute)
+	newSecret := utils.GenerateRandomToken(25)
+	newAccessToken, accessTokenErr := jwt.GenerateJWT(data.User, newSecret, h.config.JWTSecret, expirationTime)
+	if accessTokenErr != nil {
+		c.SecureJSON(accessTokenErr.Status, accessTokenErr)
+		return
+	}
+
+	expirationTime2 := time.Now().Add(100 * time.Minute)
+	newRefreshToken, refreshTokenErr := jwt.GenerateJWT(data.User, newSecret, h.config.JWTSecret, expirationTime2)
+	if refreshTokenErr != nil {
+		c.SecureJSON(refreshTokenErr.Status, refreshTokenErr)
+		return
+	}
+
+	domain := utils.GetDomain(origin)
+	isProduction := utils.IsProduction(h.config.AppEnv)
+	c.SetCookie(constants.ACCESS_TOKEN_KEY, newAccessToken, 3600, "/", domain, isProduction, isProduction)
+	c.SetCookie(constants.REFRESH_TOKEN_KEY, newRefreshToken, 3600, "/", domain, isProduction, isProduction)
+	c.SetCookie(constants.SECRET_KEY, newSecret, 3600, "/", domain, isProduction, isProduction)
+
+	c.SecureJSON(http.StatusOK, &gin.H{
+		"status":  http.StatusOK,
+		"message": "Refresh",
+		"data":    nil,
 	})
 }
