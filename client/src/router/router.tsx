@@ -18,7 +18,7 @@ const Router = () => {
         {pageRoutes}
 
         <Route
-          path="/:app"
+          path="/app/:app"
           element={
             <AuthUserProvider>
               <DashboardLayout />

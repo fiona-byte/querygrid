@@ -51,14 +51,14 @@ const Toolbar = () => {
             key={id}
             sx={{ mb: '10px' }}
             className={getActiveToolbar(pathname, link)}
-            to={`/${link}`}
+            to={`/app/${link}`}
           >
             <Plus color="white" size={28} />
           </ToolbarLink>
         ))}
       </PerfectScrollbar>
 
-      <ToolbarLink to="/create">
+      <ToolbarLink to="/app/create">
         <Plus color="white" size={28} />
       </ToolbarLink>
     </ToolbarContainer>
