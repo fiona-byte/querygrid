@@ -90,28 +90,29 @@ func (h *UserHandler) CurrentUser(c *gin.Context) {
 }
 
 func (h *UserHandler) Refresh(c *gin.Context) {
-	origin := c.GetHeader("origin")
 	var refreshToken, secret string
 	var err error
+	origin := c.GetHeader("origin")
+	internalError := resterror.InternalServerError()
 
 	if secret, err = c.Cookie(constants.SECRET_KEY); err != nil {
-		c.SecureJSON(http.StatusBadRequest, gin.H{"message": constants.InvalidToken})
+		c.SecureJSON(internalError.Status, internalError)
 		return
 	}
 
 	if refreshToken, err = c.Cookie(constants.REFRESH_TOKEN_KEY); err != nil {
-		c.SecureJSON(http.StatusBadRequest, gin.H{"message": constants.InvalidToken})
+		c.SecureJSON(internalError.Status, internalError)
 		return
 	}
 
 	data, verifyErr := jwt.VerifyJWT(refreshToken, h.config.JWTSecret)
 	if verifyErr != nil {
-		c.SecureJSON(http.StatusBadRequest, gin.H{"message": constants.InvalidToken})
+		c.SecureJSON(internalError.Status, internalError)
 		return
 	}
 
 	if data.Secret != secret {
-		c.SecureJSON(http.StatusBadRequest, gin.H{"message": constants.InvalidToken})
+		c.SecureJSON(internalError.Status, internalError)
 		return
 	}
 

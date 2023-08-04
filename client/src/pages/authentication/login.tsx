@@ -42,7 +42,7 @@ const Login = () => {
       },
       onSuccess: () => {
         utils.setAuthentication();
-        navigate('/hhhh');
+        navigate('/app/hhhh');
       },
     }
   );

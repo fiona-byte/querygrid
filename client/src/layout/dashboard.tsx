@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Toolbar from '../components/toolbar';
 import Sidebar from '../components/sidebar';
+import Header from '../components/header';
 
 const DashboardLayout = () => {
   return (
@@ -13,11 +14,12 @@ const DashboardLayout = () => {
       <Sidebar />
 
       {/* main layout */}
-      <div>
+      <Box sx={{ flex: 1, position: 'relative' }}>
         {/* header (static) */}
+        <Header />
 
         <Outlet />
-      </div>
+      </Box>
     </Box>
   );
 };
