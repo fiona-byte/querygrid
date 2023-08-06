@@ -10,17 +10,33 @@ import {
   Toolbar,
   Tooltip,
   Typography,
+  styled,
 } from '@mui/material';
 import { useUser } from '../../hooks/useUser';
 import { useTranslator } from '../../hooks/useTranslator';
 import { Languages } from '../../i18n/type';
+import images from '../../assets/images';
 
 const settings = ['Profile', 'Logout'];
-const languages = ['en', 'de'] as const;
+const languages = ['en'] as const;
 
 const stringAvatar = (name: string) => ({
   children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
 });
+
+const FlagImage = styled('img')({
+  width: '24px',
+  height: '24px',
+  borderRadius: '9px',
+  marginRight: '11px',
+});
+
+const FlagText = styled(Typography)(({ theme }) => ({
+  textTransform: 'uppercase',
+  textAlign: 'center',
+  color: theme.palette.content.main,
+  fontSize: '14px',
+}));
 
 type DropdownProps = {
   tooltip: string;
@@ -98,12 +114,20 @@ const Header = () => {
             open={elLang}
             openMenu={openLangMenu}
             closeMenu={handleCloseLangMenu}
-            title={<Typography textAlign="center">{language}</Typography>}
+            title={
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <FlagImage src={images.flags[language]} alt={language} />
+                <FlagText>{language}</FlagText>
+              </Box>
+            }
             tooltip="Change Language"
           >
             {languages.map((language) => (
               <MenuItem key={language} onClick={() => chooseLang(language)}>
-                <Typography textAlign="center">{language}</Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <FlagImage src={images.flags[language]} alt={language} />
+                  <FlagText>{language}</FlagText>
+                </Box>
               </MenuItem>
             ))}
           </Dropdown>
