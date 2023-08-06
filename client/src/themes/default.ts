@@ -12,5 +12,9 @@ export const DefaultTheme = createTheme({
       main: '#242526',
       border: '#fff',
     },
+    content: {
+      main: '#242526',
+      secondary: '#242526',
+    },
   },
 });
