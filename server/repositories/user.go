@@ -14,7 +14,10 @@ import (
 	"github.com/devylab/querygrid/pkg/password"
 	"github.com/devylab/querygrid/pkg/resterror"
 	"github.com/devylab/querygrid/pkg/utils"
-	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type UserRepo struct {
@@ -35,20 +38,25 @@ func (r *UserRepo) Create(newUser models.NewUser) *resterror.RestError {
 		return resterror.InternalServerError()
 	}
 
+	roleID, roleIDErr := primitive.ObjectIDFromHex(newUser.RoleID)
+	if roleIDErr != nil {
+		return resterror.InternalServerError()
+	}
+
 	user := &models.User{
-		ID:        uuid.New().String(),
 		FirstName: newUser.FirstName,
 		LastName:  newUser.LastName,
 		Email:     newUser.Email,
 		Password:  hashPassword,
+		RoleID:    roleID,
 		Status:    constants.PENDING,
 		CreatedAt: utils.CurrentTime(),
 		UpdatedAt: utils.CurrentTime(),
 	}
 
 	ctx := context.Background()
-	if _, err := r.connect.DB.NewInsert().Model(user).Exec(ctx); err != nil {
-		if strings.Contains(err.Error(), "users_email_key") {
+	if _, err := r.connect.User.InsertOne(ctx, user); err != nil {
+		if strings.Contains(err.Error(), "email_1") {
 			validateErrors := make(map[string]string)
 			validateErrors["email"] = "email already exists"
 			return resterror.BadRequest("unique constraint", validateErrors)
@@ -66,8 +74,8 @@ func (r *UserRepo) Create(newUser models.NewUser) *resterror.RestError {
 func (r *UserRepo) Login(login models.LoginUser) (*models.LoginResp, *resterror.RestError) {
 	ctx := context.Background()
 	var user models.User
-	err := r.connect.DB.NewSelect().Model(&user).Column("id", "password", "status").Where("email = ?", login.Email).Scan(ctx)
-	if err != nil {
+	opts := options.FindOne().SetProjection(bson.D{{"_id", 1}, {"password", 1}, {"status", 1}})
+	if err := r.connect.User.FindOne(ctx, bson.D{{"email", login.Email}}, opts).Decode(&user); err != nil {
 		logger.Error("Error getting login user data", err)
 		return nil, resterror.BadRequest("login", "invalid email/password")
 	}
@@ -83,13 +91,13 @@ func (r *UserRepo) Login(login models.LoginUser) (*models.LoginResp, *resterror.
 
 	expirationTime := time.Now().Add(5 * time.Minute)
 	secret := utils.GenerateRandomToken(25)
-	accessToken, accessTokenErr := jwt.GenerateJWT(user.ID, secret, r.config.JWTSecret, expirationTime)
+	accessToken, accessTokenErr := jwt.GenerateJWT(user.ID.Hex(), secret, r.config.JWTSecret, expirationTime)
 	if accessTokenErr != nil {
 		return nil, accessTokenErr
 	}
 
 	expirationTime2 := time.Now().Add(100 * time.Minute)
-	refreshToken, refreshTokenErr := jwt.GenerateJWT(user.ID, secret, r.config.JWTSecret, expirationTime2)
+	refreshToken, refreshTokenErr := jwt.GenerateJWT(user.ID.Hex(), secret, r.config.JWTSecret, expirationTime2)
 	if refreshTokenErr != nil {
 		return nil, refreshTokenErr
 	}
@@ -101,14 +109,32 @@ func (r *UserRepo) Login(login models.LoginUser) (*models.LoginResp, *resterror.
 	}, nil
 }
 
-func (r *UserRepo) CurrentUser(userID string) (models.User, *resterror.RestError) {
+func (r *UserRepo) CurrentUser(userID primitive.ObjectID) (models.User, *resterror.RestError) {
 	ctx := context.Background()
+	matchStage := bson.D{{"$match", bson.D{{"_id", userID}}}}
+	lookupStage := bson.D{{"$lookup", bson.D{
+		{"from", "roles"},
+		{"localField", "role_id"},
+		{"foreignField", "_id"},
+		{"as", "roles"}},
+	}}
+	unwindStage := bson.D{{"$unwind", bson.D{{"path", "$roles"}}}}
+	cursor, err := r.connect.User.Aggregate(ctx, mongo.Pipeline{lookupStage, matchStage, unwindStage})
+
 	var user models.User
-	err := r.connect.DB.NewSelect().Model(&user).Relation("Role").Where("usr.id = ?", userID).Scan(ctx)
-	if err != nil {
-		logger.Error("Error getting current user data", err)
+	for cursor.Next(context.TODO()) {
+		if err = cursor.Decode(&user); err != nil {
+			logger.Error("Error getting current user", err)
+			return user, resterror.InternalServerError()
+		}
+	}
+
+	if err := cursor.Err(); err != nil {
+		logger.Error("Error getting current user (cursor error)", err)
 		return user, resterror.InternalServerError()
 	}
+
+	defer cursor.Close(ctx)
 
 	return user, nil
 }

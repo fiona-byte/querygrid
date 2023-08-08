@@ -7,7 +7,7 @@ const Overview = () => {
 
   return (
     <div>
-      Hello I am: {user?.first_name}, my role is: {user?.Role.name}, Overview{' '}
+      Hello I am: {user?.first_name}, my role is: {user?.role.name}, Overview{' '}
       <p>{t('translations:hello_world')}</p>
       <p>{t('translations:my_name')}</p>
     </div>

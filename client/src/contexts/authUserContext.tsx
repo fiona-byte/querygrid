@@ -19,7 +19,7 @@ type User = {
   email: string;
   status: string;
   role_id: string;
-  Role: Role;
+  role: Role;
   created_at: string;
   updated_at: string;
 };

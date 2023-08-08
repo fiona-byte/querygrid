@@ -29,7 +29,6 @@ func main() {
 
 	// DATABASE CONNECTION
 	dbCon := database.Connect(conf)
-	defer dbCon.DB.Close()
 
 	ginMode(conf)
 	router := gin.Default()

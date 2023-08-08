@@ -3,15 +3,13 @@ package models
 import (
 	"time"
 
-	"github.com/uptrace/bun"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Role struct {
-	bun.BaseModel `bun:"table:roles,alias:ros"`
-
-	ID          string              `bun:"id,pk" json:"id,omitempty"`
-	Name        string              `bun:"name,notnull" json:"name"`
-	Permissions map[string][]string `bun:"permissions,notnull" json:"permissions"`
-	CreatedAt   time.Time           `bun:"created_at,notnull" json:"created_at,omitempty"`
-	UpdatedAt   time.Time           `bun:"updated_at,notnull" json:"updated_at,omitempty"`
+	ID          primitive.ObjectID  `bson:"_id" json:"id,omitempty"`
+	Name        string              `bson:"name" json:"name"`
+	Permissions map[string][]string `bson:"permissions" json:"permissions"`
+	CreatedAt   time.Time           `bson:"created_at" json:"created_at,omitempty"`
+	UpdatedAt   time.Time           `bson:"updated_at" json:"updated_at,omitempty"`
 }

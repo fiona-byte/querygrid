@@ -7,6 +7,7 @@ import (
 	"github.com/devylab/querygrid/pkg/constants"
 	"github.com/devylab/querygrid/pkg/jwt"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func Authentication(config config.Config) gin.HandlerFunc {
@@ -34,7 +35,13 @@ func Authentication(config config.Config) gin.HandlerFunc {
 			return
 		}
 
-		c.Set("userID", data.User)
+		roleID, roleIDErr := primitive.ObjectIDFromHex(data.User)
+		if roleIDErr != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": constants.InvalidToken})
+			return
+		}
+
+		c.Set("userID", roleID)
 		c.Next()
 	}
 }
