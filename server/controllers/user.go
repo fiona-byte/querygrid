@@ -11,6 +11,7 @@ import (
 	"github.com/devylab/querygrid/pkg/resterror"
 	"github.com/devylab/querygrid/pkg/utils"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type UserHandler struct {
@@ -74,7 +75,7 @@ func (h *UserHandler) Login(c *gin.Context) {
 }
 
 func (h *UserHandler) CurrentUser(c *gin.Context) {
-	userID := c.MustGet("userID").(string)
+	userID := c.MustGet("userID").(primitive.ObjectID)
 
 	data, err := h.userRepo.CurrentUser(userID)
 	if err != nil {

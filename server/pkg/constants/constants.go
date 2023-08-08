@@ -17,6 +17,7 @@ var (
 	ACCESS_TOKEN_KEY                = "hryt"
 	REFRESH_TOKEN_KEY               = "urqt"
 	SECRET_KEY                      = "bhsq"
+	DATABASE                        = "querygrid"
 
 	ServerError  = "something went wrong"
 	InvalidToken = "invalid token"
