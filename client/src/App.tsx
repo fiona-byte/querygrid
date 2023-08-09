@@ -3,13 +3,13 @@ import { ErrorBoundary } from 'react-error-boundary';
 import CssBaseline from '@mui/material/CssBaseline';
 import ThemeProvider from './contexts/themeContext';
 import InternationalizationProvider from './contexts/translatorContext';
+import ToastProvider from './contexts/toastContext';
 import Router from './router/router';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import 'react-perfect-scrollbar/dist/css/styles.css';
-import ToastProvider from './contexts/toastContext';
 
 const queryClient = new QueryClient();
 

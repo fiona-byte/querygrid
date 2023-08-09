@@ -1,17 +1,15 @@
 import { useState, MouseEvent, ReactNode } from 'react';
-import {
-  AppBar,
-  Avatar,
-  Box,
-  Container,
-  IconButton,
-  Menu,
-  MenuItem,
-  Toolbar,
-  Tooltip,
-  Typography,
-  styled,
-} from '@mui/material';
+import AppBar from '@mui/material/AppBar';
+import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Toolbar from '@mui/material/Toolbar';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+import { styled } from '@mui/material';
 import { useUser } from '../../hooks/useUser';
 import { useTranslator } from '../../hooks/useTranslator';
 import { Languages } from '../../i18n/type';
@@ -23,6 +21,12 @@ const languages = ['en'] as const;
 const stringAvatar = (name: string) => ({
   children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
 });
+
+const AppHeader = styled(AppBar)(() => ({
+  borderBottomWidth: '1px',
+  borderBottomStyle: 'solid',
+  borderColor: 'rgba(36, 37, 38, 0.1)',
+}));
 
 const FlagImage = styled('img')({
   width: '24px',
@@ -45,29 +49,23 @@ type DropdownProps = {
   closeMenu: () => void;
   title: JSX.Element;
   id: string;
+  mr?: string;
+  ml?: string;
   children?: ReactNode;
 };
 
-const Dropdown = ({
-  id,
-  title,
-  openMenu,
-  open,
-  closeMenu,
-  tooltip,
-  children,
-}: DropdownProps) => {
+const Dropdown = (dropdown: DropdownProps) => {
   return (
-    <Box sx={{ flexGrow: 0, ml: '10px' }}>
-      <Tooltip title={tooltip}>
-        <IconButton onClick={openMenu} sx={{ p: 0 }}>
-          {title}
+    <Box sx={{ flexGrow: 0, mr: dropdown.mr, ml: dropdown.ml }}>
+      <Tooltip title={dropdown.tooltip}>
+        <IconButton onClick={dropdown.openMenu} sx={{ p: 0 }}>
+          {dropdown.title}
         </IconButton>
       </Tooltip>
       <Menu
         sx={{ mt: '25px' }}
-        id={id}
-        anchorEl={open}
+        id={dropdown.id}
+        anchorEl={dropdown.open}
         elevation={1}
         anchorOrigin={{
           vertical: 'top',
@@ -78,10 +76,10 @@ const Dropdown = ({
           vertical: 'top',
           horizontal: 'right',
         }}
-        open={Boolean(open)}
-        onClose={closeMenu}
+        open={Boolean(dropdown.open)}
+        onClose={dropdown.closeMenu}
       >
-        {children}
+        {dropdown.children}
       </Menu>
     </Box>
   );
@@ -106,14 +104,16 @@ const Header = () => {
   };
 
   return (
-    <AppBar position="static" elevation={0}>
+    <AppHeader position="static" elevation={0}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
+          <Typography sx={{ mr: 'auto' }}>Page</Typography>
           <Dropdown
             id="lang-menu"
             open={elLang}
             openMenu={openLangMenu}
             closeMenu={handleCloseLangMenu}
+            mr={'40px'}
             title={
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <FlagImage src={images.flags[language]} alt={language} />
@@ -154,7 +154,7 @@ const Header = () => {
           </Dropdown>
         </Toolbar>
       </Container>
-    </AppBar>
+    </AppHeader>
   );
 };
 

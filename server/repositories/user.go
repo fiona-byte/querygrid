@@ -122,7 +122,7 @@ func (r *UserRepo) CurrentUser(userID primitive.ObjectID) (models.User, *resterr
 	cursor, err := r.connect.User.Aggregate(ctx, mongo.Pipeline{lookupStage, matchStage, unwindStage})
 
 	var user models.User
-	for cursor.Next(context.TODO()) {
+	for cursor.Next(ctx) {
 		if err = cursor.Decode(&user); err != nil {
 			logger.Error("Error getting current user", err)
 			return user, resterror.InternalServerError()
