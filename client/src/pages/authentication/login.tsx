@@ -1,18 +1,27 @@
-import { useNavigate } from 'react-router-dom';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
+import { useNavigate, Link } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useMutation } from '@tanstack/react-query';
+import { Card, Para, Form, Input, SubmitButton, Title } from './styles';
 import userServices from '../../services/userServices';
 import { useToaster } from '../../hooks/useToaster';
 import { utils } from '../../utils';
+
+const forms = [
+  {
+    type: 'text',
+    label: 'Email',
+    name: 'email',
+    placeholder: 'What’s your email address?',
+  },
+  {
+    type: 'password',
+    label: 'Password',
+    name: 'password',
+    placeholder: 'Enter your password',
+  },
+] as const;
 
 const schema = yup
   .object({
@@ -33,92 +42,52 @@ const Login = () => {
     resolver: yupResolver(schema),
   });
 
-  const loginMutation = useMutation(
-    (data: FormData) => userServices.login(data),
-    {
-      onError: (error: any) => {
-        const message = error?.response?.data?.errors || 'something went wrong';
-        toaster.triggerToast({ message, type: 'error' });
-      },
-      onSuccess: () => {
-        utils.setAuthentication();
-        navigate('/app/hhhh');
-      },
-    }
-  );
+  const loginMutation = useMutation((data: FormData) => userServices.login(data), {
+    onError: (error: any) => {
+      const message = error?.response?.data?.errors || 'something went wrong';
+      toaster.triggerToast({ message, type: 'error' });
+    },
+    onSuccess: () => {
+      utils.setAuthentication();
+      navigate('/projects');
+    },
+  });
 
   const onSubmit = (data: FormData) => loginMutation.mutate(data);
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <Typography component="h1" variant="h5">
-          Sign in
-        </Typography>
-        <Box
-          component="form"
-          onSubmit={(event) => void handleSubmit(onSubmit)(event)}
-        >
+    <Card variant="outlined">
+      <Title>Sign In</Title>
+      <Para>Login to your account to access your projects.</Para>
+      <Form onSubmit={handleSubmit(onSubmit)}>
+        {forms.map(({ placeholder, name, type }) => (
           <Controller
+            key={name}
+            name={name}
             control={control}
-            name="email"
             render={({ field: { value, ...field } }) => (
-              <TextField
-                margin="normal"
-                required
+              <Input
+                type={type}
                 fullWidth
-                id="email"
-                label="Email Address"
-                autoComplete="email"
-                autoFocus
-                error={!!errors.email}
-                helperText={errors.email?.message}
+                size="medium"
+                variant="outlined"
+                placeholder={placeholder}
+                error={!!errors[name]}
+                helperText={errors[name]?.message}
                 {...field}
               />
             )}
           />
-          <Controller
-            control={control}
-            name="password"
-            render={({ field: { value, ...field } }) => (
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                label="Password"
-                type="password"
-                id="password"
-                error={!!errors.password}
-                helperText={errors.password?.message}
-                {...field}
-              />
-            )}
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            Sign In
-          </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
-          </Grid>
-        </Box>
-      </Box>
-    </Container>
+        ))}
+        <SubmitButton disabled={loginMutation.isLoading} type="submit" fullWidth variant="contained">
+          Login
+        </SubmitButton>
+      </Form>
+
+      <Para>
+        <Link to="/reset-password">Forgot Password?</Link>
+      </Para>
+    </Card>
   );
 };
 
