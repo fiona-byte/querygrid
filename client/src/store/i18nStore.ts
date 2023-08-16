@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { Languages } from '../i18n/type';
+import { Languages } from '@lang/type';
 
 type InternationalizationState = {
   language: Languages;
@@ -16,8 +16,8 @@ const useInternationalizationStore = create<InternationalizationState>()(
     {
       name: 'language',
       storage: createJSONStorage(() => localStorage),
-    }
-  )
+    },
+  ),
 );
 
 export default useInternationalizationStore;

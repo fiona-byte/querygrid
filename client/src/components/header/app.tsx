@@ -1,11 +1,11 @@
 import { cloneElement, MouseEvent, ReactElement, useState } from 'react';
 import { Avatar, Box, Container, IconButton, Toolbar, useScrollTrigger } from '@mui/material';
-import MenuIcon from '../../assets/svg/menuIcon';
+import MenuIcon from '@assets/svg/menuIcon';
+import images from '@assets/images';
 import { AppBarWrapper, Brand, AvatarLink } from './app.styles';
-import { useMobile } from '../../hooks/useMobile';
-import images from '../../assets/images';
-import { useUser } from '../../hooks/useUser';
-import { utils } from '../../utils';
+import { useMobile } from '@hooks/useMobile';
+import { useUser } from '@hooks/useUser';
+import { utils } from '@utils/index';
 import Dropdown from '../dropdown';
 
 interface Props {

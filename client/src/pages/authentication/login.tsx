@@ -4,9 +4,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useMutation } from '@tanstack/react-query';
 import { Card, Para, Form, Input, SubmitButton, Title } from './styles';
-import userServices from '../../services/userServices';
-import { useToaster } from '../../hooks/useToaster';
-import { utils } from '../../utils';
+import userServices from '@service/userServices';
+import { useToaster } from '@hooks/useToaster';
+import { utils } from '@utils/index';
 
 const forms = [
   {

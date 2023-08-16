@@ -1,14 +1,8 @@
-import {
-  createContext,
-  ReactNode,
-  useCallback,
-  useState,
-  useEffect,
-} from 'react';
+import { createContext, ReactNode, useCallback, useState, useEffect } from 'react';
 import type { Theme } from '@mui/material/styles';
 import { ThemeProvider as MUIProvider } from '@mui/material/styles';
-import { getTheme, ThemeMode } from '../themes';
-import useThemeStore from '../store/themeStore';
+import { getTheme, ThemeMode } from '@theme/index';
+import useThemeStore from '@store/themeStore';
 
 type ThemeProps = {
   children?: ReactNode;
@@ -34,7 +28,7 @@ const ThemeProvider = ({ children }: ThemeProps) => {
       setTheme(getTheme(themeMode));
       setThemeMode(themeMode);
     },
-    [theme]
+    [theme],
   );
 
   useEffect(() => {

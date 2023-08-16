@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Box, ClickAwayListener, GlobalStyles, Toolbar } from '@mui/material';
-import { AppHeader } from '../components/header';
-import Drawer from '../components/drawer/drawer';
+import { AppHeader } from '@component/header';
+import Drawer from '@component/drawer';
 
 const AppLayout = () => {
   const [open, setOpen] = useState(false);

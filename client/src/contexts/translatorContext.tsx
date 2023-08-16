@@ -1,13 +1,7 @@
-import {
-  createContext,
-  ReactNode,
-  useCallback,
-  useState,
-  useEffect,
-} from 'react';
+import { createContext, ReactNode, useCallback, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Internationalization, Languages } from '../i18n/type';
-import useInternationalizationStore from '../store/i18nStore';
+import { Internationalization, Languages } from '@lang/type';
+import useInternationalizationStore from '@store/i18nStore';
 
 type InternationalizationProps = {
   children?: ReactNode;
@@ -18,13 +12,9 @@ export const InternationalizationContext = createContext<Internationalization>({
   changeLanguage: (_language: Languages) => null,
 });
 
-const InternationalizationProvider = ({
-  children,
-}: InternationalizationProps) => {
+const InternationalizationProvider = ({ children }: InternationalizationProps) => {
   const { i18n } = useTranslation();
-  const { language, setLanguage } = useInternationalizationStore(
-    (state) => state
-  );
+  const { language, setLanguage } = useInternationalizationStore((state) => state);
   const [lang, setLang] = useState<Languages>(language);
 
   const changeLanguage = useCallback(
@@ -32,19 +22,15 @@ const InternationalizationProvider = ({
       setLang(lang);
       setLanguage(lang);
     },
-    [lang]
+    [lang],
   );
 
   useEffect(() => {
-    i18n
-      .changeLanguage(lang)
-      .catch((err) => console.log('CHANGE LANGUAGE ERROR', err)); // TODO: remove console.log()
+    i18n.changeLanguage(lang).catch((err) => console.log('CHANGE LANGUAGE ERROR', err)); // TODO: remove console.log()
   }, [lang]);
 
   return (
-    <InternationalizationContext.Provider
-      value={{ changeLanguage, language: lang }}
-    >
+    <InternationalizationContext.Provider value={{ changeLanguage, language: lang }}>
       {children}
     </InternationalizationContext.Provider>
   );

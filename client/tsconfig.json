@@ -22,7 +22,19 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "strictNullChecks": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@component/*": ["src/components/*"],
+      "@assets/*": ["src/assets/*"],
+      "@context/*": ["src/contexts/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@utils/*": ["src/utils/*"],
+      "@lang/*": ["src/i18n/*"],
+      "@store/*": ["src/store/*"],
+      "@theme/*": ["src/themes/*"],
+      "@layout/*": ["src/layout/*"],
+      "@service/*": ["src/services/*"]
+    }
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

@@ -1,8 +1,8 @@
 import { Button as MuiButton, Container as MuiContainer, GlobalStyles, Link as MuiLink } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
-import images from '../assets/images';
-import UnionIcon from '../assets/svg/union';
+import images from '@assets/images';
+import UnionIcon from '@assets/svg/union';
 
 const AppLayout = styled('div')`
   height: 100%;

@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { ReactNode, createContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import userServices from '../services/userServices';
-import { utils } from '../utils';
+import userServices from '@service/userServices';
+import { utils } from '@utils/index';
 
 type Role = {
   id: string;

@@ -1,4 +1,4 @@
 import { useContext } from 'react';
-import { InternationalizationContext } from '../contexts/translatorContext';
+import { InternationalizationContext } from '@context/translatorContext';
 
 export const useTranslator = () => useContext(InternationalizationContext);

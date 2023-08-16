@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 import { Box, Divider, Drawer, IconButton, List, ListItem, ListItemText } from '@mui/material';
-import { Brand } from '../header/app.styles';
-import CloseIcon from '../../assets/svg/closeIcon';
-import images from '../../assets/images';
+import { Brand } from '@component/header/app.styles';
+import CloseIcon from '@assets/svg/closeIcon';
+import images from '@assets/images';
 
 interface IProps {
   open: boolean;
