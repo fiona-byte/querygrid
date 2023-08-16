@@ -1,9 +1,12 @@
-import { cloneElement, ReactElement } from 'react';
-import { Box, Container, IconButton, Toolbar, useScrollTrigger } from '@mui/material';
+import { cloneElement, MouseEvent, ReactElement, useState } from 'react';
+import { Avatar, Box, Container, IconButton, Toolbar, useScrollTrigger } from '@mui/material';
 import MenuIcon from '../../assets/svg/menuIcon';
-import { AppBarWrapper, Brand, MenuLink, LoginLink, GetStartedLink, MobileLoginLink } from './app.styles';
+import { AppBarWrapper, Brand, AvatarLink } from './app.styles';
 import { useMobile } from '../../hooks/useMobile';
 import images from '../../assets/images';
+import { useUser } from '../../hooks/useUser';
+import { utils } from '../../utils';
+import Dropdown from '../dropdown';
 
 interface Props {
   openSidebar: () => void;
@@ -30,50 +33,80 @@ const ElevationScroll = (props: Props) => {
   return null;
 };
 
+type ProfileAvatar = {
+  closeSidebar: () => void;
+  first_name?: string;
+  last_name?: string;
+  size: number;
+  fontSize: string;
+};
+
+const ProfileAvatar = (profileAvatar: ProfileAvatar) => (
+  <AvatarLink to="/profile">
+    <Avatar
+      onClick={profileAvatar.closeSidebar}
+      sx={{ width: profileAvatar.size, height: profileAvatar.size, fontSize: profileAvatar.fontSize }}
+      {...utils.stringAvatar(`${profileAvatar.first_name || 'Q'} ${profileAvatar.last_name || 'G'}`)}
+    />
+  </AvatarLink>
+);
+
 const AppHeader = (props: Props) => {
+  const user = useUser();
   const isMobile = useMobile();
+  const [elUser, setElUser] = useState<null | HTMLElement>(null);
+
+  const openUserMenu = (event: MouseEvent<HTMLElement>) => setElUser(event.currentTarget);
+  const handleCloseUserMenu = () => setElUser(null);
 
   return (
-    <Box>
-      <ElevationScroll {...props}>
-        <AppBarWrapper sx={{ backgroundColor: '#FFFFFF' }} open={props.open}>
-          <Container maxWidth="lg">
-            <Toolbar
-              sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0px !important' }}
-            >
-              {isMobile && (
-                <IconButton onClick={props.openSidebar} size="small" edge="start" color="inherit" aria-label="menu">
-                  <MenuIcon />
-                </IconButton>
-              )}
-              <Brand to="/" onClick={props.closeSidebar}>
-                <img src={images.brand} alt="home" />
-              </Brand>
-              {isMobile ? (
-                <MobileLoginLink to="/login" onClick={props.closeSidebar}>
-                  Login
-                </MobileLoginLink>
-              ) : (
-                <Box>
-                  <MenuLink to="/pricing" onClick={props.closeSidebar}>
-                    Pricing
-                  </MenuLink>
-                  <MenuLink to="/docs" onClick={props.closeSidebar}>
-                    docs
-                  </MenuLink>
-                  <LoginLink to="/login" onClick={props.closeSidebar}>
-                    Login
-                  </LoginLink>
-                  <GetStartedLink to="/app/lists" onClick={props.closeSidebar}>
-                    Get Started
-                  </GetStartedLink>
-                </Box>
-              )}
-            </Toolbar>
-          </Container>
-        </AppBarWrapper>
-      </ElevationScroll>
-    </Box>
+    <ElevationScroll {...props}>
+      <AppBarWrapper sx={{ backgroundColor: '#FFFFFF' }} open={props.open}>
+        <Container maxWidth={false}>
+          <Toolbar
+            sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0px !important' }}
+          >
+            {isMobile && (
+              <IconButton onClick={props.openSidebar} size="small" edge="start" color="inherit" aria-label="menu">
+                <MenuIcon />
+              </IconButton>
+            )}
+            <Brand to="/" onClick={props.closeSidebar}>
+              <img src={images.brand} alt="home" />
+            </Brand>
+            {isMobile ? (
+              <ProfileAvatar
+                closeSidebar={props.closeSidebar}
+                first_name={user?.first_name}
+                last_name={user?.last_name}
+                size={32}
+                fontSize="14px"
+              />
+            ) : (
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Dropdown
+                  title={
+                    <Avatar
+                      sx={{ width: 40, height: 40, fontSize: '16px' }}
+                      {...utils.stringAvatar(`${user?.first_name || 'Q'} ${user?.last_name || 'G'}`)}
+                    />
+                  }
+                  tooltip={`${user?.first_name} ${user?.last_name}`}
+                  id="user-nav-menu"
+                  open={elUser}
+                  openMenu={openUserMenu}
+                  closeMenu={handleCloseUserMenu}
+                >
+                  <Box>Profile</Box>
+                  <Box>Settings</Box>
+                  <Box>Logout</Box>
+                </Dropdown>
+              </Box>
+            )}
+          </Toolbar>
+        </Container>
+      </AppBarWrapper>
+    </ElevationScroll>
   );
 };
 

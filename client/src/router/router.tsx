@@ -1,4 +1,4 @@
-import { Route, Routes, BrowserRouter } from 'react-router-dom';
+import { Route, Routes, BrowserRouter, Navigate } from 'react-router-dom';
 import { dashboard, page, authentications } from './routes';
 import DashboardLayout from '../layout/dashboard';
 import AuthUserProvider from '../contexts/authUserContext';
@@ -21,10 +21,10 @@ const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<Navigate to="/projects" replace />} />
         <Route path="/" element={<AuthLayout />}>
           {authenticationsRoutes}
         </Route>
-
         <Route
           path="/"
           element={
@@ -35,7 +35,6 @@ const Router = () => {
         >
           {pagesRoutes}
         </Route>
-
         <Route
           path="/project/:project"
           element={
@@ -46,7 +45,6 @@ const Router = () => {
         >
           {dashboardRoutes}
         </Route>
-
         <Route path="*" element={<div>NOT FOUND</div>} />
       </Routes>
     </BrowserRouter>

@@ -13,11 +13,11 @@ const drawerWidth = '250px';
 
 const menus = [
   {
-    name: 'Docs',
-    link: '/docs',
+    name: 'Settings',
+    link: '/settings',
   },
   {
-    name: 'Pricing',
+    name: 'Logout',
     link: '/pricing',
   },
 ];
@@ -60,7 +60,7 @@ const Sidebar = ({ open, closeSidebar }: IProps) => {
       <List sx={{ p: 0 }}>
         {menus.map((menu, index) => (
           <Box key={menu.name}>
-            <Link to={menu.link} style={{ color: '#57565D' }}>
+            <Link to={menu.link} style={{ color: '#57565D', textDecoration: 'none' }}>
               <ListItem button sx={{ maxHeight: '64px', height: '100%' }}>
                 <ListItemText primary={menu.name} />
               </ListItem>
