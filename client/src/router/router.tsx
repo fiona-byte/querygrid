@@ -1,9 +1,9 @@
 import { Route, Routes, BrowserRouter, Navigate } from 'react-router-dom';
+import DashboardLayout from '@layout/dashboard';
+import AuthUserProvider from '@context/authUserContext';
+import AppLayout from '@layout/app';
+import AuthLayout from '@layout/authentication';
 import { dashboard, page, authentications } from './routes';
-import DashboardLayout from '../layout/dashboard';
-import AuthUserProvider from '../contexts/authUserContext';
-import AppLayout from '../layout/app';
-import AuthLayout from '../layout/authentication';
 
 const Router = () => {
   const dashboardRoutes = dashboard.map(({ path, title, element: Element }) => (

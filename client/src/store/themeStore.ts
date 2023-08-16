@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { ThemeMode } from '../themes';
+import { ThemeMode } from '@theme/index';
 
 type ThemeState = {
   theme: ThemeMode;
@@ -16,8 +16,8 @@ const useThemeStore = create<ThemeState>()(
     {
       name: 'theme',
       storage: createJSONStorage(() => localStorage),
-    }
-  )
+    },
+  ),
 );
 
 export default useThemeStore;

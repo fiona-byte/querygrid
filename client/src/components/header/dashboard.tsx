@@ -7,11 +7,11 @@ import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material';
-import { useUser } from '../../hooks/useUser';
-import { useTranslator } from '../../hooks/useTranslator';
-import { Languages } from '../../i18n/type';
-import images from '../../assets/images';
-import { utils } from '../../utils';
+import { useUser } from '@hooks/useUser';
+import { useTranslator } from '@hooks/useTranslator';
+import { Languages } from '@lang/type';
+import images from '@assets/images';
+import { utils } from '@utils/index';
 import Dropdown from '../dropdown';
 
 const settings = ['Profile', 'Logout'];
