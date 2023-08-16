@@ -21,6 +21,8 @@ const Link = styled(MuiLink)`
 
 const Image = styled('img')`
   height: 45px;
+  max-width: 202px;
+  width: 100%;
 
   @media (max-width: 600px) {
     height: 35px;

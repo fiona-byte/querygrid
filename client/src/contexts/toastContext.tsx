@@ -1,11 +1,4 @@
-import {
-  createContext,
-  ReactNode,
-  useCallback,
-  useState,
-  forwardRef,
-  SyntheticEvent,
-} from 'react';
+import { createContext, ReactNode, useCallback, useState, forwardRef, SyntheticEvent } from 'react';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
@@ -28,10 +21,7 @@ export const ToastContext = createContext<ToastContext>({
   triggerToast: (_toast: Toast) => null,
 });
 
-const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
-  props,
-  ref
-) {
+const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
@@ -46,10 +36,10 @@ const ToastProvider = ({ children }: ToastProps) => {
     (toast: Toast) => {
       setToaster({ ...toast, show: true });
     },
-    [toaster]
+    [toaster],
   );
 
-  const handleClose = (event?: SyntheticEvent | Event, reason?: string) => {
+  const handleClose = (_event?: SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;
     }
@@ -65,11 +55,7 @@ const ToastProvider = ({ children }: ToastProps) => {
         autoHideDuration={toaster?.duration || 5000}
         onClose={handleClose}
       >
-        <Alert
-          onClose={handleClose}
-          severity={toaster.type}
-          sx={{ width: '100%' }}
-        >
+        <Alert onClose={handleClose} severity={toaster.type} sx={{ width: '100%' }}>
           {toaster.message}
         </Alert>
       </Snackbar>

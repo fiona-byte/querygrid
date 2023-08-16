@@ -1,15 +1,32 @@
+import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import Box from '@mui/material/Box';
+import { Box, ClickAwayListener, GlobalStyles, Toolbar } from '@mui/material';
+import { AppHeader } from '../components/header';
+import Drawer from '../components/drawer/drawer';
 
 const AppLayout = () => {
+  const [open, setOpen] = useState(false);
+  const openSidebar = () => setOpen(true);
+  const closeSidebar = () => setOpen(false);
+
   return (
     <Box>
-      {/* header */}
-
-      {/* body */}
-      <Box sx={{ flex: 1, position: 'relative' }}>
-        <Outlet />
-      </Box>
+      <GlobalStyles
+        styles={{
+          body: {
+            background: '#ffffff',
+            fontFamily: "'IBM Plex Sans', sans-serif",
+          },
+        }}
+      />
+      <ClickAwayListener onClickAway={closeSidebar}>
+        <Box>
+          <AppHeader open={open} openSidebar={openSidebar} closeSidebar={closeSidebar} />
+          <Drawer open={open} closeSidebar={closeSidebar} />
+        </Box>
+      </ClickAwayListener>
+      <Toolbar />
+      <Outlet />
 
       {/* footer */}
     </Box>

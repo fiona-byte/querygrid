@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Sidebar from '../components/sidebar';
-import Header from '../components/header';
+import { DashboardHeader } from '../components/header';
 
 const DashboardLayout = () => {
   return (
@@ -12,7 +12,7 @@ const DashboardLayout = () => {
       {/* main layout */}
       <Box sx={{ flex: 1, position: 'relative' }}>
         {/* header (static) */}
-        <Header />
+        <DashboardHeader />
 
         <Outlet />
       </Box>
