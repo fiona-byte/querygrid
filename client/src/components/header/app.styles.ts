@@ -39,27 +39,10 @@ export const Brand = styled(Link)`
 export const MenuLink = styled(Link)`
   color: #313845a8;
   text-decoration: none;
-  margin-right: 40px;
+  margin-right: 20px;
+  height: 24px;
 `;
 
-export const LoginLink = styled(Link)`
-  color: #557ecd;
+export const AvatarLink = styled(Link)`
   text-decoration: none;
-  border-radius: 4px;
-  border: 1px solid #557ecd;
-  padding: 10px 30px;
-`;
-
-export const MobileLoginLink = styled(Link)`
-  color: #557ecd;
-  text-decoration: none;
-`;
-
-export const GetStartedLink = styled(Link)`
-  color: #ffffff;
-  text-decoration: none;
-  border-radius: 4px;
-  margin-left: 20px;
-  background-color: #557ecd;
-  padding: 10px 30px;
 `;

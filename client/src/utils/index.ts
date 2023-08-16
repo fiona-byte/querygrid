@@ -11,4 +11,8 @@ export const utils = {
   clearAuthentication: () => {
     localStorage.removeItem('user-authentication');
   },
+
+  stringAvatar: (name: string) => ({
+    children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+  }),
 };
