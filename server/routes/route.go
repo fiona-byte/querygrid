@@ -30,5 +30,5 @@ func (r *route) MapUrls() {
 }
 
 func NotFound(c *gin.Context) {
-	c.File("index.html")
+	c.File("./admin")
 }
