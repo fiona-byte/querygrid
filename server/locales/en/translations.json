@@ -1,4 +1,7 @@
 {
-  "hello_world": "Hello World",
-  "my_name": "My Name"
+  "projects": "Projects",
+  "new_project": "New Project",
+  "browse_projects": "Browse projects",
+  "active": "Active",
+  "disabled": "Disabled"
 }
