@@ -22,10 +22,7 @@ module.exports = {
   plugins: ['react-refresh'],
   ignorePatterns: ['vite.config.ts', '.eslintrc.cjs'],
   rules: {
-    'react-refresh/only-export-components': [
-      'warn',
-      { allowConstantExport: true },
-    ],
+    'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     'no-useless-escape': 2,
     'no-script-url': 2,
     'no-template-curly-in-string': 2,
@@ -45,6 +42,8 @@ module.exports = {
     'no-shadow': 2,
     'no-var': 2,
     '@typescript-eslint/no-var-requires': 2,
+    'no-unused-vars': 2,
+    '@typescript-eslint/no-unused-vars': 2,
     complexity: 2,
     'max-depth': 2,
     'max-nested-callbacks': 2,
