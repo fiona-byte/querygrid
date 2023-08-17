@@ -26,15 +26,9 @@ export const Brand = styled(Link)`
   text-decoration: none;
   display: flex;
   align-items: center;
-  width: 150px;
-
-  img {
-    max-width: 150px;
-    width: 100%;
-    max-height: 35px;
-    height: 100%;
-  }
 `;
+
+export const Logo = styled('img')``;
 
 export const MenuLink = styled(Link)`
   color: #313845a8;
