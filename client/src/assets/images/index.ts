@@ -1,6 +1,7 @@
 import us from './flags/us.webp';
 import appBrand from './nav-auth-brand-sm.png';
 import brand from './brand.svg';
+import project from './project.svg';
 import logo from './logo.png';
 
 export default {
@@ -11,4 +12,5 @@ export default {
   },
   brand,
   logo,
+  project,
 };
