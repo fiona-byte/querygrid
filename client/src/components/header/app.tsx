@@ -1,15 +1,33 @@
 import { cloneElement, MouseEvent, ReactElement, useState } from 'react';
-import { Avatar, Box, Container, Toolbar, useScrollTrigger } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  Container,
+  Toolbar,
+  useScrollTrigger,
+  AppBar as MuiAppBar,
+  AppBarProps as MuiAppBarProps,
+  styled,
+  Button,
+} from '@mui/material';
+import { Bell, UserCircle, Settings, LogOut } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import images from '@assets/images';
-import { AppBarWrapper, Brand, AvatarLink, Logo } from './app.styles';
 import { useMobile } from '@hooks/useMobile';
 import { useUser } from '@hooks/useUser';
 import { utils } from '@utils/index';
 import Dropdown from '../dropdown';
+import Typography from '@component/typography';
+import Notification from '@component/notification';
+import { useTranslator } from '@hooks/useTranslator';
 
 interface Props {
   window?: () => Window;
   children?: ReactElement;
+}
+
+interface AppBarProps extends MuiAppBarProps {
+  open?: boolean;
 }
 
 const ElevationScroll = (props: Props) => {
@@ -48,49 +66,165 @@ const ProfileAvatar = (profileAvatar: ProfileAvatar) => (
 );
 
 const AppHeader = (props: Props) => {
+  const navigate = useNavigate();
+  const { language, languages, changeLanguage } = useTranslator();
   const user = useUser();
   const isMobile = useMobile();
   const logoSize = isMobile ? 32 : 42;
   const [elUser, setElUser] = useState<null | HTMLElement>(null);
+  const [elLang, setElLang] = useState<null | HTMLElement>(null);
+  const [showNotification, setShowNotification] = useState(false);
 
   const openUserMenu = (event: MouseEvent<HTMLElement>) => setElUser(event.currentTarget);
   const handleCloseUserMenu = () => setElUser(null);
+  const openLangMenu = (event: MouseEvent<HTMLElement>) => setElLang(event.currentTarget);
+  const handleCloseLangMenu = () => setElLang(null);
+
+  const openNotification = () => setShowNotification(true);
+  const closeNotification = () => setShowNotification(false);
+
+  const onLogout = () => {
+    navigate('/login');
+  };
 
   return (
-    <ElevationScroll {...props}>
-      <AppBarWrapper sx={{ backgroundColor: '#FFFFFF' }}>
-        <Container maxWidth={false}>
-          <Toolbar
-            sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0px !important' }}
-          >
-            <Brand to="/projects">
-              <Logo width={logoSize} height={logoSize} src={images.logo} alt="projects" />
-            </Brand>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              {/* <Bell style={{ marginRight: '22px' }} size={24} color="#57565D" /> */}
-              <Dropdown
-                title={
-                  <Avatar
-                    sx={{ width: 40, height: 40, fontSize: '16px' }}
-                    {...utils.stringAvatar(`${user?.first_name || 'Q'} ${user?.last_name || 'G'}`)}
-                  />
-                }
-                tooltip={`${user?.first_name} ${user?.last_name}`}
-                id="user-nav-menu"
-                open={elUser}
-                openMenu={openUserMenu}
-                closeMenu={handleCloseUserMenu}
-              >
-                <Box>Profile</Box>
-                <Box>Settings</Box>
-                <Box>Logout</Box>
-              </Dropdown>
-            </Box>
-          </Toolbar>
-        </Container>
-      </AppBarWrapper>
-    </ElevationScroll>
+    <>
+      <Notification open={showNotification} closeNotification={closeNotification} />
+      <ElevationScroll {...props}>
+        <AppBarWrapper sx={{ backgroundColor: '#FFFFFF' }}>
+          <Container maxWidth={false}>
+            <Toolbar
+              sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0px !important' }}
+            >
+              <Brand to="/projects">
+                <Logo width={logoSize} height={logoSize} src={images.logo} alt="projects" />
+              </Brand>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Dropdown
+                  title={
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <FlagImage src={images.flags[language]} alt={language} />
+                    </Box>
+                  }
+                  tooltip="languages"
+                  id="lang-menu"
+                  open={elLang}
+                  openMenu={openLangMenu}
+                  closeMenu={handleCloseLangMenu}
+                >
+                  {languages.map((language) => (
+                    <MenuLinkBTN key={language.short} onClick={() => changeLanguage(language.short)}>
+                      <FlagImage src={images.flags[language.short]} alt={language.name} />
+                      <MenuText>{language.name}</MenuText>
+                    </MenuLinkBTN>
+                  ))}
+                </Dropdown>
+
+                <Button style={{ marginRight: '10px' }} onClick={openNotification}>
+                  <Bell size={24} color="#57565D" />
+                </Button>
+
+                <Dropdown
+                  title={
+                    <Avatar
+                      sx={{ width: 40, height: 40, fontSize: '16px' }}
+                      {...utils.stringAvatar(`${user?.first_name || 'Q'} ${user?.last_name || 'G'}`)}
+                    />
+                  }
+                  tooltip={`${user?.first_name} ${user?.last_name}`}
+                  id="user-nav-menu"
+                  open={elUser}
+                  openMenu={openUserMenu}
+                  closeMenu={handleCloseUserMenu}
+                >
+                  <MenuLink to="/profile">
+                    <UserCircle size={20} color="#78787D" />
+                    <MenuText>Profile</MenuText>
+                  </MenuLink>
+                  <MenuLink to="/settings">
+                    <Settings size={20} color="#78787D" />
+                    <MenuText>Settings</MenuText>
+                  </MenuLink>
+                  <MenuLinkBTN onClick={onLogout}>
+                    <LogOut size={20} color="#DC4747" />
+                    <MenuText sx={{ color: '#DC4747' }}>Logout</MenuText>
+                  </MenuLinkBTN>
+                </Dropdown>
+              </Box>
+            </Toolbar>
+          </Container>
+        </AppBarWrapper>
+      </ElevationScroll>
+    </>
   );
 };
+
+export const AppBarWrapper = styled(MuiAppBar, {
+  shouldForwardProp: (prop) => prop !== 'open',
+})<AppBarProps>(({ theme, open }) => ({
+  transition: theme.transitions.create(['margin', 'width'], {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  ...(open && {
+    width: '100%',
+    transition: theme.transitions.create(['margin', 'width'], {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  }),
+}));
+
+export const Brand = styled(Link)`
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+`;
+
+export const Logo = styled('img')``;
+
+export const MenuLink = styled(Link)`
+  display: flex;
+  align-items: center;
+  width: 147px;
+  height: 40px;
+  text-decoration: none;
+  padding: 0px 24px;
+
+  &:hover {
+    background-color: #e1e1e9;
+  }
+`;
+
+export const MenuLinkBTN = styled('div')`
+  display: flex;
+  align-items: center;
+  width: 147px;
+  height: 40px;
+  padding: 0px 24px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #e1e1e9;
+  }
+`;
+
+export const MenuText = styled(Typography.Paragraph)`
+  margin-left: 14px;
+  font-size: 16px;
+  font-weight: 400;
+  color: #78787d;
+  text-transform: capitalize;
+`;
+
+export const AvatarLink = styled(Link)`
+  text-decoration: none;
+`;
+
+const FlagImage = styled('img')({
+  width: '24px',
+  height: '24px',
+  borderRadius: '4px',
+});
 
 export default AppHeader;

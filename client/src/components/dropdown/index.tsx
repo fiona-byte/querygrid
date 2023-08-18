@@ -3,6 +3,8 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import Tooltip from '@mui/material/Tooltip';
+import { styled } from '@mui/material';
+import { useMobile } from '@hooks/useMobile';
 
 type DropdownProps = {
   tooltip: string;
@@ -17,6 +19,8 @@ type DropdownProps = {
 };
 
 const Dropdown = (dropdown: DropdownProps) => {
+  const isMobile = useMobile();
+
   return (
     <Box sx={{ flexGrow: 0, mr: dropdown.mr, ml: dropdown.ml }}>
       <Tooltip title={dropdown.tooltip}>
@@ -24,8 +28,7 @@ const Dropdown = (dropdown: DropdownProps) => {
           {dropdown.title}
         </IconButton>
       </Tooltip>
-      <Menu
-        sx={{ mt: '25px' }}
+      <DropdownMenu
         id={dropdown.id}
         anchorEl={dropdown.open}
         elevation={1}
@@ -33,6 +36,7 @@ const Dropdown = (dropdown: DropdownProps) => {
           vertical: 'top',
           horizontal: 'right',
         }}
+        sx={{ marginTop: isMobile ? '56px' : '64px' }}
         keepMounted
         transformOrigin={{
           vertical: 'top',
@@ -42,9 +46,16 @@ const Dropdown = (dropdown: DropdownProps) => {
         onClose={dropdown.closeMenu}
       >
         {dropdown.children}
-      </Menu>
+      </DropdownMenu>
     </Box>
   );
 };
+
+const DropdownMenu = styled(Menu)`
+  .MuiMenu-paper {
+    border-radius: 0px;
+    top: 0px !important;
+  }
+`;
 
 export default Dropdown;

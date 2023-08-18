@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useCallback, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Internationalization, Languages } from '@lang/type';
+import { Internationalization, Languages, languages } from '@lang/type';
 import useInternationalizationStore from '@store/i18nStore';
 
 type InternationalizationProps = {
@@ -9,6 +9,7 @@ type InternationalizationProps = {
 
 export const InternationalizationContext = createContext<Internationalization>({
   language: 'en',
+  languages: languages,
   changeLanguage: (_language: Languages) => null,
 });
 
@@ -30,7 +31,7 @@ const InternationalizationProvider = ({ children }: InternationalizationProps) =
   }, [lang]);
 
   return (
-    <InternationalizationContext.Provider value={{ changeLanguage, language: lang }}>
+    <InternationalizationContext.Provider value={{ changeLanguage, language: lang, languages }}>
       {children}
     </InternationalizationContext.Provider>
   );
