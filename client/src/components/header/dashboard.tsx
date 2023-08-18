@@ -15,7 +15,6 @@ import { utils } from '@utils/index';
 import Dropdown from '../dropdown';
 
 const settings = ['Profile', 'Logout'];
-const languages = ['en'] as const;
 
 const AppHeader = styled(AppBar)(() => ({
   borderBottomWidth: '1px',
@@ -39,7 +38,7 @@ const FlagText = styled(Typography)(({ theme }) => ({
 
 const DashboardHeader = () => {
   const user = useUser();
-  const { language, changeLanguage } = useTranslator();
+  const { language, languages, changeLanguage } = useTranslator();
   const [elUser, setElUser] = useState<null | HTMLElement>(null);
   const [elLang, setElLang] = useState<null | HTMLElement>(null);
 
@@ -73,10 +72,10 @@ const DashboardHeader = () => {
             tooltip="Change Language"
           >
             {languages.map((language) => (
-              <MenuItem key={language} onClick={() => chooseLang(language)}>
+              <MenuItem key={language.short} onClick={() => chooseLang(language.short)}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <FlagImage src={images.flags[language]} alt={language} />
-                  <FlagText>{language}</FlagText>
+                  <FlagImage src={images.flags[language.short]} alt={language.name} />
+                  <FlagText>{language.name}</FlagText>
                 </Box>
               </MenuItem>
             ))}
