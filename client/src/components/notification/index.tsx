@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import Typography from '@component/typography';
 import { Box, Divider, Drawer, IconButton, styled } from '@mui/material';
 import { X } from 'lucide-react';
@@ -61,8 +62,8 @@ const Notification = ({ open, closeNotification }: Notification) => {
         </TopWrapper>
         <Box>
           {notifications.map((notification) => (
-            <>
-              <Item key={notification.id}>
+            <Fragment key={notification.id}>
+              <Item>
                 <ItemTitle>
                   <Heading variant="h4" sx={{ fontSize: '16px' }}>
                     {notification.title}
@@ -82,7 +83,7 @@ const Notification = ({ open, closeNotification }: Notification) => {
                 <Paragraph sx={{ fontWeight: notification.read ? '400' : '500' }}>{notification.content}</Paragraph>
               </Item>
               <Divider sx={{ borderColor: '#C6D4EE' }} />
-            </>
+            </Fragment>
           ))}
         </Box>
       </Box>

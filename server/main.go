@@ -36,11 +36,12 @@ func main() {
 	// router.SetTrustedProxies(strings.Split(constants.TrustedProxies, ","))
 	router.Use(middlewares.Secure(conf.AppEnv))
 
-	config := cors.DefaultConfig()
+	corsConfig := cors.DefaultConfig()
 	corsArr := strings.Split(conf.CorsOrigins, ",")
-	config.AllowOrigins = corsArr
-	router.Use(cors.New(config))
+	corsConfig.AllowOrigins = corsArr
+	router.Use(cors.New(corsConfig))
 
+	router.Use(middlewares.StaticFileCache())
 	router.Use(static.Serve("/", static.LocalFile("./admin", true)))
 	router.Use(static.Serve("/locales", static.LocalFile("./locales", true)))
 
@@ -48,8 +49,8 @@ func main() {
 	privateRoute := router.Group("/api")
 	privateRoute.Use(middlewares.Authentication(conf))
 
-	routes := routes.NewRoute(publicRoute, privateRoute, router, dbCon, conf)
-	routes.MapUrls()
+	newRoutes := routes.NewRoute(publicRoute, privateRoute, router, dbCon, conf)
+	newRoutes.MapUrls()
 
 	panic(router.Run(utils.GetPort(conf.Port)))
 }
