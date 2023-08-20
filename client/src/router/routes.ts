@@ -25,11 +25,6 @@ export const page: RouterType[] = [
     element: loadable(() => import('../pages/project/project')),
     title: 'projects',
   },
-  {
-    path: 'create',
-    element: loadable(() => import('../pages/project/create')),
-    title: 'create',
-  },
 ];
 
 export const authentications: RouterType[] = [

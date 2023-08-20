@@ -17,7 +17,7 @@ func Secure(env string) gin.HandlerFunc {
 		ContentTypeNosniff:    true,
 		BrowserXssFilter:      true,
 		IENoOpen:              true,
-		ContentSecurityPolicy: "default-src 'self'",
+		ContentSecurityPolicy: "default-src 'self'; font-src 'self'; img-src 'self'; script-src 'self'; style-src 'self'; frame-src 'self'",
 		ReferrerPolicy:        "strict-origin-when-cross-origin",
 		IsDevelopment:         env != "production",
 	})
