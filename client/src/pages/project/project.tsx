@@ -1,9 +1,11 @@
-import { Box, Container, Input, styled } from '@mui/material';
+import { useState } from 'react';
+import { Box, Button, Container, Input, styled } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import Typography from '@component/typography';
 import { Search } from 'lucide-react';
 import images from '@assets/images';
+import NewProject from '@component/newProject';
 
 type ProjectItem = {
   name: string;
@@ -26,14 +28,19 @@ const ProjectItem = ({ name, id, status }: ProjectItem) => {
 
 const Project = () => {
   const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+
+  const openHandler = () => setOpen(true);
+  const closeHandler = () => setOpen(false);
 
   return (
     <Box>
+      <NewProject open={open} closeHandler={closeHandler} />
       <Box sx={{ backgroundColor: '#ECF1F9' }}>
         <TopWrapper maxWidth="lg">
           <Heading variant="h5">{t('translations:projects')}</Heading>
-          <NewProjectBTN to="/create">
-            <Paragraph>{t('translations:new_project')}</Paragraph>
+          <NewProjectBTN variant="contained" onClick={openHandler}>
+            <Paragraph sx={{ textTransform: 'capitalize' }}>{t('translations:new_project')}</Paragraph>
           </NewProjectBTN>
         </TopWrapper>
       </Box>
@@ -61,7 +68,7 @@ const TopWrapper = styled(Container)`
   }
 `;
 
-const NewProjectBTN = styled(Link)(({ theme }) => ({
+const NewProjectBTN = styled(Button)(({ theme }) => ({
   display: 'flex',
   backgroundColor: theme.palette.primary.main,
   color: '#ffffff',

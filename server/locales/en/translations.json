@@ -3,5 +3,9 @@
   "new_project": "New Project",
   "browse_projects": "Browse projects",
   "active": "Active",
-  "disabled": "Disabled"
+  "disabled": "Disabled",
+  "new_project_desc": "Create a new project to start building really cool stuff.",
+  "create_project": "Create Project",
+  "project_name": "Project Name",
+  "project_description": "Project Description"
 }
