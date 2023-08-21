@@ -32,7 +32,7 @@ func NewUserRepo(db *database.Database, config config.Config) *UserRepo {
 	}
 }
 
-func (r *UserRepo) Create(newUser models.NewUser) *resterror.RestError {
+func (r *UserRepo) CreateUser(newUser models.NewUser) *resterror.RestError {
 	hashPassword, hashPasswordErr := password.Hash(utils.GenerateRandomToken(20))
 	if hashPasswordErr != nil {
 		return resterror.InternalServerError()

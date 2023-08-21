@@ -25,6 +25,7 @@ func NewRoute(publicRoute, privateRoute *gin.RouterGroup, router *gin.Engine, db
 }
 func (r *route) MapUrls() {
 	r.UserRoutes()
+	r.ProjectRoutes()
 
 	r.router.NoRoute(NotFound)
 }

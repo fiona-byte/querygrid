@@ -8,7 +8,7 @@ import (
 )
 
 type User struct {
-	ID        primitive.ObjectID `bson:"_id" json:"id,omitempty"`
+	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
 	FirstName string             `bson:"first_name" json:"first_name,omitempty"`
 	LastName  string             `bson:"last_name" json:"last_name,omitempty"`
 	Email     string             `bson:"email,unique" json:"email,omitempty"`
@@ -39,7 +39,7 @@ type LoginResp struct {
 }
 
 type UserRepository interface {
-	Create(user NewUser) *resterror.RestError
+	CreateUser(user NewUser) *resterror.RestError
 	Login(user LoginUser) (*LoginResp, *resterror.RestError)
 	CurrentUser(userID primitive.ObjectID) (User, *resterror.RestError)
 }

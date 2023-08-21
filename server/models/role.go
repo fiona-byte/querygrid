@@ -7,7 +7,7 @@ import (
 )
 
 type Role struct {
-	ID          primitive.ObjectID  `bson:"_id" json:"id,omitempty"`
+	ID          primitive.ObjectID  `bson:"_id,omitempty" json:"id,omitempty"`
 	Name        string              `bson:"name" json:"name"`
 	Permissions map[string][]string `bson:"permissions" json:"permissions"`
 	CreatedAt   time.Time           `bson:"created_at" json:"created_at,omitempty"`

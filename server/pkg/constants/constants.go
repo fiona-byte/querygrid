@@ -18,6 +18,8 @@ var (
 	REFRESH_TOKEN_KEY               = "urqt"
 	SECRET_KEY                      = "bhsq"
 	DATABASE                        = "querygrid"
+	Live                            = "live"
+	Test                            = "test"
 
 	ServerError  = "something went wrong"
 	InvalidToken = "invalid token"
