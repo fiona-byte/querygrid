@@ -42,3 +42,19 @@ func (h *ProjectHandler) CreateProject(c *gin.Context) {
 		"data":    project,
 	})
 }
+
+func (h *ProjectHandler) GetAll(c *gin.Context) {
+	userID := c.MustGet("userID").(primitive.ObjectID)
+
+	project, err := h.projectRepo.GetAll(userID)
+	if err != nil {
+		c.SecureJSON(err.Status, err)
+		return
+	}
+
+	c.SecureJSON(http.StatusOK, &gin.H{
+		"status":  http.StatusOK,
+		"message": "Projects",
+		"data":    project,
+	})
+}

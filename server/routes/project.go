@@ -10,4 +10,5 @@ func (r *route) ProjectRoutes() {
 	controller := controllers.NewProjectHandler(projectRepo, r.conf)
 
 	r.private.POST("/project", controller.CreateProject)
+	r.private.GET("/projects", controller.GetAll)
 }

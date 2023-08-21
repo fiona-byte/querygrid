@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Box, Button, Container, Input, styled } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -6,6 +7,8 @@ import Typography from '@component/typography';
 import { Search } from 'lucide-react';
 import images from '@assets/images';
 import NewProject from '@component/newProject';
+import projectServices from '@service/projectServices';
+import { useToaster } from '@hooks/useToaster';
 
 type ProjectItem = {
   name: string;
@@ -13,25 +16,42 @@ type ProjectItem = {
   status: string;
 };
 
+type Projects = {
+  project: ProjectItem;
+};
+
 const ProjectItem = ({ name, id, status }: ProjectItem) => {
   return (
     <ProjectCard to={`/project/${id}`}>
       <img width={32} height={32} src={images.project} alt={name} />
-      <Heading sx={{ ml: '8px', color: '#57565D' }} variant="h5">
+      <Heading sx={{ ml: '8px', color: '#57565D', fontSize: '16px' }} variant="h5">
         {name}
       </Heading>
 
-      <Paragraph sx={{ ml: 'auto', color: '#57565D', fontSize: '16px' }}>{status}</Paragraph>
+      <Paragraph sx={{ ml: 'auto', color: '#57565D', fontSize: '14px' }}>{status}</Paragraph>
     </ProjectCard>
   );
 };
 
 const Project = () => {
+  const toaster = useToaster();
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  const [projects, setProjects] = useState<Projects[]>([]);
 
   const openHandler = () => setOpen(true);
   const closeHandler = () => setOpen(false);
+
+  useQuery(['projects'], projectServices.projects, {
+    onError: (error: any) => {
+      const message = error?.response?.data?.errors;
+      toaster.triggerToast({ message: message || 'something went wrong', type: 'error' });
+    },
+    onSuccess: ({ data }) => {
+      console.log(data);
+      setProjects(data.data);
+    },
+  });
 
   return (
     <Box>
@@ -51,7 +71,14 @@ const Project = () => {
         </SearchWrapper>
       </SearchContainer>
       <ProjectContainer>
-        <ProjectItem name="Fiona" id="jlkjklj" status={t(`translations:${'active'}`)} />
+        {projects.map(({ project }) => (
+          <ProjectItem
+            key={project.id}
+            name={project.name}
+            id={project.id}
+            status={t(`translations:${project.status}`)}
+          />
+        ))}
       </ProjectContainer>
     </Box>
   );
@@ -88,6 +115,8 @@ const Paragraph = styled(Typography.Paragraph)`
 
 const Heading = styled(Typography.Heading)`
   font-size: 25px;
+  font-weight: 600;
+  text-transform: capitalize;
 
   @media (max-width: 768px) {
     font-size: 20px;
@@ -139,9 +168,14 @@ const ProjectContainer = styled(Container)`
 const ProjectCard = styled(Link)`
   display: flex;
   align-items: center;
-  height: 64px;
   border-bottom: 1px solid #c6d4ee;
   text-decoration: none;
+  padding-top: 16px;
+  padding-bottom: 16px;
+
+  &:hover {
+    background-color: #f6f6f6;
+  }
 `;
 
 export default Project;
