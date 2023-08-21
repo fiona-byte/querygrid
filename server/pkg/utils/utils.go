@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"golang.org/x/crypto/bcrypt"
 	"math/rand"
 	"regexp"
 	"strings"
@@ -18,7 +19,7 @@ func GetPort(port string) string {
 }
 
 func GenerateRandomToken(n int) string {
-	var letterRunes = []rune("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@$%^&*)(!+=")
+	var letterRunes = []rune("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@$%^&*!+=")
 	b := make([]rune, n)
 	for i := range b {
 		b[i] = letterRunes[rand.Intn(len(letterRunes))]
@@ -42,4 +43,13 @@ func GetDomain(data string) string {
 
 func IsProduction(state string) bool {
 	return state == "production"
+}
+
+func Hash(value string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(value), 14)
+	return string(bytes), err
+}
+
+func CheckHash(value, hash string) error {
+	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(value))
 }

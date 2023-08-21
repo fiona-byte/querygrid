@@ -14,9 +14,11 @@ import (
 )
 
 type Database struct {
-	Client *mongo.Client
-	User   *mongo.Collection
-	Role   *mongo.Collection
+	Client        *mongo.Client
+	User          *mongo.Collection
+	Role          *mongo.Collection
+	Project       *mongo.Collection
+	ProjectMember *mongo.Collection
 }
 
 func Connect(config config.Config) *Database {
@@ -40,10 +42,22 @@ func Connect(config config.Config) *Database {
 		panic(roleColErr)
 	}
 
+	projectCol, projectColErr := projectCol(client)
+	if projectColErr != nil {
+		panic(projectColErr)
+	}
+
+	projectMemberCol, projectMemberColErr := projectMemberCol(client)
+	if projectMemberColErr != nil {
+		panic(projectMemberColErr)
+	}
+
 	return &Database{
-		Client: client,
-		User:   userCol,
-		Role:   roleCol,
+		Client:        client,
+		User:          userCol,
+		Role:          roleCol,
+		Project:       projectCol,
+		ProjectMember: projectMemberCol,
 	}
 }
 
@@ -58,7 +72,7 @@ func userCol(client *mongo.Client) (*mongo.Collection, error) {
 		},
 	}
 	opts := options.CreateIndexes().SetMaxTime(2 * time.Second)
-	_, err := col.Indexes().CreateMany(context.TODO(), indexModel, opts)
+	_, err := col.Indexes().CreateMany(context.Background(), indexModel, opts)
 	if err != nil {
 		logger.Error("Error creating user index", err)
 		return nil, errors.New("error setting up user collection")
@@ -78,11 +92,50 @@ func roleCol(client *mongo.Client) (*mongo.Collection, error) {
 		},
 	}
 	opts := options.CreateIndexes().SetMaxTime(2 * time.Second)
-	_, err := col.Indexes().CreateMany(context.TODO(), indexModel, opts)
+	_, err := col.Indexes().CreateMany(context.Background(), indexModel, opts)
 	if err != nil {
 		logger.Error("Error creating role index", err)
 		return nil, errors.New("error setting up role collection")
 	}
+
+	return col, nil
+}
+
+func projectCol(client *mongo.Client) (*mongo.Collection, error) {
+	database := client.Database(constants.DATABASE)
+	col := database.Collection("projects")
+
+	indexModel := []mongo.IndexModel{
+		{
+			Keys:    bson.D{{"name", 1}},
+			Options: options.Index().SetUnique(true),
+		},
+		{
+			Keys:    bson.D{{"database", 1}},
+			Options: options.Index().SetUnique(true),
+		},
+		{
+			Keys:    bson.D{{"secret_key", 1}},
+			Options: options.Index().SetUnique(true),
+		},
+		{
+			Keys:    bson.D{{"api_key", 1}},
+			Options: options.Index().SetUnique(true),
+		},
+	}
+	opts := options.CreateIndexes().SetMaxTime(2 * time.Second)
+	_, err := col.Indexes().CreateMany(context.Background(), indexModel, opts)
+	if err != nil {
+		logger.Error("Error creating project index", err)
+		return nil, errors.New("error setting up project collection")
+	}
+
+	return col, nil
+}
+
+func projectMemberCol(client *mongo.Client) (*mongo.Collection, error) {
+	database := client.Database(constants.DATABASE)
+	col := database.Collection("project_members")
 
 	return col, nil
 }

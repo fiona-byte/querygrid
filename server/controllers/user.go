@@ -34,7 +34,7 @@ func (h *UserHandler) Create(c *gin.Context) {
 		return
 	}
 
-	if err := h.userRepo.Create(newUser); err != nil {
+	if err := h.userRepo.CreateUser(newUser); err != nil {
 		c.SecureJSON(err.Status, err)
 		return
 	}
