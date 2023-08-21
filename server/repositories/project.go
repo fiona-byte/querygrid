@@ -70,10 +70,11 @@ func (r *ProjectRepo) CreateProject(newProject models.NewProject, userID primiti
 			return nil, projectErr
 		}
 
+		projectId := project.InsertedID.(primitive.ObjectID)
 		_, err = r.connect.ProjectMember.InsertOne(ctx, &models.ProjectMember{
-			ProjectID: project.InsertedID.(primitive.ObjectID),
-			UserID:    userID,
-			RoleID:    role.ID,
+			ProjectID: &projectId,
+			UserID:    &userID,
+			RoleID:    &role.ID,
 			CreatedAt: utils.CurrentTime(),
 			UpdatedAt: utils.CurrentTime(),
 		})
@@ -94,4 +95,38 @@ func (r *ProjectRepo) CreateProject(newProject models.NewProject, userID primiti
 	return &models.Project{
 		ID: result.(primitive.ObjectID),
 	}, nil
+}
+
+func (r *ProjectRepo) GetAll(userID primitive.ObjectID) ([]models.ProjectMember, *resterror.RestError) {
+	ctx := context.Background()
+	matchStage := bson.D{{"$match", bson.D{{"user_id", userID}}}}
+	sortStage := bson.D{{"$sort", bson.D{{"created_at", -1}}}}
+	unsetStage := bson.D{{"$unset", bson.A{
+		"role_id", "roles", "user", "user_id", "project_id", "projects.api_key", "projects.secret_key",
+		"projects.creator", "projects.database", "projects.user_id", "projects.mode"}}}
+	lookupStage := bson.D{{"$lookup", bson.D{
+		{"from", "projects"},
+		{"localField", "project_id"},
+		{"foreignField", "_id"},
+		{"as", "projects"}},
+	}}
+	unwindStage := bson.D{{"$unwind", bson.D{{"path", "$projects"}}}}
+	cursor, err := r.connect.ProjectMember.Aggregate(ctx, mongo.Pipeline{lookupStage, matchStage, sortStage, unsetStage, unwindStage})
+
+	var projects []models.ProjectMember
+	for cursor.Next(ctx) {
+		if err = cursor.All(ctx, &projects); err != nil {
+			logger.Error("Error getting user projects", err)
+			return projects, resterror.InternalServerError()
+		}
+	}
+
+	if err := cursor.Err(); err != nil {
+		logger.Error("Error getting user projects (cursor error)", err)
+		return projects, resterror.InternalServerError()
+	}
+
+	defer cursor.Close(ctx)
+
+	return projects, nil
 }
