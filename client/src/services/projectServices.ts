@@ -5,8 +5,8 @@ const projectServices = {
   async createProject(body: { name: string; description: string }) {
     return request.post(endpoints.createProject, body);
   },
-  async projects() {
-    return request.get(endpoints.Projects);
+  async projects(offset: number) {
+    return request.get(endpoints.Projects, { params: { offset } });
   },
 };
 
