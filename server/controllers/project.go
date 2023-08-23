@@ -46,8 +46,9 @@ func (h *ProjectHandler) CreateProject(c *gin.Context) {
 func (h *ProjectHandler) GetAll(c *gin.Context) {
 	userID := c.MustGet("userID").(primitive.ObjectID)
 	offset := c.Query("offset")
+	search := c.Query("search")
 
-	project, projectErr := h.projectRepo.GetAll(userID, offset)
+	project, projectErr := h.projectRepo.GetAll(userID, offset, search)
 	if projectErr != nil {
 		c.SecureJSON(projectErr.Status, projectErr)
 		return

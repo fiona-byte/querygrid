@@ -104,7 +104,6 @@ func roleCol(client *mongo.Client) (*mongo.Collection, error) {
 func projectCol(client *mongo.Client) (*mongo.Collection, error) {
 	database := client.Database(constants.DATABASE)
 	col := database.Collection("projects")
-
 	indexModel := []mongo.IndexModel{
 		{
 			Keys:    bson.D{{"name", 1}},
@@ -121,6 +120,9 @@ func projectCol(client *mongo.Client) (*mongo.Collection, error) {
 		{
 			Keys:    bson.D{{"api_key", 1}},
 			Options: options.Index().SetUnique(true),
+		},
+		{
+			Keys: bson.D{{"name", "text"}},
 		},
 	}
 	opts := options.CreateIndexes().SetMaxTime(2 * time.Second)
