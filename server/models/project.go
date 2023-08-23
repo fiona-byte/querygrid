@@ -41,5 +41,5 @@ type NewProject struct {
 type ProjectRepository interface {
 	CreateProject(project NewProject, userID primitive.ObjectID) (*Project, *resterror.RestError)
 	//GetById(projectID string) (*Project, *resterror.RestError)
-	GetAll(userID primitive.ObjectID) ([]ProjectMember, *resterror.RestError)
+	GetAll(userID primitive.ObjectID, offset string) ([]ProjectMember, *resterror.RestError)
 }

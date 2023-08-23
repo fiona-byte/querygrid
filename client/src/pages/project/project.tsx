@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Box, Button, Container, Input, styled } from '@mui/material';
+import { Box, Button, Container, IconButton, Input, styled } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import Typography from '@component/typography';
-import { Search } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import images from '@assets/images';
 import NewProject from '@component/newProject';
 import projectServices from '@service/projectServices';
 import { useToaster } from '@hooks/useToaster';
+import { usePagination } from '@hooks/usePagination';
 
 type ProjectItem = {
   name: string;
@@ -36,22 +37,32 @@ const ProjectItem = ({ name, id, status }: ProjectItem) => {
 const Project = () => {
   const toaster = useToaster();
   const { t } = useTranslation();
+  const { paginate, paginationHandler } = usePagination();
   const [open, setOpen] = useState(false);
   const [projects, setProjects] = useState<Projects[]>([]);
 
   const openHandler = () => setOpen(true);
   const closeHandler = () => setOpen(false);
 
-  useQuery(['projects'], projectServices.projects, {
+  useQuery(['projects', paginate], () => projectServices.projects(paginate), {
+    refetchOnWindowFocus: false,
+    keepPreviousData: true,
     onError: (error: any) => {
       const message = error?.response?.data?.errors;
       toaster.triggerToast({ message: message || 'something went wrong', type: 'error' });
     },
     onSuccess: ({ data }) => {
-      console.log(data);
       setProjects(data.data);
     },
   });
+
+  const loadNextPage = () => {
+    paginationHandler(false);
+  };
+
+  const loadPrevPage = () => {
+    paginationHandler(true);
+  };
 
   return (
     <Box>
@@ -80,6 +91,14 @@ const Project = () => {
           />
         ))}
       </ProjectContainer>
+      <PaginationContainer>
+        <IconButton onClick={loadPrevPage}>
+          <ChevronLeft size={24} color="#57565C" />
+        </IconButton>
+        <IconButton onClick={loadNextPage}>
+          <ChevronRight size={24} color="#57565C" />
+        </IconButton>
+      </PaginationContainer>
     </Box>
   );
 };
@@ -176,6 +195,13 @@ const ProjectCard = styled(Link)`
   &:hover {
     background-color: #f6f6f6;
   }
+`;
+
+const PaginationContainer = styled(Container)`
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 export default Project;

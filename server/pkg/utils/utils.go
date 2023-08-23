@@ -4,6 +4,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"math/rand"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -52,4 +53,12 @@ func Hash(value string) (string, error) {
 
 func CheckHash(value, hash string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(value))
+}
+
+func Offset(value string) (int, error) {
+	if value == "" {
+		value = "0"
+	}
+
+	return strconv.Atoi(value)
 }

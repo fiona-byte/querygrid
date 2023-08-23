@@ -45,10 +45,11 @@ func (h *ProjectHandler) CreateProject(c *gin.Context) {
 
 func (h *ProjectHandler) GetAll(c *gin.Context) {
 	userID := c.MustGet("userID").(primitive.ObjectID)
+	offset := c.Query("offset")
 
-	project, err := h.projectRepo.GetAll(userID)
-	if err != nil {
-		c.SecureJSON(err.Status, err)
+	project, projectErr := h.projectRepo.GetAll(userID, offset)
+	if projectErr != nil {
+		c.SecureJSON(projectErr.Status, projectErr)
 		return
 	}
 
