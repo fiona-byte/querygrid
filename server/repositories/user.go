@@ -119,11 +119,15 @@ func (r *UserRepo) CurrentUser(userID primitive.ObjectID) (models.User, *resterr
 		{"as", "roles"}},
 	}}
 	unwindStage := bson.D{{"$unwind", bson.D{{"path", "$roles"}}}}
-	cursor, err := r.connect.User.Aggregate(ctx, mongo.Pipeline{lookupStage, matchStage, unwindStage})
+	cursor, cursorErr := r.connect.User.Aggregate(ctx, mongo.Pipeline{lookupStage, matchStage, unwindStage})
+	if cursorErr != nil {
+		logger.Error("Error getting user projects (cursor aggregate)", cursorErr)
+		return models.User{}, resterror.InternalServerError()
+	}
 
 	var user models.User
 	for cursor.Next(ctx) {
-		if err = cursor.Decode(&user); err != nil {
+		if err := cursor.Decode(&user); err != nil {
 			logger.Error("Error getting current user", err)
 			return user, resterror.InternalServerError()
 		}

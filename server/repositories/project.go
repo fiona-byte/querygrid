@@ -97,7 +97,7 @@ func (r *ProjectRepo) CreateProject(newProject models.NewProject, userID primiti
 	}, nil
 }
 
-func (r *ProjectRepo) GetAll(userID primitive.ObjectID, offsetStr string) ([]models.ProjectMember, *resterror.RestError) {
+func (r *ProjectRepo) GetAll(userID primitive.ObjectID, offsetStr, search string) ([]models.ProjectMember, *resterror.RestError) {
 	offset, err := utils.Offset(offsetStr)
 	if err != nil {
 		restErr := resterror.BadJSONRequest()
@@ -106,6 +106,13 @@ func (r *ProjectRepo) GetAll(userID primitive.ObjectID, offsetStr string) ([]mod
 
 	ctx := context.Background()
 	matchStage := bson.D{{"$match", bson.D{{"user_id", userID}}}}
+	if search != "" {
+		matchStage = bson.D{{"$match", bson.D{
+			{"user_id", userID},
+			{"$text", bson.D{{"$search", search}}},
+		}}}
+	}
+
 	sortStage := bson.D{{"$sort", bson.D{{"created_at", -1}}}}
 	unsetStage := bson.D{{"$unset", bson.A{
 		"role_id", "roles", "user", "user_id", "project_id", "projects.api_key", "projects.secret_key",
@@ -119,13 +126,17 @@ func (r *ProjectRepo) GetAll(userID primitive.ObjectID, offsetStr string) ([]mod
 	unwindStage := bson.D{{"$unwind", bson.D{{"path", "$projects"}}}}
 	limitStage := bson.D{{"$limit", 10}}
 	skipStage := bson.D{{"$skip", offset}}
-	cursor, err := r.connect.ProjectMember.Aggregate(ctx, mongo.Pipeline{
-		lookupStage, matchStage, sortStage, unsetStage, skipStage, limitStage, unwindStage,
+	cursor, cursorErr := r.connect.ProjectMember.Aggregate(ctx, mongo.Pipeline{
+		matchStage, lookupStage, sortStage, unsetStage, skipStage, limitStage, unwindStage,
 	})
+	if cursorErr != nil {
+		logger.Error("Error getting user projects (cursor aggregate)", cursorErr)
+		return nil, resterror.InternalServerError()
+	}
 
 	var projects []models.ProjectMember
 	for cursor.Next(ctx) {
-		if err = cursor.All(ctx, &projects); err != nil {
+		if err := cursor.All(ctx, &projects); err != nil {
 			logger.Error("Error getting user projects", err)
 			return nil, resterror.InternalServerError()
 		}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Box, Button, Container, IconButton, Input, styled } from '@mui/material';
 import { useTranslation } from 'react-i18next';
@@ -10,6 +10,7 @@ import NewProject from '@component/newProject';
 import projectServices from '@service/projectServices';
 import { useToaster } from '@hooks/useToaster';
 import { usePagination } from '@hooks/usePagination';
+import { useDebounce } from '@hooks/useDebounce';
 
 type ProjectItem = {
   name: string;
@@ -25,7 +26,7 @@ const ProjectItem = ({ name, id, status }: ProjectItem) => {
   return (
     <ProjectCard to={`/project/${id}`}>
       <img width={32} height={32} src={images.project} alt={name} />
-      <Heading sx={{ ml: '8px', color: '#57565D', fontSize: '16px' }} variant="h5">
+      <Heading noWrap sx={{ ml: '8px', color: '#57565D', fontSize: '16px' }} variant="h5">
         {name}
       </Heading>
 
@@ -40,11 +41,17 @@ const Project = () => {
   const { paginate, paginationHandler } = usePagination();
   const [open, setOpen] = useState(false);
   const [projects, setProjects] = useState<Projects[]>([]);
+  const [search, setSearch] = useState('');
+  const debouncedValue = useDebounce(search, 500);
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
+  };
 
   const openHandler = () => setOpen(true);
   const closeHandler = () => setOpen(false);
 
-  useQuery(['projects', paginate], () => projectServices.projects(paginate), {
+  useQuery(['projects', paginate, debouncedValue], () => projectServices.projects(paginate, debouncedValue), {
     refetchOnWindowFocus: false,
     keepPreviousData: true,
     onError: (error: any) => {
@@ -56,13 +63,12 @@ const Project = () => {
     },
   });
 
-  const loadNextPage = () => {
-    paginationHandler(false);
-  };
+  useEffect(() => {
+    console.log('HELLO');
+  }, [debouncedValue]);
 
-  const loadPrevPage = () => {
-    paginationHandler(true);
-  };
+  const loadNextPage = () => paginationHandler(false);
+  const loadPrevPage = () => paginationHandler(true);
 
   return (
     <Box>
@@ -78,7 +84,13 @@ const Project = () => {
       <SearchContainer>
         <SearchWrapper>
           <Search size={24} color="#57565C" />
-          <SearchInput fullWidth disableUnderline={true} placeholder={t('translations:browse_projects')} />
+          <SearchInput
+            value={search}
+            onChange={handleChange}
+            fullWidth
+            disableUnderline={true}
+            placeholder={t('translations:browse_projects')}
+          />
         </SearchWrapper>
       </SearchContainer>
       <ProjectContainer>
