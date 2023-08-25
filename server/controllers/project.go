@@ -60,3 +60,21 @@ func (h *ProjectHandler) GetAll(c *gin.Context) {
 		"data":    project,
 	})
 }
+
+func (h *ProjectHandler) ProjectCount(c *gin.Context) {
+	userID := c.MustGet("userID").(primitive.ObjectID)
+
+	projectCount, projectCountErr := h.projectRepo.ProjectCount(userID)
+	if projectCountErr != nil {
+		c.SecureJSON(projectCountErr.Status, projectCountErr)
+		return
+	}
+
+	c.SecureJSON(http.StatusOK, &gin.H{
+		"status":  http.StatusOK,
+		"message": "Project count",
+		"data": &gin.H{
+			"count": projectCount,
+		},
+	})
+}

@@ -2,7 +2,8 @@ const endpoints = {
   login: '/users/login',
   currentUser: '/users/me',
   createProject: '/project',
-  Projects: '/projects',
+  projects: '/projects',
+  projectCount: '/project/count',
 };
 
 export default endpoints;

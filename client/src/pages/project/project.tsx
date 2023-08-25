@@ -12,17 +12,13 @@ import { useToaster } from '@hooks/useToaster';
 import { usePagination } from '@hooks/usePagination';
 import { useDebounce } from '@hooks/useDebounce';
 
-type ProjectItem = {
+type Project = {
   name: string;
   id: string;
   status: string;
 };
 
-type Projects = {
-  project: ProjectItem;
-};
-
-const ProjectItem = ({ name, id, status }: ProjectItem) => {
+const ProjectItem = ({ name, id, status }: Project) => {
   return (
     <ProjectCard to={`/project/${id}`}>
       <img width={32} height={32} src={images.project} alt={name} />
@@ -38,9 +34,10 @@ const ProjectItem = ({ name, id, status }: ProjectItem) => {
 const Project = () => {
   const toaster = useToaster();
   const { t } = useTranslation();
-  const { paginate, paginationHandler } = usePagination();
   const [open, setOpen] = useState(false);
-  const [projects, setProjects] = useState<Projects[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [projectCount, setProjectCount] = useState(0);
+  const { paginate, prevPage, nextPage, paginationHandler } = usePagination(projectCount);
   const [search, setSearch] = useState('');
   const debouncedValue = useDebounce(search, 500);
 
@@ -59,7 +56,25 @@ const Project = () => {
       toaster.triggerToast({ message: message || 'something went wrong', type: 'error' });
     },
     onSuccess: ({ data }) => {
-      setProjects(data.data);
+      const projectsArr = data.data as Project[];
+      const isProjectArr = Array.isArray(projectsArr);
+      if (isProjectArr && projectsArr.length) {
+        setProjects(projectsArr);
+      }
+    },
+  });
+
+  useQuery(['projectCount'], projectServices.projectCount, {
+    refetchOnWindowFocus: false,
+    keepPreviousData: true,
+    onError: (error: any) => {
+      const message = error?.response?.data?.errors;
+      toaster.triggerToast({ message: message || 'something went wrong', type: 'error' });
+    },
+    onSuccess: ({ data }) => {
+      if (data?.data?.count) {
+        setProjectCount(data.data.count);
+      }
     },
   });
 
@@ -75,7 +90,9 @@ const Project = () => {
       <NewProject open={open} closeHandler={closeHandler} />
       <Box sx={{ backgroundColor: '#ECF1F9' }}>
         <TopWrapper maxWidth="lg">
-          <Heading variant="h5">{t('translations:projects')}</Heading>
+          <Heading variant="h5">
+            {t('translations:projects')}({projectCount})
+          </Heading>
           <NewProjectBTN variant="contained" onClick={openHandler}>
             <Paragraph sx={{ textTransform: 'capitalize' }}>{t('translations:new_project')}</Paragraph>
           </NewProjectBTN>
@@ -94,7 +111,7 @@ const Project = () => {
         </SearchWrapper>
       </SearchContainer>
       <ProjectContainer>
-        {projects.map(({ project }) => (
+        {projects.map((project) => (
           <ProjectItem
             key={project.id}
             name={project.name}
@@ -104,10 +121,10 @@ const Project = () => {
         ))}
       </ProjectContainer>
       <PaginationContainer>
-        <IconButton onClick={loadPrevPage}>
+        <IconButton disabled={!prevPage} onClick={loadPrevPage}>
           <ChevronLeft size={24} color="#57565C" />
         </IconButton>
-        <IconButton onClick={loadNextPage}>
+        <IconButton disabled={!nextPage} onClick={loadNextPage}>
           <ChevronRight size={24} color="#57565C" />
         </IconButton>
       </PaginationContainer>

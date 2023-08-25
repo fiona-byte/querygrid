@@ -6,7 +6,10 @@ const projectServices = {
     return request.post(endpoints.createProject, body);
   },
   async projects(offset: number, search: string) {
-    return request.get(endpoints.Projects, { params: { offset, search } });
+    return request.get(endpoints.projects, { params: { offset, search } });
+  },
+  async projectCount() {
+    return request.get(endpoints.projectCount);
   },
 };
 
