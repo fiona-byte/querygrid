@@ -6,6 +6,11 @@ import (
 	"time"
 )
 
+type ProjectMember struct {
+	UserID *primitive.ObjectID `bson:"user_id,omitempty" json:"user_id,omitempty"`
+	RoleID *primitive.ObjectID `bson:"role_id,omitempty" json:"role_id,omitempty"`
+}
+
 type Project struct {
 	ID          primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
 	Name        string             `bson:"name,unique" json:"name,omitempty"`
@@ -15,22 +20,9 @@ type Project struct {
 	Status      string             `bson:"status" json:"status,omitempty"`
 	Description string             `bson:"description" json:"description,omitempty"`
 	Mode        string             `bson:"mode" json:"mode,omitempty"`
-	UserID      primitive.ObjectID `bson:"user_id" json:"user_id,omitempty"`
-	User        User               `bson:"user,omitempty" json:"creator,omitempty"`
+	Members     []*ProjectMember   `bson:"members,omitempty" json:"members,omitempty"`
 	CreatedAt   time.Time          `bson:"created_at" json:"created_at,omitempty"`
 	UpdatedAt   time.Time          `bson:"updated_at" json:"updated_at,omitempty"`
-}
-
-type ProjectMember struct {
-	ID        primitive.ObjectID  `bson:"_id,omitempty" json:"id,omitempty"`
-	ProjectID *primitive.ObjectID `bson:"project_id" json:"project_id,omitempty"`
-	Project   *Project            `bson:"projects" json:"project,omitempty"`
-	UserID    *primitive.ObjectID `bson:"user_id,omitempty" json:"user_id,omitempty"`
-	User      *User               `bson:"user" json:"user,omitempty"`
-	RoleID    *primitive.ObjectID `bson:"role_id,omitempty" json:"role_id,omitempty"`
-	Role      *Role               `bson:"roles" json:"role,omitempty"`
-	CreatedAt time.Time           `bson:"created_at" json:"created_at,omitempty"`
-	UpdatedAt time.Time           `bson:"updated_at" json:"updated_at,omitempty"`
 }
 
 type NewProject struct {
@@ -41,5 +33,6 @@ type NewProject struct {
 type ProjectRepository interface {
 	CreateProject(project NewProject, userID primitive.ObjectID) (*Project, *resterror.RestError)
 	//GetById(projectID string) (*Project, *resterror.RestError)
-	GetAll(userID primitive.ObjectID, offsetStr, search string) ([]ProjectMember, *resterror.RestError)
+	GetAll(userID primitive.ObjectID, offsetStr, search string) ([]Project, *resterror.RestError)
+	ProjectCount(userID primitive.ObjectID) (int64, *resterror.RestError)
 }

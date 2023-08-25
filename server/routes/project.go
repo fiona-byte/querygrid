@@ -11,4 +11,5 @@ func (r *route) ProjectRoutes() {
 
 	r.private.POST("/project", controller.CreateProject)
 	r.private.GET("/projects", controller.GetAll)
+	r.private.GET("/project/count", controller.ProjectCount)
 }
