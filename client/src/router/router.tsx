@@ -4,6 +4,7 @@ import AuthUserProvider from '@context/authUserContext';
 import AppLayout from '@layout/app';
 import AuthLayout from '@layout/authentication';
 import { dashboard, page, authentications } from './routes';
+import PermissionProvider from '@context/permissionContext';
 
 const Router = () => {
   const dashboardRoutes = dashboard.map(({ path, title, element: Element }) => (
@@ -29,7 +30,9 @@ const Router = () => {
           path="/"
           element={
             <AuthUserProvider>
-              <AppLayout />
+              <PermissionProvider>
+                <AppLayout />
+              </PermissionProvider>
             </AuthUserProvider>
           }
         >
@@ -39,7 +42,9 @@ const Router = () => {
           path="/project/:project"
           element={
             <AuthUserProvider>
-              <DashboardLayout />
+              <PermissionProvider>
+                <DashboardLayout />
+              </PermissionProvider>
             </AuthUserProvider>
           }
         >
