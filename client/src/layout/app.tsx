@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import { Box, GlobalStyles, Toolbar, styled } from '@mui/material';
-import { AppHeader } from '@component/header';
+import Header from '@component/header';
 import AppFooter from '@component/footer/app';
 
 const AppLayout = () => {
@@ -14,7 +14,7 @@ const AppLayout = () => {
           },
         }}
       />
-      <AppHeader />
+      <Header />
       <Toolbar />
       <Main>
         <Outlet />

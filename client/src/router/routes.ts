@@ -13,9 +13,9 @@ export const dashboard: RouterType[] = [
     title: 'overview',
   },
   {
-    path: 'tables',
-    element: loadable(() => import('../pages/dashboard/tables')),
-    title: 'tables',
+    path: 'collections',
+    element: loadable(() => import('../pages/dashboard/collections')),
+    title: 'collections',
   },
 ];
 
