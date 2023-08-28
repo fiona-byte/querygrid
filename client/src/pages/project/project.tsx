@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Box, Button, Container, IconButton, Input, styled } from '@mui/material';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +11,7 @@ import projectServices from '@service/projectServices';
 import { useToaster } from '@hooks/useToaster';
 import { usePagination } from '@hooks/usePagination';
 import { useDebounce } from '@hooks/useDebounce';
+import { Can } from '@context/permissionContext';
 
 type Project = {
   name: string;
@@ -51,6 +52,7 @@ const Project = () => {
   useQuery(['projects', paginate, debouncedValue], () => projectServices.projects(paginate, debouncedValue), {
     refetchOnWindowFocus: false,
     keepPreviousData: true,
+    retry: 0,
     onError: (error: any) => {
       const message = error?.response?.data?.errors;
       toaster.triggerToast({ message: message || 'something went wrong', type: 'error' });
@@ -67,6 +69,7 @@ const Project = () => {
   useQuery(['projectCount'], projectServices.projectCount, {
     refetchOnWindowFocus: false,
     keepPreviousData: true,
+    retry: 0,
     onError: (error: any) => {
       const message = error?.response?.data?.errors;
       toaster.triggerToast({ message: message || 'something went wrong', type: 'error' });
@@ -77,10 +80,6 @@ const Project = () => {
       }
     },
   });
-
-  useEffect(() => {
-    console.log('HELLO');
-  }, [debouncedValue]);
 
   const loadNextPage = () => paginationHandler(false);
   const loadPrevPage = () => paginationHandler(true);
@@ -93,9 +92,11 @@ const Project = () => {
           <Heading variant="h5">
             {t('translations:projects')}({projectCount})
           </Heading>
-          <NewProjectBTN variant="contained" onClick={openHandler}>
-            <Paragraph sx={{ textTransform: 'capitalize' }}>{t('translations:new_project')}</Paragraph>
-          </NewProjectBTN>
+          <Can I="create" a="project">
+            <NewProjectBTN variant="contained" onClick={openHandler}>
+              <Paragraph sx={{ textTransform: 'capitalize' }}>{t('translations:new_project')}</Paragraph>
+            </NewProjectBTN>
+          </Can>
         </TopWrapper>
       </Box>
       <SearchContainer>

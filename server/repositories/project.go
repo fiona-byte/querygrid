@@ -84,10 +84,10 @@ func (r *ProjectRepo) GetAll(userID primitive.ObjectID, offsetStr, search string
 
 	filter := bson.D{{"members.user_id", userID}}
 	if search != "" {
-		filter = bson.D{{"$match", bson.D{
+		filter = bson.D{
 			{"members.user_id", userID},
 			{"$text", bson.D{{"$search", search}}},
-		}}}
+		}
 	}
 	opts := options.Find().
 		SetProjection(bson.D{{"_id", 1}, {"name", 1}, {"status", 1}}).
