@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Sidebar from '@component/sidebar';
 import Header from '@component/header';
 import { useMobile } from '@hooks/useMobile';
-import { Toolbar } from '@mui/material';
+import { Toolbar, styled } from '@mui/material';
 
 const DashboardLayout = () => {
   const isMobile = useMobile();
@@ -18,7 +18,7 @@ const DashboardLayout = () => {
   const toggleSidebar = () => setShow(!show);
 
   return (
-    <Box sx={{ display: 'flex', height: '100%' }}>
+    <Container>
       <Sidebar show={show} />
 
       {/* main layout */}
@@ -26,10 +26,24 @@ const DashboardLayout = () => {
         <Header toggleSidebar={toggleSidebar} sidebarOpen={show} />
         <Toolbar />
 
-        <Outlet />
+        <Main>
+          <Outlet />
+        </Main>
       </Box>
-    </Box>
+    </Container>
   );
 };
+
+const Container = styled(Box)({
+  overflow: 'hidden',
+  display: 'flex',
+  height: '100%',
+});
+
+const Main = styled(Box)(() => ({
+  background: '#F4F6FC',
+  height: '100%',
+  padding: '16px 24px',
+}));
 
 export default DashboardLayout;

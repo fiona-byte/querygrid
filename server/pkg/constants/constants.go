@@ -20,7 +20,11 @@ var (
 	DATABASE                        = "querygrid"
 	Live                            = "live"
 	Test                            = "test"
-
-	ServerError  = "something went wrong"
-	InvalidToken = "invalid token"
+	CREATE                          = "create"
+	READ                            = "read"
+	UPDATE                          = "update"
+	DELETE                          = "delete"
+	ServerError                     = "something went wrong"
+	InvalidToken                    = "invalid token"
+	PROJECT                         = "project"
 )

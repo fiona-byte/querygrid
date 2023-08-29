@@ -32,7 +32,7 @@ interface HeaderProps {
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
-  isDashboard?: boolean;
+  dashboard?: 'true' | 'false';
 }
 
 const ElevationScroll = (props: HeaderProps) => {
@@ -96,7 +96,11 @@ const Header = (props: HeaderProps) => {
     <>
       <Notification open={showNotification} closeNotification={closeNotification} />
       <ElevationScroll {...props}>
-        <AppBarWrapper open={props.sidebarOpen} isDashboard={!!props.toggleSidebar} sx={{ backgroundColor: '#FFFFFF' }}>
+        <AppBarWrapper
+          open={props.sidebarOpen}
+          dashboard={props.toggleSidebar ? 'true' : 'false'}
+          sx={{ backgroundColor: '#FFFFFF' }}
+        >
           <Container maxWidth={false}>
             <Toolbar
               sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0px !important' }}
@@ -173,12 +177,12 @@ const Header = (props: HeaderProps) => {
 
 export const AppBarWrapper = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
-})<AppBarProps>(({ theme, open, isDashboard }) => ({
+})<AppBarProps>(({ theme, open, dashboard }) => ({
   transition: theme.transitions.create(['margin', 'width'], {
     easing: theme.transitions.easing.sharp,
     duration: 0.5,
   }),
-  ...(isDashboard && {
+  ...(dashboard === 'true' && {
     width: 'calc(100% - 250px)',
   }),
   ...(open && {

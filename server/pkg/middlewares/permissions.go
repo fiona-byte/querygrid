@@ -1,35 +1,49 @@
 package middlewares
 
 import (
+	"github.com/devylab/querygrid/pkg/config"
+	"github.com/devylab/querygrid/pkg/constants"
 	"github.com/devylab/querygrid/pkg/database"
+	"github.com/devylab/querygrid/repositories"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"net/http"
+	"slices"
 )
 
-func HasPermission(connect *database.Database) gin.HandlerFunc {
+type Permission struct {
+	connect *database.Database
+	config  config.Config
+}
+
+func NewPermission(db *database.Database, config config.Config) *Permission {
+	return &Permission{
+		connect: db,
+		config:  config,
+	}
+}
+
+func (r *Permission) HasPermission(field, permission string) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// ctx := context.Background()
-		// userID := c.MustGet("userID").(string)
-		// var user models.User
-		// err := connect.DB.NewSelect().Model(&user).
-		// 	Column("usr.id", "usr.role_id").
-		// 	Relation("Role", func(q *bun.SelectQuery) *bun.SelectQuery {
-		// 		return q.Column("id", "name", "permission")
-		// 	}).
-		// 	Where("id = ?", userID).Scan(ctx)
-		// if err != nil {
-		// 	c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "user don't have the permission"})
-		// 	return
-		// }
+		userID := c.MustGet("userID").(primitive.ObjectID)
+		userRepo := repositories.NewUserRepo(r.connect, r.config)
 
-		// fmt.Println("USER HEHEHEHEHEHEHE", user)
-		// GET USER ROLE
-		// FETCH ROLE
-		// CHECK IF USER ROLE HAS THE RIGHT PERMISSION
+		user, userErr := userRepo.CurrentUser(userID)
+		if userErr != nil {
+			c.AbortWithStatusJSON(userErr.Status, userErr)
+			return
+		}
 
-		// if data.Secret != secret {
-		// 	c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": constants.InvalidToken})
-		// 	return
-		// }
+		if user.Status != constants.ACTIVE {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "contact admin for support"})
+			return
+		}
+
+		permissions := user.Role.Permissions[field]
+		if hasRole := slices.Contains(permissions, permission); !hasRole {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "don't have necessary permission"})
+			return
+		}
 
 		c.Next()
 	}
