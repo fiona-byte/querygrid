@@ -35,13 +35,13 @@ func Authentication(config config.Config) gin.HandlerFunc {
 			return
 		}
 
-		roleID, roleIDErr := primitive.ObjectIDFromHex(data.User)
-		if roleIDErr != nil {
+		userID, userIDErr := primitive.ObjectIDFromHex(data.User)
+		if userIDErr != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": constants.InvalidToken})
 			return
 		}
 
-		c.Set("userID", roleID)
+		c.Set("userID", userID)
 		c.Next()
 	}
 }
