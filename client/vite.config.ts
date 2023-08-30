@@ -8,6 +8,7 @@ export default defineConfig({
   plugins: [react(), splitVendorChunkPlugin(), tsconfigPaths()],
   build: {
     outDir: path.join(__dirname, '..', 'server', 'admin'),
+    sourcemap: true,
     // rollupOptions: {
     //   output: {
     //     manualChunks(id) {
