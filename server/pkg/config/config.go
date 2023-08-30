@@ -7,12 +7,10 @@ import (
 )
 
 type Config struct {
-	AppEnv         string `mapstructure:"APP_ENV"`
-	CorsOrigins    string `mapstructure:"CORS_ORIGINS"`
-	TrustedProxies string `mapstructure:"TRUSTED_PROXIES"`
-	DatabaseUrl    string `mapstructure:"DATABASE_URL"`
-	Port           string `mapstructure:"PORT"`
-	JWTSecret      string `mapstructure:"JWT_SECRET"`
+	AppEnv      string `mapstructure:"APP_ENV"`
+	DatabaseUrl string `mapstructure:"DATABASE_URL"`
+	Port        string `mapstructure:"PORT"`
+	JWTSecret   string `mapstructure:"JWT_SECRET"`
 }
 
 func LoadConfig() (config Config) {
@@ -27,7 +25,7 @@ func LoadConfig() (config Config) {
 	}
 
 	if err := viper.Unmarshal(&config); err != nil {
-		log.Fatal("unable to unmarsha config", err)
+		log.Fatal("unable to unmarshal config", err)
 	}
 
 	return

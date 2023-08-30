@@ -119,7 +119,7 @@ const menuItemStyles: MenuItemStyles = {
   },
 };
 
-const SidebarContainer = styled(ProSidebar)(({ theme }) => ({
+const SidebarContainer = styled(ProSidebar)(() => ({
   border: 'none !important',
   color: '#9A999D',
 }));

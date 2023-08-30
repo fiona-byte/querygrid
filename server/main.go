@@ -1,8 +1,6 @@
 package main
 
 import (
-	"strings"
-
 	"github.com/devylab/querygrid/pkg/config"
 	"github.com/devylab/querygrid/pkg/database"
 	"github.com/devylab/querygrid/pkg/middlewares"
@@ -37,8 +35,7 @@ func main() {
 	router.Use(middlewares.Secure(conf.AppEnv))
 
 	corsConfig := cors.DefaultConfig()
-	corsArr := strings.Split(conf.CorsOrigins, ",")
-	corsConfig.AllowOrigins = corsArr
+	corsConfig.AllowAllOrigins = true
 	router.Use(cors.New(corsConfig))
 
 	router.Use(middlewares.StaticFileCache())
