@@ -99,36 +99,42 @@ const Project = () => {
           </Can>
         </TopWrapper>
       </Box>
-      <SearchContainer>
-        <SearchWrapper>
-          <Search size={24} color="#57565C" />
-          <SearchInput
-            value={search}
-            onChange={handleChange}
-            fullWidth
-            disableUnderline={true}
-            placeholder={t('translations:browse_projects')}
-          />
-        </SearchWrapper>
-      </SearchContainer>
-      <ProjectContainer>
-        {projects.map((project) => (
-          <ProjectItem
-            key={project.id}
-            name={project.name}
-            id={project.id}
-            status={t(`translations:${project.status}`)}
-          />
-        ))}
-      </ProjectContainer>
-      <PaginationContainer>
-        <IconButton disabled={!prevPage} onClick={loadPrevPage}>
-          <ChevronLeft size={24} color="#57565C" />
-        </IconButton>
-        <IconButton disabled={!nextPage} onClick={loadNextPage}>
-          <ChevronRight size={24} color="#57565C" />
-        </IconButton>
-      </PaginationContainer>
+      {projects.length ? (
+        <>
+          <SearchContainer>
+            <SearchWrapper>
+              <Search size={24} color="#57565C" />
+              <SearchInput
+                value={search}
+                onChange={handleChange}
+                fullWidth
+                disableUnderline={true}
+                placeholder={t('translations:browse_projects')}
+              />
+            </SearchWrapper>
+          </SearchContainer>
+          <ProjectContainer>
+            {projects.map((project) => (
+              <ProjectItem
+                key={project.id}
+                name={project.name}
+                id={project.id}
+                status={t(`translations:${project.status}`)}
+              />
+            ))}
+          </ProjectContainer>
+          <PaginationContainer>
+            <IconButton disabled={!prevPage} onClick={loadPrevPage}>
+              <ChevronLeft size={24} color="#57565C" />
+            </IconButton>
+            <IconButton disabled={!nextPage} onClick={loadNextPage}>
+              <ChevronRight size={24} color="#57565C" />
+            </IconButton>
+          </PaginationContainer>
+        </>
+      ) : (
+        <p>No Projects</p>
+      )}
     </Box>
   );
 };

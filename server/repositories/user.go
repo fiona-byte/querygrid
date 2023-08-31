@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"go.mongodb.org/mongo-driver/mongo/writeconcern"
 	"strings"
 	"time"
 
@@ -30,6 +31,98 @@ func NewUserRepo(db *database.Database, config config.Config) *UserRepo {
 		connect: db,
 		config:  config,
 	}
+}
+
+func (r *UserRepo) Setup(newUser models.NewUser) (*models.LoginResp, *resterror.RestError) {
+	ctxs := context.Background()
+	var setting models.Setting
+	if settingErr := r.connect.Setting.FindOne(ctxs, bson.D{{"name", "install"}}).Decode(&setting); settingErr != nil {
+		logger.Error("error getting install setting", settingErr)
+		return nil, resterror.InternalServerError()
+	}
+
+	// check if install is true
+	install := setting.Value.(bool)
+	if install {
+		return nil, nil
+	}
+
+	wc := writeconcern.Majority()
+	txnOptions := options.Transaction().SetWriteConcern(wc)
+	session, sessionErr := r.connect.Client.StartSession()
+	if sessionErr != nil {
+		logger.Error("session error (Setup)", sessionErr)
+		return nil, resterror.InternalServerError()
+	}
+	defer session.EndSession(ctxs)
+
+	permissions := make(map[string][]string)
+	permissions["project"] = []string{"create", "read", "update", "delete"}
+
+	result, transactionErr := session.WithTransaction(ctxs, func(ctx mongo.SessionContext) (interface{}, error) {
+		filter := bson.D{{"name", "super"}}
+		update := bson.D{{"$set", bson.D{{"name", "super"}, {"permissions", permissions},
+			{"created_at", utils.CurrentTime()}, {"updated_at", utils.CurrentTime()}}}}
+		opts := options.Update().SetUpsert(true)
+		roleResult, roleErr := r.connect.Setting.UpdateOne(ctx, filter, update, opts)
+		if roleErr != nil {
+			return nil, roleErr
+		}
+
+		hashPassword, hashPasswordErr := password.Hash(newUser.Password)
+		if hashPasswordErr != nil {
+			return nil, hashPasswordErr
+		}
+
+		user := &models.User{
+			FirstName: newUser.FirstName,
+			LastName:  newUser.LastName,
+			Email:     newUser.Email,
+			Password:  hashPassword,
+			RoleID:    roleResult.UpsertedID.(primitive.ObjectID),
+			Status:    constants.ACTIVE,
+			CreatedAt: utils.CurrentTime(),
+			UpdatedAt: utils.CurrentTime(),
+		}
+
+		userResult, userErr := r.connect.User.InsertOne(ctx, user)
+		if userErr != nil {
+			return nil, userErr
+		}
+
+		settingFilter := bson.D{{"name", "install"}}
+		settingUpdate := bson.D{{"$set", bson.D{{"name", "install"}, {"value", true}}}}
+		settingOpts := options.Update().SetUpsert(true)
+		if _, err := r.connect.Setting.UpdateOne(ctx, settingFilter, settingUpdate, settingOpts); err != nil {
+			return nil, err
+		}
+
+		return userResult.InsertedID.(primitive.ObjectID).Hex(), nil
+	}, txnOptions)
+
+	if transactionErr != nil {
+		logger.Error("transaction error (Setup)", transactionErr)
+		return nil, resterror.InternalServerError()
+	}
+
+	expirationTime := time.Now().Add(5 * time.Minute)
+	secret := utils.GenerateRandomToken(25)
+	accessToken, accessTokenErr := jwt.GenerateJWT(result.(string), secret, r.config.JWTSecret, expirationTime)
+	if accessTokenErr != nil {
+		return nil, accessTokenErr
+	}
+
+	expirationTime2 := time.Now().Add(100 * time.Minute)
+	refreshToken, refreshTokenErr := jwt.GenerateJWT(result.(string), secret, r.config.JWTSecret, expirationTime2)
+	if refreshTokenErr != nil {
+		return nil, refreshTokenErr
+	}
+
+	return &models.LoginResp{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+		Secret:       secret,
+	}, nil
 }
 
 func (r *UserRepo) CreateUser(newUser models.NewUser) *resterror.RestError {

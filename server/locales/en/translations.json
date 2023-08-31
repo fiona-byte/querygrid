@@ -7,5 +7,10 @@
   "new_project_desc": "Create a new project to start building really cool stuff.",
   "create_project": "Create Project",
   "project_name": "Project Name",
-  "project_description": "Project Description"
+  "project_description": "Project Description",
+  "language": "Language",
+  "welcome_to_querygrid": "Welcome to QueryGrid",
+  "prefered_language": "Choose your prefered language",
+  "create_an_account": "Create an account",
+  "sign_up_desc": "Create your account in a few steps and start building really cool stuff"
 }

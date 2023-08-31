@@ -3,6 +3,8 @@ package database
 import (
 	"context"
 	"errors"
+	"github.com/devylab/querygrid/models"
+	"strings"
 	"time"
 
 	"github.com/devylab/querygrid/pkg/config"
@@ -19,6 +21,7 @@ type Database struct {
 	Role          *mongo.Collection
 	Project       *mongo.Collection
 	ProjectMember *mongo.Collection
+	Setting       *mongo.Collection
 }
 
 func Connect(config config.Config) *Database {
@@ -52,12 +55,18 @@ func Connect(config config.Config) *Database {
 		panic(projectMemberColErr)
 	}
 
+	settingCol, settingColErr := settingCol(client)
+	if settingColErr != nil {
+		panic(settingColErr)
+	}
+
 	return &Database{
 		Client:        client,
 		User:          userCol,
 		Role:          roleCol,
 		Project:       projectCol,
 		ProjectMember: projectMemberCol,
+		Setting:       settingCol,
 	}
 }
 
@@ -72,8 +81,7 @@ func userCol(client *mongo.Client) (*mongo.Collection, error) {
 		},
 	}
 	opts := options.CreateIndexes().SetMaxTime(2 * time.Second)
-	_, err := col.Indexes().CreateMany(context.Background(), indexModel, opts)
-	if err != nil {
+	if _, err := col.Indexes().CreateMany(context.Background(), indexModel, opts); err != nil {
 		logger.Error("Error creating user index", err)
 		return nil, errors.New("error setting up user collection")
 	}
@@ -92,8 +100,7 @@ func roleCol(client *mongo.Client) (*mongo.Collection, error) {
 		},
 	}
 	opts := options.CreateIndexes().SetMaxTime(2 * time.Second)
-	_, err := col.Indexes().CreateMany(context.Background(), indexModel, opts)
-	if err != nil {
+	if _, err := col.Indexes().CreateMany(context.Background(), indexModel, opts); err != nil {
 		logger.Error("Error creating role index", err)
 		return nil, errors.New("error setting up role collection")
 	}
@@ -126,8 +133,7 @@ func projectCol(client *mongo.Client) (*mongo.Collection, error) {
 		},
 	}
 	opts := options.CreateIndexes().SetMaxTime(2 * time.Second)
-	_, err := col.Indexes().CreateMany(context.Background(), indexModel, opts)
-	if err != nil {
+	if _, err := col.Indexes().CreateMany(context.Background(), indexModel, opts); err != nil {
 		logger.Error("Error creating project index", err)
 		return nil, errors.New("error setting up project collection")
 	}
@@ -138,6 +144,37 @@ func projectCol(client *mongo.Client) (*mongo.Collection, error) {
 func projectMemberCol(client *mongo.Client) (*mongo.Collection, error) {
 	database := client.Database(constants.DATABASE)
 	col := database.Collection("project_members")
+
+	return col, nil
+}
+
+func settingCol(client *mongo.Client) (*mongo.Collection, error) {
+	database := client.Database(constants.DATABASE)
+	col := database.Collection("settings")
+
+	indexModel := []mongo.IndexModel{
+		{
+			Keys:    bson.D{{"name", 1}},
+			Options: options.Index().SetUnique(true),
+		},
+	}
+	opts := options.CreateIndexes().SetMaxTime(2 * time.Second)
+	if _, err := col.Indexes().CreateMany(context.Background(), indexModel, opts); err != nil {
+		logger.Error("Error creating settings index", err)
+		return nil, errors.New("error setting up settings collection")
+	}
+
+	setting := &models.Setting{
+		Name:  "install",
+		Value: false,
+	}
+
+	if _, settingsErr := col.InsertOne(context.Background(), setting); settingsErr != nil {
+		if !strings.Contains(settingsErr.Error(), "name_1") {
+			logger.Error("Error inserting settings install", settingsErr)
+			return nil, errors.New("error inserting settings install")
+		}
+	}
 
 	return col, nil
 }
