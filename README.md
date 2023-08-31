@@ -6,14 +6,14 @@
 
 <!-- PROJECT LOGO -->
 <br />
-<div style="text-align:center">
+<div align="center">
   <a href="https://github.com/devylab/querygrid">
     <img src="logo.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 style="text-align:center">QueryGrid</h3>
+  <h3 align="center">QueryGrid</h3>
 
-  <p style="text-align:center">
+  <p align="center">
     A backend as a service software
     <br />
     <a href="https://github.com/devylab/querygrid"><strong>Explore the docs »</strong></a>
@@ -57,7 +57,7 @@
 
 ## About QueryGrid
 
-[//]: # ([![QueryGrid Screen Shot][product-screenshot]]&#40;https://github.com/devylab/querygrid&#41;)
+[//]: # '[![QueryGrid Screen Shot][product-screenshot]](https://github.com/devylab/querygrid)'
 
 QueryGrid is a backend as a service software that allows you to build a web and mobile applications without writing a single line of backend. It hosts databases, storage, services, authentication, mailing and other features.
 
@@ -67,9 +67,7 @@ Why QueryGrid?:
 - It is lightweight
 - It is self-hosted (you can host it on your own cloud provider)
 
-
 ### Built With
-
 
 - [![Golang][Golang]][Golang-url]
 - [![React][React.js]][React-url]
@@ -86,7 +84,7 @@ To get the project running locally follow these simple steps below.
 To run QueryGrid on your local environment you will need to install the following
 
 - Node (node >= 18.9.0)
-  
+
 You can get a detailed instruction on how to install Node from their official [documentation](https://nodejs.org/)
 
 - Golang (go >= 1.20)
@@ -98,7 +96,6 @@ You can get a detailed instruction on how to install Golang from their official 
 You can get a detailed instruction on how to install Mongodb from their official [documentation](https://www.mongodb.com/try/download/community), or you can use the docker image [here](https://hub.docker.com/_/mongo)
 
 ### Installation
-
 
 1. Clone the repo
    ```sh
@@ -114,7 +111,7 @@ You can get a detailed instruction on how to install Mongodb from their official
    ```
 4. Duplicate the `app.env.sample` in the server directory, rename it to `app.env` and update the content
 5. For development mode, you have to run frontend and backend on separate terminals
-    ```sh
+   ```sh
    # terminal 1
    cd client && npm run dev
    ```
@@ -125,31 +122,22 @@ You can get a detailed instruction on how to install Mongodb from their official
 
 <!-- USAGE EXAMPLES -->
 
-[//]: # (## Usage)
-
-[//]: # ()
-[//]: # (To build a production version)
-
-[//]: # ()
-[//]: # (1. Make build script executable)
-
-[//]: # (   ```sh)
-
-[//]: # (   chmod +x build.sh)
-
-[//]: # (   ```)
-
-[//]: # (2. Build project)
-
-[//]: # (   ```sh)
-
-[//]: # (   ./build.sh)
-
-[//]: # (   ```)
-
-[//]: # (3. Run build version)
+[//]: # '## Usage'
+[//]: #
+[//]: # 'To build a production version'
+[//]: #
+[//]: # '1. Make build script executable'
+[//]: # '   ```sh'
+[//]: # '   chmod +x build.sh'
+[//]: # '   ```'
+[//]: # '2. Build project'
+[//]: # '   ```sh'
+[//]: # '   ./build.sh'
+[//]: # '   ```'
+[//]: # '3. Run build version'
 
 ## Documentation
+
 _For more examples, please refer to the [Documentation](https://github.com/devylab/querygrid)_
 
 <!-- ROADMAP -->
@@ -157,7 +145,6 @@ _For more examples, please refer to the [Documentation](https://github.com/devyl
 ## Report a bug
 
 See the [open issues](https://github.com/devylab/querygrid/issues) for a full list of proposed features (and known issues) or create a [new issue](https://github.com/devylab/querygrid/issues/new).
-
 
 <!-- CONTRIBUTING -->
 
@@ -174,13 +161,11 @@ Don't forget to give the project a star! Thanks again!
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-
 <!-- LICENSE -->
 
 ## License
 
 Distributed under the MIT License. See [License](https://github.com/devylab/querygrid/blob/main/LICENSE) for more information.
-
 
 <!-- CONTACT -->
 
@@ -198,7 +183,6 @@ Project Link: [https://github.com/devylab/querygrid](https://github.com/devylab/
 - [React Pro Sidebar](https://github.com/azouaoui-med/react-pro-sidebar)
 - [Zustand](https://docs.pmnd.rs/zustand/getting-started/introduction)
 - [Mui](https://mui.com/)
-
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->

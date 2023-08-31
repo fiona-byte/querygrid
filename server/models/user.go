@@ -44,4 +44,5 @@ type UserRepository interface {
 	Login(user LoginUser) (*LoginResp, *resterror.RestError)
 	CurrentUser(userID primitive.ObjectID) (User, *resterror.RestError)
 	Setup(user NewUser) (*LoginResp, *resterror.RestError)
+	Install() (bool, *resterror.RestError)
 }

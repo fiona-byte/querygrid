@@ -11,6 +11,9 @@ const userServices = {
   async setup(body: unknown) {
     return request.post(endpoints.setup, body);
   },
+  async install() {
+    return request.get(endpoints.install);
+  },
 };
 
 export default Object.freeze(userServices);

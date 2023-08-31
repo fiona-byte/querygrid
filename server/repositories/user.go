@@ -125,6 +125,17 @@ func (r *UserRepo) Setup(newUser models.NewUser) (*models.LoginResp, *resterror.
 	}, nil
 }
 
+func (r *UserRepo) Install() (bool, *resterror.RestError) {
+	ctx := context.Background()
+	var setting models.Setting
+	if settingErr := r.connect.Setting.FindOne(ctx, bson.D{{"name", "install"}}).Decode(&setting); settingErr != nil {
+		logger.Error("error getting install setting", settingErr)
+		return false, resterror.InternalServerError()
+	}
+
+	return setting.Value.(bool), nil
+}
+
 func (r *UserRepo) CreateUser(newUser models.NewUser) *resterror.RestError {
 	hashPassword, hashPasswordErr := password.Hash(utils.GenerateRandomToken(20))
 	if hashPasswordErr != nil {
