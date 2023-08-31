@@ -4,6 +4,7 @@ const endpoints = {
   createProject: '/project',
   projects: '/projects',
   projectCount: '/project/count',
+  setup: '/setup',
 };
 
 export default endpoints;

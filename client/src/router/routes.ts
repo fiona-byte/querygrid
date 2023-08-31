@@ -33,4 +33,9 @@ export const authentications: RouterType[] = [
     element: loadable(() => import('../pages/authentication/login')),
     title: 'login',
   },
+  {
+    path: 'setup',
+    element: loadable(() => import('../pages/authentication/setup')),
+    title: 'setup',
+  },
 ];

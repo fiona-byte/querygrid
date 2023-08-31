@@ -144,3 +144,31 @@ func (h *UserHandler) Refresh(c *gin.Context) {
 		"data":    nil,
 	})
 }
+
+func (h *UserHandler) Setup(c *gin.Context) {
+	origin := c.GetHeader("origin")
+	var newUser models.NewUser
+	if err := c.ShouldBindJSON(&newUser); err != nil {
+		restErr := resterror.BadJSONRequest()
+		c.SecureJSON(restErr.Status, restErr)
+		return
+	}
+
+	data, err := h.userRepo.Setup(newUser)
+	if err != nil {
+		c.SecureJSON(err.Status, err)
+		return
+	}
+
+	domain := utils.GetDomain(origin)
+	isProduction := utils.IsProduction(h.config.AppEnv)
+	c.SetCookie(constants.ACCESS_TOKEN_KEY, data.AccessToken, 3600, "/", domain, isProduction, isProduction)
+	c.SetCookie(constants.REFRESH_TOKEN_KEY, data.RefreshToken, 3600, "/", domain, isProduction, isProduction)
+	c.SetCookie(constants.SECRET_KEY, data.Secret, 3600, "/", domain, isProduction, isProduction)
+
+	c.SecureJSON(http.StatusOK, &gin.H{
+		"status":  http.StatusOK,
+		"message": "Setup",
+		"data":    nil,
+	})
+}

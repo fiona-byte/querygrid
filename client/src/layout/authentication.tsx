@@ -4,6 +4,41 @@ import { styled } from '@mui/material/styles';
 import images from '@assets/images';
 import UnionIcon from '@assets/svg/union';
 
+const AuthLayout = () => {
+  return (
+    <>
+      <GlobalStyles
+        styles={{
+          body: {
+            background: 'linear-gradient(223.09deg, #487cdf 2.98%, #194bab 103.2%)',
+            fontFamily: "'IBM Plex Sans', sans-serif",
+          },
+        }}
+      />
+      <AppLayout>
+        <NavContainer>
+          <Link href="https://querygrid.io">
+            <Image src={images.appBrand} alt="querygrid" />
+          </Link>
+        </NavContainer>
+        <Container>
+          <FirstUnion />
+          <Outlet />
+          <SecondUnion />
+          <BgEffect>
+            {[1, 2, 3, 4, 5].map((i) => (
+              <MiniEffect key={`mini-effect-${i}`}>
+                <SmallEffect />
+              </MiniEffect>
+            ))}
+            <Button variant="contained">Register</Button>
+          </BgEffect>
+        </Container>
+      </AppLayout>
+    </>
+  );
+};
+
 const AppLayout = styled('div')`
   height: 100%;
 `;
@@ -100,40 +135,5 @@ const Button = styled(MuiButton)`
   opacity: 0.5;
   cursor: default;
 `;
-
-const AuthLayout = () => {
-  return (
-    <>
-      <GlobalStyles
-        styles={{
-          body: {
-            background: 'linear-gradient(223.09deg, #487cdf 2.98%, #194bab 103.2%)',
-            fontFamily: "'IBM Plex Sans', sans-serif",
-          },
-        }}
-      />
-      <AppLayout>
-        <NavContainer>
-          <Link href="https://querygrid.io">
-            <Image src={images.appBrand} />
-          </Link>
-        </NavContainer>
-        <Container>
-          <FirstUnion />
-          <Outlet />
-          <SecondUnion />
-          <BgEffect>
-            {[1, 2, 3, 4, 5].map((i) => (
-              <MiniEffect key={`mini-effect-${i}`}>
-                <SmallEffect />
-              </MiniEffect>
-            ))}
-            <Button variant="contained">Register</Button>
-          </BgEffect>
-        </Container>
-      </AppLayout>
-    </>
-  );
-};
 
 export default AuthLayout;

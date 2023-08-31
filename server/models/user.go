@@ -25,6 +25,7 @@ type NewUser struct {
 	LastName  string `json:"last_name"`
 	Email     string `json:"email"`
 	RoleID    string `json:"role_id"`
+	Password  string `json:"password"`
 }
 
 type LoginUser struct {
@@ -42,4 +43,5 @@ type UserRepository interface {
 	CreateUser(user NewUser) *resterror.RestError
 	Login(user LoginUser) (*LoginResp, *resterror.RestError)
 	CurrentUser(userID primitive.ObjectID) (User, *resterror.RestError)
+	Setup(user NewUser) (*LoginResp, *resterror.RestError)
 }
