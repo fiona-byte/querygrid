@@ -5,6 +5,7 @@ const endpoints = {
   projects: '/projects',
   projectCount: '/project/count',
   setup: '/setup',
+  install: '/install',
 };
 
 export default endpoints;

@@ -172,3 +172,17 @@ func (h *UserHandler) Setup(c *gin.Context) {
 		"data":    nil,
 	})
 }
+
+func (h *UserHandler) Install(c *gin.Context) {
+	data, err := h.userRepo.Install()
+	if err != nil {
+		c.SecureJSON(err.Status, err)
+		return
+	}
+
+	c.SecureJSON(http.StatusOK, &gin.H{
+		"status":  http.StatusOK,
+		"message": "Install",
+		"data":    data,
+	})
+}
