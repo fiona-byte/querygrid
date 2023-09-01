@@ -1,7 +1,8 @@
 import { ReactNode, createContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import userServices from '@service/userServices';
-import { useNavigate } from 'react-router-dom';
+import Loader from '@component/loader';
 
 type AppSetupProps = {
   children: ReactNode;
@@ -27,11 +28,7 @@ const AppSetupProvider = ({ children }: AppSetupProps) => {
     },
   });
 
-  return (
-    <AppSetupContext.Provider value={{ install }}>
-      {isLoading ? <div>loadinggggg</div> : children}
-    </AppSetupContext.Provider>
-  );
+  return <AppSetupContext.Provider value={{ install }}>{isLoading ? <Loader /> : children}</AppSetupContext.Provider>;
 };
 
 export default AppSetupProvider;

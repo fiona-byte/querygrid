@@ -3,6 +3,7 @@ import { ReactNode, createContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import userServices from '@service/userServices';
 import { utils } from '@utils/index';
+import Loader from '@component/loader';
 
 type Role = {
   id: string;
@@ -63,9 +64,7 @@ const AuthUserProvider = ({ children }: { children?: ReactNode }) => {
   }, [location]);
 
   return (
-    <AuthUserContext.Provider value={{ user: currentUser }}>
-      {loading ? <div>Loading</div> : children}
-    </AuthUserContext.Provider>
+    <AuthUserContext.Provider value={{ user: currentUser }}>{loading ? <Loader /> : children}</AuthUserContext.Provider>
   );
 };
 
