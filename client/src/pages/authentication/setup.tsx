@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import First from '@component/Setup/first';
 import Second from '@component/Setup/second';
 import { AppSetupContext } from '@context/appSetupContext';
+import Loader from '@component/loader';
 
 const Setup = () => {
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ const Setup = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  if (pageLoading) return <div>loading...</div>;
+  if (pageLoading) return <Loader />;
 
   return <>{activeStep === 0 ? <First handleNext={handleNext} /> : <Second handleBack={handleBack} />}</>;
 };
