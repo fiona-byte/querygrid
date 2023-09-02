@@ -1,6 +1,8 @@
 package models
 
 import (
+	"github.com/devylab/querygrid/pkg/jwt"
+	"github.com/devylab/querygrid/pkg/utils"
 	"time"
 
 	"github.com/devylab/querygrid/pkg/resterror"
@@ -45,4 +47,25 @@ type UserRepository interface {
 	CurrentUser(userID primitive.ObjectID) (User, *resterror.RestError)
 	Setup(user NewUser) (*LoginResp, *resterror.RestError)
 	Install() (bool, *resterror.RestError)
+}
+
+func GenerateUserToken(userID, JWTSecret string) (*LoginResp, *resterror.RestError) {
+	expirationTime := time.Now().Add(1 * time.Hour) // 1 hour
+	secret := utils.GenerateRandomToken(25)
+	accessToken, accessTokenErr := jwt.GenerateJWT(userID, secret, JWTSecret, expirationTime)
+	if accessTokenErr != nil {
+		return nil, accessTokenErr
+	}
+
+	expirationTime2 := time.Now().Add(168 * time.Hour) // 7 days
+	refreshToken, refreshTokenErr := jwt.GenerateJWT(userID, secret, JWTSecret, expirationTime2)
+	if refreshTokenErr != nil {
+		return nil, refreshTokenErr
+	}
+
+	return &LoginResp{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+		Secret:       secret,
+	}, nil
 }
