@@ -5,14 +5,14 @@ import (
 	"github.com/devylab/querygrid/repositories"
 )
 
-func (r *route) UserRoutes() {
-	userRepo := repositories.NewUserRepo(r.db, r.conf)
-	controller := controllers.NewUserHandler(userRepo, r.conf)
+func (r *RouteConfig) UserRoutes() {
+	userRepo := repositories.NewUserRepo(r.DB, r.Config, r.Cache)
+	controller := controllers.NewUserHandler(userRepo, r.Config)
 
 	// r.public.POST("/users/user", controller.Create)
-	r.public.POST("/users/login", controller.Login)
-	r.private.GET("/users/me", controller.CurrentUser)
-	r.public.POST("/users/refresh", controller.Refresh)
-	r.public.POST("/setup", controller.Setup)
-	r.public.GET("/install", controller.Install)
+	r.Public.POST("/users/login", controller.Login)
+	r.Private.GET("/users/me", controller.CurrentUser)
+	r.Public.POST("/users/refresh", controller.Refresh)
+	r.Public.POST("/setup", controller.Setup)
+	r.Public.GET("/install", controller.Install)
 }

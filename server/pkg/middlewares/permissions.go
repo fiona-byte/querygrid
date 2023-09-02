@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	cache2 "github.com/devylab/querygrid/pkg/cache"
 	"github.com/devylab/querygrid/pkg/config"
 	"github.com/devylab/querygrid/pkg/constants"
 	"github.com/devylab/querygrid/pkg/database"
@@ -14,9 +15,10 @@ import (
 type Permission struct {
 	connect *database.Database
 	config  config.Config
+	cache   *cache2.Cache
 }
 
-func NewPermission(db *database.Database, config config.Config) *Permission {
+func NewPermission(db *database.Database, config config.Config, cache *cache2.Cache) *Permission {
 	return &Permission{
 		connect: db,
 		config:  config,
@@ -26,7 +28,7 @@ func NewPermission(db *database.Database, config config.Config) *Permission {
 func (r *Permission) HasPermission(field, permission string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userID := c.MustGet("userID").(primitive.ObjectID)
-		userRepo := repositories.NewUserRepo(r.connect, r.config)
+		userRepo := repositories.NewUserRepo(r.connect, r.config, r.cache)
 
 		user, userErr := userRepo.CurrentUser(userID)
 		if userErr != nil {

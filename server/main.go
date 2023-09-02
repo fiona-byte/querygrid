@@ -1,6 +1,7 @@
 package main
 
 import (
+	cache2 "github.com/devylab/querygrid/pkg/cache"
 	"github.com/devylab/querygrid/pkg/config"
 	"github.com/devylab/querygrid/pkg/database"
 	"github.com/devylab/querygrid/pkg/middlewares"
@@ -28,6 +29,9 @@ func main() {
 	// DATABASE CONNECTION
 	dbCon := database.Connect(conf)
 
+	// CACHE
+	cache := cache2.NewCache()
+
 	ginMode(conf)
 	router := gin.Default()
 	router.Use(gzip.Gzip(gzip.DefaultCompression))
@@ -46,7 +50,14 @@ func main() {
 	privateRoute := router.Group("/api")
 	privateRoute.Use(middlewares.Authentication(conf))
 
-	newRoutes := routes.NewRoute(publicRoute, privateRoute, router, dbCon, conf)
+	newRoutes := routes.NewRoute(&routes.RouteConfig{
+		Public:  publicRoute,
+		Private: privateRoute,
+		Router:  router,
+		DB:      dbCon,
+		Config:  conf,
+		Cache:   cache,
+	})
 	newRoutes.MapUrls()
 
 	panic(router.Run(utils.GetPort(conf.Port)))
