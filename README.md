@@ -95,6 +95,8 @@ You can get a detailed instruction on how to install Golang from their official 
 
 You can get a detailed instruction on how to install Mongodb from their official [documentation](https://www.mongodb.com/try/download/community), or you can use the docker image [here](https://hub.docker.com/_/mongo)
 
+Note: you need to setup mongo replica on your mongodb database. Here's a setup process on [Github Gist](https://gist.github.com/davisford/bb37079900888c44d2bbcb2c52a5d6e8) by Davisford
+
 ### Installation
 
 1. Clone the repo
