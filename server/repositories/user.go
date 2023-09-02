@@ -2,6 +2,9 @@ package repositories
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
+	cache2 "github.com/devylab/querygrid/pkg/cache"
 	"go.mongodb.org/mongo-driver/mongo/writeconcern"
 	"strings"
 	"time"
@@ -24,12 +27,14 @@ import (
 type UserRepo struct {
 	connect *database.Database
 	config  config.Config
+	cache   *cache2.Cache
 }
 
-func NewUserRepo(db *database.Database, config config.Config) *UserRepo {
+func NewUserRepo(db *database.Database, config config.Config, cache *cache2.Cache) *UserRepo {
 	return &UserRepo{
 		connect: db,
 		config:  config,
+		cache:   cache,
 	}
 }
 
@@ -198,35 +203,59 @@ func (r *UserRepo) Login(login models.LoginUser) (*models.LoginResp, *resterror.
 }
 
 func (r *UserRepo) CurrentUser(userID primitive.ObjectID) (models.User, *resterror.RestError) {
-	ctx := context.Background()
-	matchStage := bson.D{{"$match", bson.D{{"_id", userID}}}}
-	lookupStage := bson.D{{"$lookup", bson.D{
-		{"from", "roles"},
-		{"localField", "role_id"},
-		{"foreignField", "_id"},
-		{"as", "roles"}},
-	}}
-	unwindStage := bson.D{{"$unwind", bson.D{{"path", "$roles"}}}}
-	cursor, cursorErr := r.connect.User.Aggregate(ctx, mongo.Pipeline{lookupStage, matchStage, unwindStage})
-	if cursorErr != nil {
-		logger.Error("Error getting user projects (cursor aggregate)", cursorErr)
-		return models.User{}, resterror.InternalServerError()
-	}
+	var cacheUser models.User
+	cacheKey := fmt.Sprintf("current-user-%s", userID.Hex())
+	cacheData, err := r.cache.Get(cacheKey)
+	if err != nil {
+		// FETCH FROM DB IF NO CACHE
+		ctx := context.Background()
+		matchStage := bson.D{{"$match", bson.D{{"_id", userID}}}}
+		lookupStage := bson.D{{"$lookup", bson.D{
+			{"from", "roles"},
+			{"localField", "role_id"},
+			{"foreignField", "_id"},
+			{"as", "roles"}},
+		}}
+		unwindStage := bson.D{{"$unwind", bson.D{{"path", "$roles"}}}}
+		cursor, cursorErr := r.connect.User.Aggregate(ctx, mongo.Pipeline{lookupStage, matchStage, unwindStage})
+		if cursorErr != nil {
+			logger.Error("Error getting user projects (cursor aggregate)", cursorErr)
+			return models.User{}, resterror.InternalServerError()
+		}
 
-	var user models.User
-	for cursor.Next(ctx) {
-		if err := cursor.Decode(&user); err != nil {
-			logger.Error("Error getting current user", err)
+		var user models.User
+		for cursor.Next(ctx) {
+			if err := cursor.Decode(&user); err != nil {
+				logger.Error("Error getting current user", err)
+				return user, resterror.InternalServerError()
+			}
+		}
+
+		if err := cursor.Err(); err != nil {
+			logger.Error("Error getting current user (cursor error)", err)
 			return user, resterror.InternalServerError()
 		}
+
+		defer cursor.Close(ctx)
+
+		data, marshErr := json.Marshal(user)
+		if marshErr != nil {
+			logger.Error("Error unable to marsh json", marshErr)
+			return user, resterror.InternalServerError()
+		}
+
+		if err := r.cache.Set(cacheKey, data); err != nil {
+			return user, resterror.InternalServerError()
+		}
+
+		return user, nil
 	}
 
-	if err := cursor.Err(); err != nil {
-		logger.Error("Error getting current user (cursor error)", err)
-		return user, resterror.InternalServerError()
+	if unMarshErr := json.Unmarshal(cacheData, &cacheUser); unMarshErr != nil {
+		fmt.Println("Can;t unmarshal the byte array")
+		logger.Error("Error unable to unmarshal the byte array", unMarshErr)
+		return cacheUser, resterror.InternalServerError()
 	}
 
-	defer cursor.Close(ctx)
-
-	return user, nil
+	return cacheUser, nil
 }

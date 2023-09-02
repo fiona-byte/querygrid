@@ -3,6 +3,7 @@ module github.com/devylab/querygrid
 go 1.20
 
 require (
+	github.com/allegro/bigcache/v3 v3.1.0
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-contrib/gzip v0.0.6
 	go.uber.org/zap v1.24.0

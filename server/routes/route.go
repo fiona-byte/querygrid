@@ -1,38 +1,34 @@
 package routes
 
 import (
+	cache2 "github.com/devylab/querygrid/pkg/cache"
 	"github.com/devylab/querygrid/pkg/config"
 	"github.com/devylab/querygrid/pkg/database"
 	"github.com/devylab/querygrid/pkg/middlewares"
 	"github.com/gin-gonic/gin"
 )
 
-type route struct {
-	router     *gin.Engine
-	public     *gin.RouterGroup
-	private    *gin.RouterGroup
-	db         *database.Database
-	conf       config.Config
-	permission *middlewares.Permission
+type RouteConfig struct {
+	Router     *gin.Engine
+	Public     *gin.RouterGroup
+	Private    *gin.RouterGroup
+	DB         *database.Database
+	Config     config.Config
+	Permission *middlewares.Permission
+	Cache      *cache2.Cache
 }
 
-func NewRoute(publicRoute, privateRoute *gin.RouterGroup, router *gin.Engine, db *database.Database, conf config.Config) *route {
-	permissions := middlewares.NewPermission(db, conf)
-
-	return &route{
-		router:     router,
-		public:     publicRoute,
-		private:    privateRoute,
-		db:         db,
-		conf:       conf,
-		permission: permissions,
-	}
+func NewRoute(routeConfig *RouteConfig) *RouteConfig {
+	permissions := middlewares.NewPermission(routeConfig.DB, routeConfig.Config, routeConfig.Cache)
+	routeConfig.Permission = permissions
+	return routeConfig
 }
-func (r *route) MapUrls() {
+
+func (r *RouteConfig) MapUrls() {
 	r.UserRoutes()
 	r.ProjectRoutes()
 
-	r.router.NoRoute(NotFound)
+	r.Router.NoRoute(NotFound)
 }
 
 func NotFound(c *gin.Context) {

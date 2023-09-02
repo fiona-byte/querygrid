@@ -6,11 +6,11 @@ import (
 	"github.com/devylab/querygrid/repositories"
 )
 
-func (r *route) ProjectRoutes() {
-	projectRepo := repositories.NewProjectRepo(r.db, r.conf)
-	controller := controllers.NewProjectHandler(projectRepo, r.conf)
+func (r *RouteConfig) ProjectRoutes() {
+	projectRepo := repositories.NewProjectRepo(r.DB, r.Config)
+	controller := controllers.NewProjectHandler(projectRepo, r.Config)
 
-	r.private.POST("/project", r.permission.HasPermission(constants.PROJECT, constants.CREATE), controller.CreateProject)
-	r.private.GET("/projects", controller.GetAll)
-	r.private.GET("/project/count", controller.ProjectCount)
+	r.Private.POST("/project", r.Permission.HasPermission(constants.PROJECT, constants.CREATE), controller.CreateProject)
+	r.Private.GET("/projects", controller.GetAll)
+	r.Private.GET("/project/count", controller.ProjectCount)
 }
