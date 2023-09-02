@@ -193,24 +193,8 @@ func (r *UserRepo) Login(login models.LoginUser) (*models.LoginResp, *resterror.
 		return nil, resterror.BadRequest("login", "contact admin for support")
 	}
 
-	expirationTime := time.Now().Add(5 * time.Minute)
-	secret := utils.GenerateRandomToken(25)
-	accessToken, accessTokenErr := jwt.GenerateJWT(user.ID.Hex(), secret, r.config.JWTSecret, expirationTime)
-	if accessTokenErr != nil {
-		return nil, accessTokenErr
-	}
+	return models.GenerateUserToken(user.ID.Hex(), r.config.JWTSecret)
 
-	expirationTime2 := time.Now().Add(100 * time.Minute)
-	refreshToken, refreshTokenErr := jwt.GenerateJWT(user.ID.Hex(), secret, r.config.JWTSecret, expirationTime2)
-	if refreshTokenErr != nil {
-		return nil, refreshTokenErr
-	}
-
-	return &models.LoginResp{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-		Secret:       secret,
-	}, nil
 }
 
 func (r *UserRepo) CurrentUser(userID primitive.ObjectID) (models.User, *resterror.RestError) {

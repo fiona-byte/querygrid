@@ -15,29 +15,29 @@ func Authentication(config config.Config) gin.HandlerFunc {
 		var accessToken, secret string
 		var err error
 		if accessToken, err = c.Cookie(constants.ACCESS_TOKEN_KEY); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": constants.InvalidToken})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": constants.InvalidToken})
 			return
 		}
 
 		if secret, err = c.Cookie(constants.SECRET_KEY); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": constants.InvalidToken})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": constants.InvalidToken})
 			return
 		}
 
 		data, verifyErr := jwt.VerifyJWT(accessToken, config.JWTSecret)
 		if verifyErr != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": constants.InvalidToken})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": constants.InvalidToken})
 			return
 		}
 
 		if data.Secret != secret {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": constants.InvalidToken})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": constants.InvalidToken})
 			return
 		}
 
 		userID, userIDErr := primitive.ObjectIDFromHex(data.User)
 		if userIDErr != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": constants.InvalidToken})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": constants.InvalidToken})
 			return
 		}
 
