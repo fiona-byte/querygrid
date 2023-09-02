@@ -14,7 +14,7 @@
   <h3 align="center">QueryGrid</h3>
 
   <p align="center">
-    A backend as a service software
+    An open source backend as a service software
     <br />
     <a href="https://github.com/devylab/querygrid"><strong>Explore the docs »</strong></a>
     <br />
@@ -59,7 +59,7 @@
 
 [//]: # '[![QueryGrid Screen Shot][product-screenshot]](https://github.com/devylab/querygrid)'
 
-QueryGrid is a backend as a service software that allows you to build a web and mobile applications without writing a single line of backend. It hosts databases, storage, services, authentication, mailing and other features.
+QueryGrid is an open source backend as a service software that allows you to build a web and mobile applications without writing a single line of backend. It hosts databases, storage, services, authentication, mailing and other features.
 
 Why QueryGrid?:
 
