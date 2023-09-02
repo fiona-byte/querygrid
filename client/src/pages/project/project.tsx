@@ -12,6 +12,7 @@ import { useToaster } from '@hooks/useToaster';
 import { usePagination } from '@hooks/usePagination';
 import { useDebounce } from '@hooks/useDebounce';
 import { Can } from '@context/permissionContext';
+import PageLayout from '@layout/page';
 
 type Project = {
   name: string;
@@ -85,7 +86,7 @@ const Project = () => {
   const loadPrevPage = () => paginationHandler(true);
 
   return (
-    <Box>
+    <PageLayout page="Projects">
       <NewProject open={open} closeHandler={closeHandler} />
       <Box sx={{ backgroundColor: '#ECF1F9' }}>
         <TopWrapper maxWidth="lg">
@@ -135,7 +136,7 @@ const Project = () => {
       ) : (
         <p>No Projects</p>
       )}
-    </Box>
+    </PageLayout>
   );
 };
 

@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from 'react-error-boundary';
 import CssBaseline from '@mui/material/CssBaseline';
+import { HelmetProvider } from 'react-helmet-async';
 import ThemeProvider from './contexts/themeContext';
 import InternationalizationProvider from './contexts/translatorContext';
 import ToastProvider from './contexts/toastContext';
@@ -17,7 +18,9 @@ const App = () => {
           <InternationalizationProvider>
             <ToastProvider>
               <CssBaseline />
-              <Router />
+              <HelmetProvider>
+                <Router />
+              </HelmetProvider>
             </ToastProvider>
           </InternationalizationProvider>
         </ThemeProvider>

@@ -7,6 +7,7 @@ import userServices from '@service/userServices';
 import { useToaster } from '@hooks/useToaster';
 import { utils } from '@utils/index';
 import { Card, Para, Form, Input, SubmitButton, Title } from '@assets/styles/auth.styles';
+import PageLayout from '@layout/page';
 
 const forms = [
   {
@@ -56,38 +57,40 @@ const Login = () => {
   const onSubmit = (data: FormData) => loginMutation.mutate(data);
 
   return (
-    <Card variant="outlined">
-      <Title>Sign In</Title>
-      <Para>Login to your account to access your projects.</Para>
-      <Form onSubmit={handleSubmit(onSubmit)}>
-        {forms.map(({ placeholder, name, type }) => (
-          <Controller
-            key={name}
-            name={name}
-            control={control}
-            render={({ field: { value, ...field } }) => (
-              <Input
-                type={type}
-                fullWidth
-                size="medium"
-                variant="outlined"
-                placeholder={placeholder}
-                error={!!errors[name]}
-                helperText={errors[name]?.message}
-                {...field}
-              />
-            )}
-          />
-        ))}
-        <SubmitButton disabled={loginMutation.isLoading} type="submit" fullWidth variant="contained">
-          Login
-        </SubmitButton>
-      </Form>
+    <PageLayout page="Login">
+      <Card variant="outlined">
+        <Title>Sign In</Title>
+        <Para>Login to your account to access your projects.</Para>
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          {forms.map(({ placeholder, name, type }) => (
+            <Controller
+              key={name}
+              name={name}
+              control={control}
+              render={({ field: { value, ...field } }) => (
+                <Input
+                  type={type}
+                  fullWidth
+                  size="medium"
+                  variant="outlined"
+                  placeholder={placeholder}
+                  error={!!errors[name]}
+                  helperText={errors[name]?.message}
+                  {...field}
+                />
+              )}
+            />
+          ))}
+          <SubmitButton disabled={loginMutation.isLoading} type="submit" fullWidth variant="contained">
+            Login
+          </SubmitButton>
+        </Form>
 
-      <Para>
-        <Link to="/reset-password">Forgot Password?</Link>
-      </Para>
-    </Card>
+        <Para>
+          <Link to="/reset-password">Forgot Password?</Link>
+        </Para>
+      </Card>
+    </PageLayout>
   );
 };
 
