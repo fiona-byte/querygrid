@@ -197,7 +197,7 @@ Project Link: [https://github.com/devylab/querygrid](https://github.com/devylab/
 [stars-url]: https://github.com/devylab/querygrid/stargazers
 [issues-shield]: https://img.shields.io/github/issues/devylab/querygrid.svg?style=for-the-badge
 [issues-url]: https://github.com/devylab/querygrid/issues
-[license-shield]: https://img.shields.io/github/license/devylab/querygrid.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/devylab/querygrid?style=for-the-badge
 [license-url]: https://github.com/devylab/querygrid/blob/main/LICENSE
 [product-screenshot]: images/screenshot.png
 [Golang]: https://img.shields.io/badge/Golang-0769AD?style=for-the-badge&logo=go&logoColor=white
