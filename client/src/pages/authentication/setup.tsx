@@ -4,6 +4,7 @@ import First from '@component/Setup/first';
 import Second from '@component/Setup/second';
 import { AppSetupContext } from '@context/appSetupContext';
 import Loader from '@component/loader';
+import PageLayout from '@layout/page';
 
 const Setup = () => {
   const navigate = useNavigate();
@@ -40,7 +41,11 @@ const Setup = () => {
 
   if (pageLoading) return <Loader />;
 
-  return <>{activeStep === 0 ? <First handleNext={handleNext} /> : <Second handleBack={handleBack} />}</>;
+  return (
+    <PageLayout page="Setup">
+      {activeStep === 0 ? <First handleNext={handleNext} /> : <Second handleBack={handleBack} />}
+    </PageLayout>
+  );
 };
 
 export default Setup;
