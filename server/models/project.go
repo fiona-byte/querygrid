@@ -32,7 +32,7 @@ type NewProject struct {
 
 type ProjectRepository interface {
 	CreateProject(project NewProject, userID primitive.ObjectID) (*Project, *resterror.RestError)
-	//GetById(projectID string) (*Project, *resterror.RestError)
+	GetById(projectId string, userID primitive.ObjectID) (*Project, *resterror.RestError)
 	GetAll(userID primitive.ObjectID, offsetStr, search string) ([]Project, *resterror.RestError)
 	ProjectCount(userID primitive.ObjectID) (int64, *resterror.RestError)
 }

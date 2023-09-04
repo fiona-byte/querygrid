@@ -32,7 +32,6 @@ const ProjectItem = ({ name, id, status }: Project) => {
     </ProjectCard>
   );
 };
-
 const Project = () => {
   const toaster = useToaster();
   const { t } = useTranslation();

@@ -1,0 +1,16 @@
+{
+  "projects": "Projekte",
+  "new_project": "Neues Projekt",
+  "browse_projects": "Projekt durchsuchen",
+  "active": "Aktiv",
+  "disabled": "Deaktiviert",
+  "new_project_desc": "Erstellen Sie ein neues Projekt, um wirklich coole Sachen zu bauen.",
+  "create_project": "Projekt erstellen",
+  "project_name": "Projektname",
+  "project_description": "Projektbeschreibung",
+  "language": "Sprache",
+  "welcome_to_querygrid": "Willkommen bei QueryGrid",
+  "prefered_language": "Wählen Sie Ihre bevorzugte Sprache",
+  "create_an_account": "Ein Konto erstellen",
+  "sign_up_desc": "Erstellen Sie in wenigen Schritten Ihr Konto und beginnen Sie mit der Entwicklung wirklich cooler Sachen"
+}

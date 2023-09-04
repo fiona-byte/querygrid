@@ -62,7 +62,8 @@ func (r *UserRepo) Setup(newUser models.NewUser) (*models.LoginResp, *resterror.
 	defer session.EndSession(ctxs)
 
 	permissions := make(map[string][]string)
-	permissions["project"] = []string{"create", "read", "update", "delete"}
+	permissions["project"] = []string{"create", "read", "update", "delete", "view_all"}
+	permissions["user"] = []string{"create", "read", "update", "delete", "view_all"}
 
 	result, transactionErr := session.WithTransaction(ctxs, func(ctx mongo.SessionContext) (interface{}, error) {
 		filter := bson.D{{"name", "super"}}

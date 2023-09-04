@@ -1,4 +1,5 @@
-import us from './flags/us.webp';
+import us from './flags/us.png';
+import de from './flags/de.png';
 import appBrand from './nav-auth-brand-sm.png';
 import brand from './brand.svg';
 import project from './project.svg';
@@ -9,7 +10,7 @@ export default {
   appBrand,
   flags: {
     en: us,
-    de: us,
+    de: de,
   },
   brand,
   logo,

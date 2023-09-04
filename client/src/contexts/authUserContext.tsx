@@ -8,7 +8,7 @@ import Loader from '@component/loader';
 type Role = {
   id: string;
   name: string;
-  permissions: { [key: string]: string[] };
+  permissions: Record<string, string[]>;
   created_at: string;
   updated_at: string;
 };

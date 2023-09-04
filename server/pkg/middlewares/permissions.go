@@ -22,6 +22,7 @@ func NewPermission(db *database.Database, config config.Config, cache *cache2.Ca
 	return &Permission{
 		connect: db,
 		config:  config,
+		cache:   cache,
 	}
 }
 

@@ -11,6 +11,7 @@ func (r *RouteConfig) ProjectRoutes() {
 	controller := controllers.NewProjectHandler(projectRepo, r.Config)
 
 	r.Private.POST("/project", r.Permission.HasPermission(constants.PROJECT, constants.CREATE), controller.CreateProject)
-	r.Private.GET("/projects", controller.GetAll)
-	r.Private.GET("/project/count", controller.ProjectCount)
+	r.Private.GET("/projects", r.Permission.HasPermission(constants.PROJECT, constants.VIEW_ALL), controller.GetAll)
+	r.Private.GET("/project/count", r.Permission.HasPermission(constants.PROJECT, constants.VIEW_ALL), controller.ProjectCount)
+	r.Private.GET("/project/:projectId", r.Permission.HasPermission(constants.PROJECT, constants.READ), controller.GetById)
 }
