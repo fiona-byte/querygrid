@@ -11,6 +11,9 @@ const projectServices = {
   async projectCount() {
     return request.get(endpoints.projectCount);
   },
+  async getProjectById(projectId: string) {
+    return request.get(endpoints.getProjectById, { params: { projectId } });
+  },
 };
 
 export default Object.freeze(projectServices);

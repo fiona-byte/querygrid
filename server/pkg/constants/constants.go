@@ -18,10 +18,12 @@ var (
 	Live                            = "live"
 	Test                            = "test"
 	CREATE                          = "create"
+	VIEW_ALL                        = "view_all"
 	READ                            = "read"
 	UPDATE                          = "update"
 	DELETE                          = "delete"
 	ServerError                     = "something went wrong"
 	InvalidToken                    = "invalid token"
 	PROJECT                         = "project"
+	USER                            = "user"
 )

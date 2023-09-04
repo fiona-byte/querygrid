@@ -70,6 +70,7 @@ Why QueryGrid?:
 ### Built With
 
 - [![Golang][Golang]][Golang-url]
+- [![Typescript][typescript]][typescript-url]
 - [![React][React.js]][React-url]
 - [![Mui][Mui]][Mui-url]
 
@@ -185,6 +186,7 @@ Project Link: [https://github.com/devylab/querygrid](https://github.com/devylab/
 - [React Pro Sidebar](https://github.com/azouaoui-med/react-pro-sidebar)
 - [Zustand](https://docs.pmnd.rs/zustand/getting-started/introduction)
 - [Mui](https://mui.com/)
+- [Flag icons created by Freepik - Flaticon](https://www.flaticon.com/free-icons/flag)
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
@@ -200,9 +202,11 @@ Project Link: [https://github.com/devylab/querygrid](https://github.com/devylab/
 [license-shield]: https://img.shields.io/github/license/devylab/querygrid?style=for-the-badge
 [license-url]: https://github.com/devylab/querygrid/blob/main/LICENSE
 [product-screenshot]: images/screenshot.png
-[Golang]: https://img.shields.io/badge/Golang-0769AD?style=for-the-badge&logo=go&logoColor=white
+[Golang]: https://img.shields.io/badge/go-%2300ADD8.svg?style=for-the-badge&logo=go&logoColor=white
 [Golang-url]: https://go.dev/
-[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[React.js]: https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB
 [React-url]: https://reactjs.org/
-[Mui]: https://img.shields.io/badge/Mui-35495E?style=for-the-badge&logo=mui&logoColor=4FC08D
+[Mui]: https://img.shields.io/badge/MUI-%230081CB.svg?style=for-the-badge&logo=mui&logoColor=white
 [Mui-url]: https://mui.com/
+[typescript]: https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white
+[typescript-url]: https://www.typescriptlang.org/

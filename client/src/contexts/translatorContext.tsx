@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useCallback, useState, useEffect } from 'react';
+import { createContext, ReactNode, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Internationalization, Languages, languages } from '@lang/type';
 import useInternationalizationStore from '@store/i18nStore';
@@ -16,22 +16,15 @@ export const InternationalizationContext = createContext<Internationalization>({
 const InternationalizationProvider = ({ children }: InternationalizationProps) => {
   const { i18n } = useTranslation();
   const { language, setLanguage } = useInternationalizationStore((state) => state);
-  const [lang, setLang] = useState<Languages>(language);
 
-  const changeLanguage = useCallback(
-    (lang: Languages) => {
-      setLang(lang);
-      setLanguage(lang);
-    },
-    [lang],
-  );
+  const changeLanguage = useCallback((lang: Languages) => setLanguage(lang), [language]);
 
   useEffect(() => {
-    i18n.changeLanguage(lang).catch((err) => console.log('CHANGE LANGUAGE ERROR', err)); // TODO: remove console.log()
-  }, [lang]);
+    i18n.changeLanguage(language).catch((err) => console.log('CHANGE LANGUAGE ERROR', err)); // TODO: remove console.log()
+  }, [language]);
 
   return (
-    <InternationalizationContext.Provider value={{ changeLanguage, language: lang, languages }}>
+    <InternationalizationContext.Provider value={{ changeLanguage, language, languages }}>
       {children}
     </InternationalizationContext.Provider>
   );

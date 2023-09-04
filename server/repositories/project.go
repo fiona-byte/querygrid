@@ -131,3 +131,22 @@ func (r *ProjectRepo) ProjectCount(userID primitive.ObjectID) (int64, *resterror
 
 	return count, nil
 }
+
+func (r *ProjectRepo) GetById(projectID string, userID primitive.ObjectID) (*models.Project, *resterror.RestError) {
+	ctx := context.Background()
+
+	projectId, projectIDErr := primitive.ObjectIDFromHex(projectID)
+	if projectIDErr != nil {
+		return nil, resterror.InternalServerError()
+	}
+
+	var project models.Project
+	opts := options.FindOne().SetProjection(bson.D{{"_id", 1}, {"password", 1}, {"status", 1}})
+	filter := bson.D{{"_id", projectId}, {"members.user_id", userID}}
+	if err := r.connect.User.FindOne(ctx, filter, opts).Decode(&project); err != nil {
+		logger.Error("Error getting project data", err)
+		return nil, resterror.BadRequest("project", "not found")
+	}
+	
+	return &project, nil
+}
