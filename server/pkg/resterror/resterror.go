@@ -31,6 +31,13 @@ func BadJSONRequest() *RestError {
 	}
 }
 
+func BadQueryRequest() *RestError {
+	return &RestError{
+		Message: "invalid query",
+		Status:  http.StatusBadRequest,
+	}
+}
+
 func NotFound(message string) *RestError {
 	return &RestError{
 		Message: message,

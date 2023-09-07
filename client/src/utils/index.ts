@@ -15,4 +15,8 @@ export const utils = {
   stringAvatar: (name: string) => ({
     children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
   }),
+
+  hasPrevious: (page: number) => page > 1,
+
+  hasNext: (page: number, total: number) => page < total,
 };

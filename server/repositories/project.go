@@ -7,12 +7,14 @@ import (
 	"github.com/devylab/querygrid/pkg/constants"
 	"github.com/devylab/querygrid/pkg/database"
 	"github.com/devylab/querygrid/pkg/logger"
+	"github.com/devylab/querygrid/pkg/paginate"
 	"github.com/devylab/querygrid/pkg/resterror"
 	"github.com/devylab/querygrid/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"strings"
+	"time"
 )
 
 type ProjectRepo struct {
@@ -28,7 +30,8 @@ func NewProjectRepo(db *database.Database, config config.Config) *ProjectRepo {
 }
 
 func (r *ProjectRepo) CreateProject(newProject models.NewProject, userID primitive.ObjectID) (*models.Project, *resterror.RestError) {
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
 	projectName := utils.ReplaceRegex(strings.TrimSpace(newProject.Name), " ", `\s+`)
 	projectDescription := utils.ReplaceRegex(strings.TrimSpace(newProject.Description), " ", `\s+`)
 	underscoreName := strings.ReplaceAll(strings.ToLower(projectName), " ", "_")
@@ -73,27 +76,27 @@ func (r *ProjectRepo) CreateProject(newProject models.NewProject, userID primiti
 	}, nil
 }
 
-func (r *ProjectRepo) GetAll(userID primitive.ObjectID, offsetStr, search string) ([]models.Project, *resterror.RestError) {
-	ctx := context.Background()
-
-	offset, err := utils.Offset(offsetStr)
-	if err != nil {
-		restErr := resterror.BadJSONRequest()
-		return nil, restErr
-	}
+func (r *ProjectRepo) GetAll(userID primitive.ObjectID, query models.ProjectQuery, paginate *paginate.Paginate) (*models.ProjectResponse, *resterror.RestError) {
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
 
 	filter := bson.D{{"members.user_id", userID}}
-	if search != "" {
-		filter = bson.D{
-			{"members.user_id", userID},
-			{"$text", bson.D{{"$search", search}}},
-		}
+	if query.Search != "" {
+		filter = append(filter, bson.E{"$text", bson.D{{"$search", query.Search}}})
 	}
+
+	countOpts := options.Count().SetHint("_id_")
+	projectCount, projectCountErr := r.connect.Project.CountDocuments(ctx, filter, countOpts)
+	if projectCountErr != nil {
+		logger.Error("Error getting projects count", projectCountErr)
+		return nil, resterror.InternalServerError()
+	}
+
 	opts := options.Find().
 		SetProjection(bson.D{{"_id", 1}, {"name", 1}, {"status", 1}}).
-		SetSkip(int64(offset)).
-		SetLimit(int64(10)).
-		SetSort(bson.M{"created_at": -1})
+		SetLimit(int64(paginate.Limit)).
+		SetSkip(int64(paginate.Offset)).
+		SetSort(bson.M{"_id": -1})
 	cursor, cursorErr := r.connect.Project.Find(ctx, filter, opts)
 	if cursorErr != nil {
 		logger.Error("Error getting projects (cursor)", cursorErr)
@@ -115,25 +118,17 @@ func (r *ProjectRepo) GetAll(userID primitive.ObjectID, offsetStr, search string
 
 	defer cursor.Close(ctx)
 
-	return projects, nil
-}
-
-func (r *ProjectRepo) ProjectCount(userID primitive.ObjectID) (int64, *resterror.RestError) {
-	ctx := context.Background()
-
-	filter := bson.D{{"members.user_id", userID}}
-	opts := options.Count().SetHint("_id_")
-	count, countErr := r.connect.Project.CountDocuments(ctx, filter, opts)
-	if countErr != nil {
-		logger.Error("Error getting projects (cursor)", countErr)
-		return 0, resterror.InternalServerError()
-	}
-
-	return count, nil
+	return &models.ProjectResponse{
+		Projects:    projects,
+		CurrentPage: paginate.CurrentPage,
+		TotalPages:  paginate.TotalPages(projectCount),
+		Count:       projectCount,
+	}, nil
 }
 
 func (r *ProjectRepo) GetById(projectID string, userID primitive.ObjectID) (*models.Project, *resterror.RestError) {
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
 
 	projectId, projectIDErr := primitive.ObjectIDFromHex(projectID)
 	if projectIDErr != nil {
@@ -147,6 +142,6 @@ func (r *ProjectRepo) GetById(projectID string, userID primitive.ObjectID) (*mod
 		logger.Error("Error getting project data", err)
 		return nil, resterror.BadRequest("project", "not found")
 	}
-	
+
 	return &project, nil
 }
