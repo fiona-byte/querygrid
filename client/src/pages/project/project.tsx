@@ -8,11 +8,11 @@ import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import images from '@assets/images';
 import NewProject from '@component/newProject';
 import projectServices from '@service/projectServices';
-import { useToaster } from '@hooks/useToaster';
 import { useDebounce } from '@hooks/useDebounce';
 import { Can } from '@context/permissionContext';
 import PageLayout from '@layout/page';
 import { utils } from '@utils/index';
+import Toaster from '@component/toaster';
 
 type Project = {
   name: string;
@@ -34,7 +34,6 @@ const ProjectItem = ({ name, id, status }: Project) => {
 };
 let num = 0;
 const Project = () => {
-  const toaster = useToaster();
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState<string | undefined>();
@@ -51,7 +50,7 @@ const Project = () => {
   const openHandler = () => setOpen(true);
   const closeHandler = () => setOpen(false);
 
-  const { data: projectQuery } = useQuery({
+  const { data: projectQuery, isError } = useQuery({
     queryKey: ['projects', debouncedValue, page],
     queryFn: () => projectServices.projects(debouncedValue, page),
     retry: 0,
@@ -61,6 +60,7 @@ const Project = () => {
 
   return (
     <PageLayout page="Projects">
+      <Toaster show={isError} message={'something went wrong'} type="error" />
       <NewProject open={open} closeHandler={closeHandler} />
       <Box sx={{ backgroundColor: '#ECF1F9' }}>
         <TopWrapper maxWidth="lg">

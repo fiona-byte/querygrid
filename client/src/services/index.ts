@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios';
+import axios, { type AxiosError } from 'axios';
 
 const instance = axios.create({
   baseURL: '/api',
@@ -32,4 +32,5 @@ instance.interceptors.response.use(
   },
 );
 
+export type RequestError = AxiosError;
 export default instance;

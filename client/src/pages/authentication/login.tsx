@@ -1,13 +1,14 @@
-import { useNavigate, Link } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import { object, string, InferType } from 'yup';
 import { useMutation } from '@tanstack/react-query';
 import userServices from '@service/userServices';
-import { useToaster } from '@hooks/useToaster';
 import { utils } from '@utils/index';
 import { Card, Para, Form, Input, SubmitButton, Title } from '@assets/styles/auth.styles';
 import PageLayout from '@layout/page';
+import Toaster from '@component/toaster';
+import { RequestError } from '@service/index';
 
 const forms = [
   {
@@ -24,17 +25,13 @@ const forms = [
   },
 ] as const;
 
-const schema = yup
-  .object({
-    email: yup.string().email('invalid email').required('email is required'),
-    password: yup.string().required('password is required'),
-  })
-  .required();
-type FormData = yup.InferType<typeof schema>;
+const schema = object({
+  email: string().email('invalid email').required('email is required'),
+  password: string().required('password is required'),
+}).required();
+type FormData = InferType<typeof schema>;
 
 const Login = () => {
-  const navigate = useNavigate();
-  const toaster = useToaster();
   const {
     control,
     handleSubmit,
@@ -43,21 +40,22 @@ const Login = () => {
     resolver: yupResolver(schema),
   });
 
-  const loginMutation = useMutation((data: FormData) => userServices.login(data), {
-    onError: (error: any) => {
-      const message = error?.response?.data?.errors || 'something went wrong';
-      toaster.triggerToast({ message, type: 'error' });
-    },
-    onSuccess: () => {
-      utils.setAuthentication();
-      navigate('/projects');
-    },
+  const { isLoading, isError, mutate, error, isSuccess } = useMutation<unknown, RequestError, FormData>({
+    mutationKey: ['user_login'],
+    mutationFn: (data) => userServices.login(data),
   });
 
-  const onSubmit = (data: FormData) => loginMutation.mutate(data);
+  const onSubmit = (data: FormData) => mutate(data);
+  const errorMessage = error?.response?.data?.errors || 'something went wrong';
+
+  if (isSuccess) {
+    utils.setAuthentication();
+    return <Navigate to="/projects" />;
+  }
 
   return (
     <PageLayout page="Login">
+      <Toaster show={isError} message={errorMessage} type="error" />
       <Card variant="outlined">
         <Title>Sign In</Title>
         <Para>Login to your account to access your projects.</Para>
@@ -81,7 +79,7 @@ const Login = () => {
               )}
             />
           ))}
-          <SubmitButton disabled={loginMutation.isLoading} type="submit" fullWidth variant="contained">
+          <SubmitButton disabled={isLoading} type="submit" fullWidth variant="contained">
             Login
           </SubmitButton>
         </Form>
