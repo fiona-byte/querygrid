@@ -4,7 +4,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { HelmetProvider } from 'react-helmet-async';
 import ThemeProvider from './contexts/themeContext';
 import InternationalizationProvider from './contexts/translatorContext';
-import ToastProvider from './contexts/toastContext';
 import Router from './router/router';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 
@@ -16,12 +15,10 @@ const App = () => {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <InternationalizationProvider>
-            <ToastProvider>
-              <CssBaseline />
-              <HelmetProvider>
-                <Router />
-              </HelmetProvider>
-            </ToastProvider>
+            <CssBaseline />
+            <HelmetProvider>
+              <Router />
+            </HelmetProvider>
           </InternationalizationProvider>
         </ThemeProvider>
       </QueryClientProvider>
