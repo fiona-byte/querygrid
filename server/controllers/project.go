@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/devylab/querygrid/models"
 	"github.com/devylab/querygrid/pkg/config"
+	"github.com/devylab/querygrid/pkg/paginate"
 	"github.com/devylab/querygrid/pkg/resterror"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -45,10 +46,14 @@ func (h *ProjectHandler) CreateProject(c *gin.Context) {
 
 func (h *ProjectHandler) GetAll(c *gin.Context) {
 	userID := c.MustGet("userID").(primitive.ObjectID)
-	offset := c.Query("offset")
-	search := c.Query("search")
+	var query models.ProjectQuery
+	if err := c.ShouldBindQuery(&query); err != nil {
+		restErr := resterror.BadQueryRequest()
+		c.SecureJSON(restErr.Status, restErr)
+		return
+	}
 
-	project, projectErr := h.projectRepo.GetAll(userID, offset, search)
+	project, projectErr := h.projectRepo.GetAll(userID, query, paginate.NewPagination(query.Page, query.Limit))
 	if projectErr != nil {
 		c.SecureJSON(projectErr.Status, projectErr)
 		return
@@ -58,24 +63,6 @@ func (h *ProjectHandler) GetAll(c *gin.Context) {
 		"status":  http.StatusOK,
 		"message": "Projects",
 		"data":    project,
-	})
-}
-
-func (h *ProjectHandler) ProjectCount(c *gin.Context) {
-	userID := c.MustGet("userID").(primitive.ObjectID)
-
-	projectCount, projectCountErr := h.projectRepo.ProjectCount(userID)
-	if projectCountErr != nil {
-		c.SecureJSON(projectCountErr.Status, projectCountErr)
-		return
-	}
-
-	c.SecureJSON(http.StatusOK, &gin.H{
-		"status":  http.StatusOK,
-		"message": "Project count",
-		"data": &gin.H{
-			"count": projectCount,
-		},
 	})
 }
 

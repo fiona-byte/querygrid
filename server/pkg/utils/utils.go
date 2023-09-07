@@ -1,10 +1,10 @@
 package utils
 
 import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 	"math/rand"
 	"regexp"
-	"strconv"
 	"strings"
 	"time"
 
@@ -55,10 +55,11 @@ func CheckHash(value, hash string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(value))
 }
 
-func Offset(value string) (int, error) {
-	if value == "" {
-		value = "0"
+func IsObjectID(ID string) *primitive.ObjectID {
+	projectId, projectIDErr := primitive.ObjectIDFromHex(ID)
+	if projectIDErr != nil || ID == "000000000000000000000000" {
+		return nil
 	}
 
-	return strconv.Atoi(value)
+	return &projectId
 }
