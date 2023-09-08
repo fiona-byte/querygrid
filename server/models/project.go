@@ -19,7 +19,7 @@ type Project struct {
 	SecretKey   string             `bson:"secret_key,unique" json:"secret_key,omitempty"`
 	ApiKey      string             `bson:"api_key,unique" json:"api_key,omitempty"`
 	Status      string             `bson:"status" json:"status,omitempty"`
-	Description string             `bson:"description" json:"description,omitempty"`
+	Description string             `bson:"description" json:"description"`
 	Mode        string             `bson:"mode" json:"mode,omitempty"`
 	Members     []*ProjectMember   `bson:"members,omitempty" json:"members,omitempty"`
 	CreatedAt   time.Time          `bson:"created_at" json:"created_at,omitempty"`

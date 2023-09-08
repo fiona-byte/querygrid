@@ -53,6 +53,11 @@ const Login = () => {
     return <Navigate to="/projects" />;
   }
 
+  // Redirect back if user is logged in
+  if (utils.getAuthentication()) {
+    return <Navigate to="/projects" />;
+  }
+
   return (
     <PageLayout page="Login">
       <Toaster show={isError} message={errorMessage} type="error" />
