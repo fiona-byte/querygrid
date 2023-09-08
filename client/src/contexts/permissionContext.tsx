@@ -11,7 +11,7 @@ export const PermissionContext = createContext<AnyAbility>({} as AnyAbility);
 export const Can = createContextualCan(PermissionContext.Consumer);
 
 const PermissionProvider = ({ children }: PermissionProviderProps) => {
-  const user = useUser();
+  const { user } = useUser();
 
   const ability = defineAbility((can) => {
     if (user) {

@@ -4,7 +4,7 @@ import PageLayout from '@layout/page';
 
 const Overview = () => {
   const { t } = useTranslation();
-  const user = useUser();
+  const { user } = useUser();
 
   return (
     <PageLayout page="Overview">

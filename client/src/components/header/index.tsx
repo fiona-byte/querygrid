@@ -73,7 +73,7 @@ const ProfileAvatar = (profileAvatar: ProfileAvatar) => (
 const Header = (props: HeaderProps) => {
   const navigate = useNavigate();
   const { language, languages, changeLanguage } = useTranslator();
-  const user = useUser();
+  const { user } = useUser();
   const isMobile = useMobile();
   const logoSize = isMobile ? 32 : 42;
   const [elUser, setElUser] = useState<null | HTMLElement>(null);
