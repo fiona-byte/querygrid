@@ -6,6 +6,9 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), splitVendorChunkPlugin(), tsconfigPaths()],
+  optimizeDeps: {
+    include: ['@tanstack/react-query'],
+  },
   build: {
     outDir: path.join(__dirname, '..', 'server', 'admin'),
     sourcemap: true,

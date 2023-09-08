@@ -136,9 +136,10 @@ func (r *ProjectRepo) GetById(projectID string, userID primitive.ObjectID) (*mod
 	}
 
 	var project models.Project
-	opts := options.FindOne().SetProjection(bson.D{{"_id", 1}, {"password", 1}, {"status", 1}})
+	opts := options.FindOne().SetProjection(bson.D{{"members", 0}, {"database", 0},
+		{"updated_at", 0}, {"secret_key", 0}, {"api_key", 0}})
 	filter := bson.D{{"_id", projectId}, {"members.user_id", userID}}
-	if err := r.connect.User.FindOne(ctx, filter, opts).Decode(&project); err != nil {
+	if err := r.connect.Project.FindOne(ctx, filter, opts).Decode(&project); err != nil {
 		logger.Error("Error getting project data", err)
 		return nil, resterror.BadRequest("project", "not found")
 	}

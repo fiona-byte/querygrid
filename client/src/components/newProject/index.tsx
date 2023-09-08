@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { InferType, object, string } from 'yup';
 import { useMutation } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import Typography from '@component/typography';
 import { Box, Button, Dialog, IconButton, TextField, styled } from '@mui/material';
 import { X } from 'lucide-react';
@@ -37,7 +38,6 @@ const NewProject = ({ open, closeHandler }: NewProject) => {
     mutationKey: ['create_project'],
     mutationFn: (data) => projectServices.createProject(data),
   });
-  const errorMessage = error?.response?.data?.errors || 'something went wrong';
 
   const onSubmit = (data: FormData) => mutate(data);
 
@@ -45,15 +45,18 @@ const NewProject = ({ open, closeHandler }: NewProject) => {
     return <Navigate to={`/project/${data.data.id}`} />;
   }
 
-  if (isError) {
-    if (typeof errorMessage === 'object') {
-      setError('name', { message: errorMessage?.name });
+  useEffect(() => {
+    if (isError) {
+      const errorMessage = error?.response?.data?.errors;
+      if (typeof errorMessage === 'object') {
+        setError('name', { message: errorMessage?.name });
+      }
     }
-  }
+  }, [isError]);
 
   return (
     <>
-      <Toaster show={isError} message={errorMessage} type="error" />
+      <Toaster show={isError} message={'something went wrong'} type="error" />
       <Dialog onClose={closeHandler} open={open}>
         <ModalBox>
           <ModalTitle>
