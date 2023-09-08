@@ -1,20 +1,20 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import First from '@component/Setup/first';
 import Second from '@component/Setup/second';
-import { AppSetupContext } from '@context/appSetupContext';
 import Loader from '@component/loader';
 import PageLayout from '@layout/page';
+import { useProjectSetup } from '@hooks/useProjectSetup';
 
 const Setup = () => {
   const navigate = useNavigate();
-  const { install } = useContext(AppSetupContext);
+  const { isSuccess, data } = useProjectSetup();
   const [activeStep, setActiveStep] = useState(0);
   const [pageLoading, setPageLoading] = useState(true);
   const [skipped, setSkipped] = useState(new Set<number>());
 
   useEffect(() => {
-    if (install) {
+    if (isSuccess && data.data) {
       navigate('/projects');
     }
     setPageLoading(false);

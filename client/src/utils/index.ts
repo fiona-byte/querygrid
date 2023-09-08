@@ -19,4 +19,8 @@ export const utils = {
   hasPrevious: (page: number) => page > 1,
 
   hasNext: (page: number, total: number) => page < total,
+
+  mapValues: (obj: any, iteratee: any) => {
+    return Object.fromEntries(Object.entries(obj).map(([key, value]) => [key, iteratee(value)]));
+  },
 };

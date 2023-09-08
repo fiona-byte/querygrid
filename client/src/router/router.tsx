@@ -1,24 +1,35 @@
 import { ReactNode } from 'react';
 import { Route, Routes, BrowserRouter, Navigate } from 'react-router-dom';
 import DashboardLayout from '@layout/dashboard';
-import AuthUserProvider from '@context/authUserContext';
 import AppLayout from '@layout/app';
 import AuthLayout from '@layout/authentication';
 import { dashboard, page, authentications } from './routes';
 import PermissionProvider from '@context/permissionContext';
-import AppSetupProvider from '@context/appSetupContext';
+import { useProjectSetup } from '@hooks/useProjectSetup';
+import { utils } from '@utils/index';
 
 type Props = {
   children: ReactNode;
 };
 
+const AppSetup = ({ children }: Props) => {
+  const { isSuccess, data } = useProjectSetup();
+
+  return isSuccess && !data?.data ? <Navigate to="/setup" /> : children;
+};
+
+const Authenticated = ({ children }: Props) => {
+  const isAuthenticated = utils.getAuthentication();
+  return isAuthenticated ? children : <Navigate to="/login" />;
+};
+
 const Protected = ({ children }: Props) => {
   return (
-    <AppSetupProvider>
-      <AuthUserProvider>
+    <AppSetup>
+      <Authenticated>
         <PermissionProvider>{children}</PermissionProvider>
-      </AuthUserProvider>
-    </AppSetupProvider>
+      </Authenticated>
+    </AppSetup>
   );
 };
 
@@ -42,9 +53,9 @@ const Router = () => {
         <Route
           path="/"
           element={
-            <AppSetupProvider>
+            <AppSetup>
               <AuthLayout />
-            </AppSetupProvider>
+            </AppSetup>
           }
         >
           {authenticationsRoutes}
@@ -72,9 +83,9 @@ const Router = () => {
         <Route
           path="*"
           element={
-            <AppSetupProvider>
+            <AppSetup>
               <div>NOT FOUND</div>
-            </AppSetupProvider>
+            </AppSetup>
           }
         />
       </Routes>

@@ -32,16 +32,12 @@ const ProjectItem = ({ name, id, status }: Project) => {
     </ProjectCard>
   );
 };
-let num = 0;
 const Project = () => {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState<string | undefined>();
   const [page, setPage] = useState(1);
   const debouncedValue = useDebounce(search, 500);
-
-  num = num + 1;
-  console.log('I RE RENDERED ', num);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value || undefined);
