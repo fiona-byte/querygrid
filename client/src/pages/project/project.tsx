@@ -95,18 +95,18 @@ const Project = () => {
             ))}
           </ProjectContainer>
           <PaginationContainer>
-            <IconButton
+            <PaginationButton
               disabled={!utils.hasPrevious(projectQuery.data.current_page)}
               onClick={() => setPage(projectQuery.data.current_page - 1)}
             >
               <ChevronLeft size={24} color="#57565C" />
-            </IconButton>
-            <IconButton
+            </PaginationButton>
+            <PaginationButton
               disabled={!utils.hasNext(projectQuery.data.current_page, projectQuery.data.total_pages)}
               onClick={() => setPage(projectQuery.data.current_page + 1)}
             >
               <ChevronRight size={24} color="#57565C" />
-            </IconButton>
+            </PaginationButton>
           </PaginationContainer>
         </>
       ) : (
@@ -216,5 +216,12 @@ const PaginationContainer = styled(Container)`
   align-items: center;
   justify-content: center;
 `;
+
+const PaginationButton = styled(IconButton)({
+  '&.MuiButtonBase-root:disabled': {
+    cursor: 'not-allowed',
+    pointerEvents: 'auto',
+  },
+});
 
 export default Project;

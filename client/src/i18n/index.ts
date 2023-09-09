@@ -8,7 +8,7 @@ i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    debug: true, // TODO: disable if production
+    debug: false,
     fallbackLng: 'en',
     supportedLngs: ['en', 'de'],
     ns: ['translations'],

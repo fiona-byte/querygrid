@@ -106,9 +106,15 @@ const Header = (props: HeaderProps) => {
               sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0px !important' }}
             >
               {props.toggleSidebar ? (
-                <IconButton onClick={props.toggleSidebar}>
-                  <MenuIcon />
-                </IconButton>
+                <>
+                  {isMobile ? (
+                    <IconButton onClick={props.toggleSidebar}>
+                      <MenuIcon />
+                    </IconButton>
+                  ) : (
+                    <span />
+                  )}
+                </>
               ) : (
                 <Brand to="/projects">
                   <Logo width={logoSize} height={logoSize} src={images.logo} alt="projects" />

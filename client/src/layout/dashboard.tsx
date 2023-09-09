@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Sidebar from '@component/sidebar';
 import Header from '@component/header';
 import { useMobile } from '@hooks/useMobile';
-import { Toolbar, styled } from '@mui/material';
+import { GlobalStyles, Toolbar, styled } from '@mui/material';
 
 const DashboardLayout = () => {
   const isMobile = useMobile();
@@ -19,6 +19,13 @@ const DashboardLayout = () => {
 
   return (
     <Container>
+      <GlobalStyles
+        styles={{
+          body: {
+            fontFamily: "'IBM Plex Sans', sans-serif",
+          },
+        }}
+      />
       <Sidebar show={show} />
 
       {/* main layout */}
