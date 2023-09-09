@@ -23,4 +23,6 @@ export const utils = {
   mapValues: (obj: any, iteratee: any) => {
     return Object.fromEntries(Object.entries(obj).map(([key, value]) => [key, iteratee(value)]));
   },
+
+  isObject: (value: unknown) => typeof value === 'object' && !Array.isArray(value) && value !== null,
 };

@@ -9,6 +9,7 @@ declare module '@mui/material/styles' {
     content: {
       main: string;
       secondary: string;
+      tetiary: string;
     };
   }
   interface PaletteOptions {
@@ -19,6 +20,7 @@ declare module '@mui/material/styles' {
     content?: {
       main: string;
       secondary: string;
+      tetiary: string;
     };
   }
 }

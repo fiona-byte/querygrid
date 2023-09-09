@@ -14,7 +14,8 @@ export const DefaultTheme = createTheme({
     },
     content: {
       main: '#242526',
-      secondary: '#242526',
+      secondary: '#35343C',
+      tetiary: '#57565D',
     },
   },
 });

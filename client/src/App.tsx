@@ -5,7 +5,6 @@ import { HelmetProvider } from 'react-helmet-async';
 import ThemeProvider from './contexts/themeContext';
 import InternationalizationProvider from './contexts/translatorContext';
 import Router from './router/router';
-import 'react-perfect-scrollbar/dist/css/styles.css';
 import { RequestError } from './services';
 import { utils } from './utils';
 
