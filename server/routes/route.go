@@ -27,6 +27,8 @@ func NewRoute(routeConfig *RouteConfig) *RouteConfig {
 func (r *RouteConfig) MapUrls() {
 	r.UserRoutes()
 	r.ProjectRoutes()
+	r.CollectionRoutes()
+	r.DocumentRoutes()
 
 	r.Router.NoRoute(NotFound)
 }

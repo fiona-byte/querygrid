@@ -24,6 +24,4 @@ var (
 	DELETE                          = "delete"
 	ServerError                     = "something went wrong"
 	InvalidToken                    = "invalid token"
-	PROJECT                         = "project"
-	USER                            = "user"
 )
