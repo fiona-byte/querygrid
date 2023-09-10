@@ -7,6 +7,8 @@ const endpoints = {
   setup: '/setup',
   install: '/install',
   getProjectById: '/project/',
+  getCollections: '/collections/',
+  getDocuments: '/document/:projectId/:collection',
 };
 
 export default endpoints;

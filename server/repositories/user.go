@@ -61,13 +61,9 @@ func (r *UserRepo) Setup(newUser models.NewUser) (*models.LoginResp, *resterror.
 	}
 	defer session.EndSession(ctxs)
 
-	permissions := make(map[string][]string)
-	permissions["project"] = []string{"create", "read", "update", "delete", "view_all"}
-	permissions["user"] = []string{"create", "read", "update", "delete", "view_all"}
-
 	result, transactionErr := session.WithTransaction(ctxs, func(ctx mongo.SessionContext) (interface{}, error) {
 		filter := bson.D{{"name", "super"}}
-		update := bson.D{{"$set", bson.D{{"name", "super"}, {"permissions", permissions},
+		update := bson.D{{"$set", bson.D{{"name", "super"}, {"permissions", constants.GetPermissions()},
 			{"created_at", utils.CurrentTime()}, {"updated_at", utils.CurrentTime()}}}}
 		opts := options.Update().SetUpsert(true)
 		roleResult, roleErr := r.connect.Setting.UpdateOne(ctx, filter, update, opts)

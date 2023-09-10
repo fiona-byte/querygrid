@@ -178,3 +178,12 @@ func settingCol(client *mongo.Client) (*mongo.Collection, error) {
 
 	return col, nil
 }
+
+func (c *Database) GetDatabase(database string) *mongo.Database {
+	return c.Client.Database(database)
+}
+
+func (c *Database) GetCollection(database, collection string) *mongo.Collection {
+	db := c.Client.Database(database)
+	return db.Collection(collection)
+}
