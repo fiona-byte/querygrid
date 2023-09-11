@@ -10,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"slices"
 	"time"
 )
 
@@ -50,4 +51,19 @@ func (r *CollectionRepo) GetCollections(projectID string, userId primitive.Objec
 	}
 
 	return result, nil
+}
+
+func (r *CollectionRepo) ValidateCollection(projectID, collection string, userId primitive.ObjectID) *resterror.RestError {
+	collections, collectionsErr := r.GetCollections(projectID, userId)
+	if collectionsErr != nil {
+		return collectionsErr
+	}
+
+	if slices.Contains(collections, collection) {
+		validateErrors := make(map[string]string)
+		validateErrors["name"] = "collection name exists"
+		return resterror.BadRequest("collection", validateErrors)
+	}
+
+	return nil
 }

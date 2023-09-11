@@ -11,7 +11,6 @@ const AuthLayout = () => {
         styles={{
           body: {
             background: 'linear-gradient(223.09deg, #487cdf 2.98%, #194bab 103.2%)',
-            fontFamily: "'IBM Plex Sans', sans-serif",
           },
         }}
       />

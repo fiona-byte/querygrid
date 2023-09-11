@@ -36,3 +36,20 @@ func (h *CollectionHandler) GetCollections(c *gin.Context) {
 		"data":    collections,
 	})
 }
+
+func (h *CollectionHandler) ValidateCollection(c *gin.Context) {
+	userID := c.MustGet("userID").(primitive.ObjectID)
+	projectId := c.Param("projectId")
+	collection := c.Param("collection")
+
+	if collectionErr := h.collectionRepo.ValidateCollection(projectId, collection, userID); collectionErr != nil {
+		c.SecureJSON(collectionErr.Status, collectionErr)
+		return
+	}
+
+	c.SecureJSON(http.StatusOK, &gin.H{
+		"status":  http.StatusOK,
+		"message": "validate collection",
+		"data":    nil,
+	})
+}

@@ -15,4 +15,5 @@ type Collection struct {
 
 type CollectionRepository interface {
 	GetCollections(projectId string, userId primitive.ObjectID) ([]string, *resterror.RestError)
+	ValidateCollection(projectId, collection string, userId primitive.ObjectID) *resterror.RestError
 }

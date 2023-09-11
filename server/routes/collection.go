@@ -11,4 +11,5 @@ func (r *RouteConfig) CollectionRoutes() {
 	controller := controllers.NewCollectionHandler(collectionRepo, r.Config)
 
 	r.Private.GET("/collections/:projectId", r.Permission.HasPermission(constants.Role.Database, constants.VIEW_ALL), controller.GetCollections)
+	r.Private.POST("/collections/:projectId/:collection", r.Permission.HasPermission(constants.Role.Database, constants.READ), controller.ValidateCollection)
 }
