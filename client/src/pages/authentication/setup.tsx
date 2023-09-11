@@ -11,7 +11,6 @@ const Setup = () => {
   const { isSuccess, data } = useProjectSetup();
   const [activeStep, setActiveStep] = useState(0);
   const [pageLoading, setPageLoading] = useState(true);
-  const [skipped, setSkipped] = useState(new Set<number>());
 
   useEffect(() => {
     if (isSuccess && data.data) {
@@ -20,19 +19,8 @@ const Setup = () => {
     setPageLoading(false);
   }, []);
 
-  const isStepSkipped = (step: number) => {
-    return skipped.has(step);
-  };
-
   const handleNext = () => {
-    let newSkipped = skipped;
-    if (isStepSkipped(activeStep)) {
-      newSkipped = new Set(newSkipped.values());
-      newSkipped.delete(activeStep);
-    }
-
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    setSkipped(newSkipped);
   };
 
   const handleBack = () => {

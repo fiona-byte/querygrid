@@ -16,6 +16,10 @@ const collectionServices = {
       }),
     );
   },
+
+  async validateCollection(projectId: string, collection: string) {
+    return request.post(endpoints.getDocuments + projectId + '/' + collection);
+  },
 };
 
 export default Object.freeze(collectionServices);
