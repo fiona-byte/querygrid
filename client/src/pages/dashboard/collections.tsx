@@ -16,12 +16,16 @@ const Collections = () => {
   const [selectedDocument, setSelectedDocument] = useState('');
 
   const handleDocument = (doc: string) => setSelectedDocument(doc);
-  const handleSelected = (collection: string) => setSelectedCollection(collection);
+  const handleSelected = (collection: string) => {
+    setSelectedDocument('');
+    setSelectedCollection(collection);
+  };
 
   const { isError, isLoading, data } = useQuery({
     queryKey: ['collections', project],
     queryFn: () => collectionServices.getCollections(project),
     retry: 0,
+    refetchOnWindowFocus: false,
   });
 
   return (

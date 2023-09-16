@@ -3,6 +3,7 @@ package models
 import (
 	"github.com/devylab/querygrid/pkg/paginate"
 	"github.com/devylab/querygrid/pkg/resterror"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )
@@ -46,6 +47,6 @@ type ProjectResponse struct {
 
 type ProjectRepository interface {
 	CreateProject(project NewProject, userID primitive.ObjectID) (*Project, *resterror.RestError)
-	GetById(projectId string, userID primitive.ObjectID) (*Project, *resterror.RestError)
+	GetById(projectId string, userID primitive.ObjectID, selectOptions bson.D) (*Project, *resterror.RestError)
 	GetAll(userID primitive.ObjectID, query ProjectQuery, paginate *paginate.Paginate) (*ProjectResponse, *resterror.RestError)
 }

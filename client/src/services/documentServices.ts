@@ -30,6 +30,10 @@ const documentServices = {
       }),
     );
   },
+
+  async createDocument(projectId: string, body: { name: string; field: unknown }) {
+    return request.post(endpoints.createDocument + projectId, body);
+  },
 };
 
 export default Object.freeze(documentServices);

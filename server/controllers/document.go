@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/devylab/querygrid/models"
 	"github.com/devylab/querygrid/pkg/config"
+	"github.com/devylab/querygrid/pkg/resterror"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
@@ -54,5 +55,28 @@ func (h *DocumentHandler) GetDocument(c *gin.Context) {
 		"status":  http.StatusOK,
 		"message": "Document",
 		"data":    document,
+	})
+}
+
+func (h *DocumentHandler) CreateDocument(c *gin.Context) {
+	userID := c.MustGet("userID").(primitive.ObjectID)
+	projectId := c.Param("projectId")
+
+	var newDocument models.CreateDocument
+	if err := c.ShouldBindJSON(&newDocument); err != nil {
+		restErr := resterror.BadJSONRequest()
+		c.SecureJSON(restErr.Status, restErr)
+		return
+	}
+
+	if documentErr := h.documentRepo.CreateDocument(projectId, userID, newDocument); documentErr != nil {
+		c.SecureJSON(documentErr.Status, documentErr)
+		return
+	}
+
+	c.SecureJSON(http.StatusOK, &gin.H{
+		"status":  http.StatusOK,
+		"message": "create document",
+		"data":    nil,
 	})
 }

@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"context"
-	"fmt"
 	"github.com/devylab/querygrid/models"
 	"github.com/devylab/querygrid/pkg/config"
 	"github.com/devylab/querygrid/pkg/database"
@@ -26,21 +25,14 @@ func NewDocumentRepo(db *database.Database, config config.Config) *DocumentRepo 
 	}
 }
 
-func (r *DocumentRepo) GetDocuments(projectID, collection string, userId primitive.ObjectID) ([]string, *resterror.RestError) {
+func (r *DocumentRepo) GetDocuments(projectId, collection string, userId primitive.ObjectID) ([]string, *resterror.RestError) {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
-	projectId, projectIDErr := primitive.ObjectIDFromHex(projectID)
-	if projectIDErr != nil {
-		return nil, resterror.InternalServerError()
-	}
-
-	var project models.Project
-	opts := options.FindOne().SetProjection(bson.D{{"_id", 1}, {"database", 1}})
-	filter := bson.D{{"_id", projectId}, {"members.user_id", userId}}
-	if err := r.connect.Project.FindOne(ctx, filter, opts).Decode(&project); err != nil {
-		logger.Error("Error getting project data", err)
-		return nil, resterror.BadRequest("project", "not found")
+	projectRepo := NewProjectRepo(r.connect, r.config)
+	project, projectErr := projectRepo.GetById(projectId, userId, bson.D{{"_id", 1}, {"database", 1}})
+	if projectErr != nil {
+		return nil, projectErr
 	}
 
 	col := r.connect.GetCollection(project.Database, collection)
@@ -74,26 +66,19 @@ func (r *DocumentRepo) GetDocuments(projectID, collection string, userId primiti
 	return documents, nil
 }
 
-func (r *DocumentRepo) GetDocument(projectID, collection, document string, userId primitive.ObjectID) (interface{}, *resterror.RestError) {
+func (r *DocumentRepo) GetDocument(projectId, collection, document string, userId primitive.ObjectID) (interface{}, *resterror.RestError) {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
-
-	projectId, projectIDErr := primitive.ObjectIDFromHex(projectID)
-	if projectIDErr != nil {
-		return nil, resterror.InternalServerError()
-	}
 
 	documentId, documentIdErr := primitive.ObjectIDFromHex(document)
 	if documentIdErr != nil {
 		return nil, resterror.InternalServerError()
 	}
 
-	var project models.Project
-	opts := options.FindOne().SetProjection(bson.D{{"_id", 1}, {"database", 1}})
-	filter := bson.D{{"_id", projectId}, {"members.user_id", userId}}
-	if err := r.connect.Project.FindOne(ctx, filter, opts).Decode(&project); err != nil {
-		logger.Error("Error getting project data", err)
-		return nil, resterror.BadRequest("project", "not found")
+	projectRepo := NewProjectRepo(r.connect, r.config)
+	project, projectErr := projectRepo.GetById(projectId, userId, bson.D{{"_id", 1}, {"database", 1}})
+	if projectErr != nil {
+		return nil, projectErr
 	}
 
 	var result bson.M
@@ -104,7 +89,24 @@ func (r *DocumentRepo) GetDocument(projectID, collection, document string, userI
 		return nil, resterror.InternalServerError()
 	}
 
-	fmt.Println("RESULT", result)
-
 	return result, nil
+}
+
+func (r *DocumentRepo) CreateDocument(projectId string, userId primitive.ObjectID, document models.CreateDocument) *resterror.RestError {
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+
+	projectRepo := NewProjectRepo(r.connect, r.config)
+	project, projectErr := projectRepo.GetById(projectId, userId, bson.D{{"_id", 1}, {"database", 1}})
+	if projectErr != nil {
+		return projectErr
+	}
+
+	col := r.connect.GetCollection(project.Database, document.Name)
+	if _, createDocumentErr := col.InsertOne(ctx, document.Field); createDocumentErr != nil {
+		logger.Error("Error creating document", createDocumentErr)
+		return resterror.InternalServerError()
+	}
+
+	return nil
 }

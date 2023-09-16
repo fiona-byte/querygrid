@@ -126,7 +126,7 @@ func (r *ProjectRepo) GetAll(userID primitive.ObjectID, query models.ProjectQuer
 	}, nil
 }
 
-func (r *ProjectRepo) GetById(projectID string, userID primitive.ObjectID) (*models.Project, *resterror.RestError) {
+func (r *ProjectRepo) GetById(projectID string, userID primitive.ObjectID, selectOptions bson.D) (*models.Project, *resterror.RestError) {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
@@ -136,8 +136,13 @@ func (r *ProjectRepo) GetById(projectID string, userID primitive.ObjectID) (*mod
 	}
 
 	var project models.Project
-	opts := options.FindOne().SetProjection(bson.D{{"members", 0}, {"database", 0},
-		{"updated_at", 0}, {"secret_key", 0}, {"api_key", 0}})
+
+	selectFields := bson.D{{"members", 0}, {"database", 0}, {"updated_at", 0}, {"secret_key", 0}, {"api_key", 0}}
+	if selectOptions != nil {
+		selectFields = selectOptions
+	}
+
+	opts := options.FindOne().SetProjection(selectFields)
 	filter := bson.D{{"_id", projectId}, {"members.user_id", userID}}
 	if err := r.connect.Project.FindOne(ctx, filter, opts).Decode(&project); err != nil {
 		logger.Error("Error getting project data", err)

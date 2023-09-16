@@ -1,10 +1,12 @@
-import { styled, Box, Button, Card as MuiCard } from '@mui/material';
+import { styled, Box, Button, Card as MuiCard, Dialog } from '@mui/material';
 import Typography from '@component/typography';
+import typography from '@component/typography';
 
 export const CollectionHeading = styled(Typography.Paragraph)(({ theme }) => ({
   fontSize: '16px',
   fontWeight: '500',
   color: theme.palette.content.tetiary,
+  textTransform: 'capitalize',
 }));
 
 export const Paragraph = styled(Typography.Paragraph)(({ theme }) => ({
@@ -36,7 +38,7 @@ export const AddButton = styled(Button)(({ theme }) => ({
   textTransform: 'capitalize',
 }));
 
-export const CollectionItem = styled(Button)({
+export const CollectionItem = styled(Box)({
   width: '100%',
   display: 'flex',
   alignItems: 'center',
@@ -44,6 +46,7 @@ export const CollectionItem = styled(Button)({
   textDecoration: 'none',
   paddingLeft: '12px',
   height: '40px',
+  cursor: 'pointer',
 
   '&.selected': {
     backgroundColor: '#E2E9F6',
@@ -85,4 +88,39 @@ export const Loading = styled(Box)({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+});
+
+export const Modal = styled(Dialog)({
+  '&.MuiDialog-root .MuiDialog-paper': {
+    minWidth: '532px',
+    width: '532px',
+    minHeight: '317px',
+    padding: '20px',
+  },
+});
+
+export const ModalHeading = styled(Box)({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  marginBottom: '20px',
+});
+
+export const Title = styled(typography.Heading)(({ theme }) => ({
+  color: theme.palette.content.secondary,
+  fontSize: '20px',
+  fontWeight: '500',
+}));
+
+export const BTN = styled(Button)({
+  textTransform: 'capitalize',
+  marginTop: '20px',
+  minWidth: '100px',
+  ml: '6px',
+});
+
+export const ButtonWrapper = styled(Box)({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  alignItems: 'center',
 });
