@@ -23,6 +23,7 @@ import AddField from './addFields';
 import { RequestError } from '@service/index';
 import FieldCollapse from './fieldCollapse';
 import { utils } from '@utils/index';
+import { Can } from '@context/permissionContext';
 
 type FieldCardProps = {
   style?: SxProps;
@@ -183,24 +184,29 @@ const FieldCard = ({ style, project, collection, document }: FieldCardProps) => 
   return (
     <Card elevation={0} sx={style}>
       <Toaster show={isError} message={'unable to get document'} type="error" />
-      <AddFieldModal
-        open={open}
-        handleClose={handleClose}
-        project={project}
-        document={document}
-        collection={collection}
-        refetch={refetch}
-        fieldData={data?.data}
-      />
+      <Can I="create" a="database">
+        <AddFieldModal
+          open={open}
+          handleClose={handleClose}
+          project={project}
+          document={document}
+          collection={collection}
+          refetch={refetch}
+          fieldData={data?.data}
+        />
+      </Can>
+
       <CardHeading>
         <CollectionHeading>Field</CollectionHeading>
-        <AddButton
-          onClick={handleOpen}
-          disabled={!document}
-          startIcon={<Plus color={document ? theme.palette.primary.main : 'rgba(0, 0, 0, 0.26)'} size={20} />}
-        >
-          Add new field
-        </AddButton>
+        <Can I="create" a="database">
+          <AddButton
+            onClick={handleOpen}
+            disabled={!document}
+            startIcon={<Plus color={document ? theme.palette.primary.main : 'rgba(0, 0, 0, 0.26)'} size={20} />}
+          >
+            Add new field
+          </AddButton>
+        </Can>
       </CardHeading>
       <ItemsWrapper>
         {isLoading ? (
