@@ -12,6 +12,7 @@ const endpoints = {
   validateCollection: '/collections/',
   createCollection: '/collections/create/',
   createDocument: '/document/',
+  updateDocument: '/document/',
 };
 
 export default endpoints;

@@ -14,8 +14,15 @@ type CreateDocument struct {
 	Field interface{} `bson:"field" json:"field,omitempty"`
 }
 
+type UpdateDocument struct {
+	Name     string      `json:"name,omitempty"`
+	Document string      `json:"document,omitempty"`
+	Field    interface{} `bson:"field" json:"field,omitempty"`
+}
+
 type DocumentRepository interface {
 	GetDocuments(projectId, collection string, userId primitive.ObjectID) ([]string, *resterror.RestError)
 	GetDocument(projectId, collection, document string, userId primitive.ObjectID) (interface{}, *resterror.RestError)
 	CreateDocument(projectId string, userId primitive.ObjectID, document CreateDocument) *resterror.RestError
+	UpdateDocument(projectId string, userId primitive.ObjectID, document UpdateDocument) *resterror.RestError
 }

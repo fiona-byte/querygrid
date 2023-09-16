@@ -1,11 +1,26 @@
-import { Fragment, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { CircularProgress, SxProps, useTheme } from '@mui/material';
-import documentServices from '@service/documentServices';
+import { Fragment, useEffect, useState } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { CircularProgress, IconButton, SxProps, useTheme } from '@mui/material';
+import documentServices, { UpdateDocument } from '@service/documentServices';
 import Toaster from '@component/toaster';
-import { Plus } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import { Card, CardHeading, CollectionHeading, AddButton, ItemsWrapper, Loading, FieldItem } from './styles';
+import {
+  Card,
+  CardHeading,
+  CollectionHeading,
+  AddButton,
+  ItemsWrapper,
+  Loading,
+  FieldItem,
+  Modal,
+  BTN,
+  ButtonWrapper,
+  ModalHeading,
+  Title,
+} from './styles';
+import AddField from './addFields';
+import { RequestError } from '@service/index';
 import FieldCollapse from './fieldCollapse';
 import { utils } from '@utils/index';
 
@@ -20,6 +35,67 @@ type RenderFieldProps = {
   key: string;
   value: unknown;
   sx?: SxProps;
+};
+
+type AddFieldModalProps = {
+  open: boolean;
+  handleClose: () => void;
+  project: string;
+  collection: string;
+  document: string;
+  fieldData: unknown;
+  refetch: () => void;
+};
+
+const AddFieldModal = ({
+  open,
+  handleClose,
+  project,
+  collection,
+  document,
+  refetch,
+  fieldData,
+}: AddFieldModalProps) => {
+  const theme = useTheme();
+  const [fieldEditor, setFieldEditor] = useState('');
+
+  const handleEditorChange = (value: string) => setFieldEditor(value);
+
+  const resetModal = () => {
+    handleClose();
+    setFieldEditor('');
+  };
+
+  const { mutate, isLoading } = useMutation<unknown, RequestError, UpdateDocument>({
+    mutationKey: ['update_document', project],
+    mutationFn: (data) => documentServices.updateDocument(project, data),
+    onSuccess: () => {
+      refetch();
+      resetModal();
+    },
+  });
+
+  const handleSubmit = () => mutate({ name: collection, document, field: JSON.parse(fieldEditor) });
+
+  return (
+    <Modal open={open} onClose={resetModal}>
+      <ModalHeading>
+        <span />
+        <Title>Add a Field</Title>
+        <IconButton aria-label="close" onClick={resetModal}>
+          <X color={theme.palette.content.tetiary} size={24} />
+        </IconButton>
+      </ModalHeading>
+
+      <AddField editorValue={fieldData} handleEditorChange={handleEditorChange} />
+      <ButtonWrapper>
+        <BTN onClick={resetModal}>Cancel</BTN>
+        <BTN onClick={handleSubmit} variant="contained" disabled={isLoading} size="large">
+          Add
+        </BTN>
+      </ButtonWrapper>
+    </Modal>
+  );
 };
 
 const renderField = ({ key, value, sx }: RenderFieldProps) => {
@@ -86,6 +162,10 @@ const renderField = ({ key, value, sx }: RenderFieldProps) => {
 
 const FieldCard = ({ style, project, collection, document }: FieldCardProps) => {
   const theme = useTheme();
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const { isError, isLoading, data, refetch } = useQuery({
     queryKey: ['document', project, collection, document],
@@ -103,9 +183,24 @@ const FieldCard = ({ style, project, collection, document }: FieldCardProps) => 
   return (
     <Card elevation={0} sx={style}>
       <Toaster show={isError} message={'unable to get document'} type="error" />
+      <AddFieldModal
+        open={open}
+        handleClose={handleClose}
+        project={project}
+        document={document}
+        collection={collection}
+        refetch={refetch}
+        fieldData={data?.data}
+      />
       <CardHeading>
         <CollectionHeading>Field</CollectionHeading>
-        <AddButton startIcon={<Plus color={theme.palette.primary.main} size={20} />}>Add new field</AddButton>
+        <AddButton
+          onClick={handleOpen}
+          disabled={!document}
+          startIcon={<Plus color={document ? theme.palette.primary.main : 'rgba(0, 0, 0, 0.26)'} size={20} />}
+        >
+          Add new field
+        </AddButton>
       </CardHeading>
       <ItemsWrapper>
         {isLoading ? (

@@ -80,3 +80,26 @@ func (h *DocumentHandler) CreateDocument(c *gin.Context) {
 		"data":    nil,
 	})
 }
+
+func (h *DocumentHandler) UpdateDocument(c *gin.Context) {
+	userID := c.MustGet("userID").(primitive.ObjectID)
+	projectId := c.Param("projectId")
+
+	var newDocument models.UpdateDocument
+	if err := c.ShouldBindJSON(&newDocument); err != nil {
+		restErr := resterror.BadJSONRequest()
+		c.SecureJSON(restErr.Status, restErr)
+		return
+	}
+
+	if documentErr := h.documentRepo.UpdateDocument(projectId, userID, newDocument); documentErr != nil {
+		c.SecureJSON(documentErr.Status, documentErr)
+		return
+	}
+
+	c.SecureJSON(http.StatusOK, &gin.H{
+		"status":  http.StatusOK,
+		"message": "update document",
+		"data":    nil,
+	})
+}
