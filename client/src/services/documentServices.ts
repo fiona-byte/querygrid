@@ -1,6 +1,7 @@
-import { array, object, string, number } from 'yup';
+import { array, object, string, number, lazy, mixed } from 'yup';
 import request from './index';
 import endpoints from './endpoints';
+import { utils } from '@utils/index';
 
 const DocumentsSchema = object({
   data: array().of(string().required()).required(),
@@ -9,7 +10,7 @@ const DocumentsSchema = object({
 });
 
 const DocumentSchema = object({
-  data: object().required(),
+  data: lazy((obj) => object(utils.mapValues(obj, () => mixed()))),
   status: number().required(),
   message: string().required(),
 });

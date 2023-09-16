@@ -10,6 +10,7 @@ const endpoints = {
   getCollections: '/collections/',
   getDocuments: '/document/',
   validateCollection: '/collections/',
+  createCollection: '/collections/create/',
 };
 
 export default endpoints;

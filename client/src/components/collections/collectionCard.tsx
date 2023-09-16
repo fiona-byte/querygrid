@@ -1,5 +1,15 @@
 import { useState } from 'react';
-import { Box, CircularProgress, Dialog, IconButton, LinearProgress, SxProps, styled, useTheme } from '@mui/material';
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Dialog,
+  IconButton,
+  LinearProgress,
+  SxProps,
+  styled,
+  useTheme,
+} from '@mui/material';
 import { Plus, Trash2, X } from 'lucide-react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import {
@@ -16,6 +26,9 @@ import typography from '@component/typography';
 import { useParams } from 'react-router-dom';
 import AddCollection from './modals/addCollection';
 import AddField from './addFields';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { RequestError } from '@service/index';
+import collectionServices from '@service/collectionServices';
 
 type CollectionCardProps = {
   style?: SxProps;
@@ -32,20 +45,44 @@ type AddCollectionModalProps = {
 
 const steps = ['Step 1: Create a collection', 'Step 2: Add a document'];
 const AddCollectionModal = ({ open, handleClose }: AddCollectionModalProps) => {
+  const queryClient = useQueryClient();
   const { project } = useParams() as { project: string };
   const theme = useTheme();
   const [activeStep, setActiveStep] = useState(0);
+  const [collection, setCollection] = useState('');
+  const [fieldEditor, setFieldEditor] = useState('');
 
-  const handleNext = () => {
+  const handleNext = (collectionName: string) => {
+    setCollection(collectionName);
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
+  const handleEditorChange = (value: string) => setFieldEditor(value);
+
+  const resetModal = () => {
+    handleClose();
+    setCollection('');
+    setFieldEditor('');
+    setActiveStep(0);
+  };
+
+  const { mutate, isLoading } = useMutation<unknown, RequestError, { name: string; field: unknown }>({
+    mutationKey: ['create_collection', project],
+    mutationFn: (data) => collectionServices.createCollection(project, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['collections']);
+      resetModal();
+    },
+  });
+
+  const handleSubmit = () => mutate({ name: collection, field: JSON.parse(fieldEditor) });
+
   return (
-    <Modal open={open} onClose={handleClose}>
+    <Modal open={open} onClose={resetModal}>
       <ModalHeading>
         <span />
         <Title>Add a Collection</Title>
-        <IconButton aria-label="close" onClick={handleClose}>
+        <IconButton aria-label="close" onClick={resetModal}>
           <X color={theme.palette.content.tetiary} size={24} />
         </IconButton>
       </ModalHeading>
@@ -63,7 +100,13 @@ const AddCollectionModal = ({ open, handleClose }: AddCollectionModalProps) => {
           <AddCollection project={project} handleNext={handleNext} />
         ) : (
           <>
-            <AddField />
+            <AddField handleEditorChange={handleEditorChange} />
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+              <BTN onClick={resetModal}>Cancel</BTN>
+              <BTN onClick={handleSubmit} variant="contained" disabled={isLoading} size="large">
+                Add
+              </BTN>
+            </Box>
           </>
         )}
       </StepContent>
@@ -114,7 +157,7 @@ const CollectionsCard = ({ style, isLoading, collections, selected, handleSelect
 };
 
 const Modal = styled(Dialog)({
-  '&.MuiDialog-root .MuiPaper-root': {
+  '&.MuiDialog-root .MuiDialog-paper': {
     minWidth: '532px',
     width: '532px',
     minHeight: '317px',
@@ -159,5 +202,12 @@ const StepTitle = styled(typography.Paragraph)(({ theme }) => ({
     color: theme.palette.primary.main,
   },
 }));
+
+const BTN = styled(Button)({
+  textTransform: 'capitalize',
+  marginTop: '20px',
+  minWidth: '100px',
+  ml: '6px',
+});
 
 export default CollectionsCard;

@@ -51,16 +51,25 @@ func (r *DocumentRepo) GetDocuments(projectID, collection string, userId primiti
 		return nil, resterror.InternalServerError()
 	}
 
-	var results []bson.M
-	if err := cursor.All(ctx, &results); err != nil {
-		logger.Error("Error decoding documents (cursor)", cursorErr)
-		return nil, resterror.InternalServerError()
+	var results []models.DocumentID
+	for cursor.Next(ctx) {
+		if err := cursor.All(ctx, &results); err != nil {
+			logger.Error("Error decoding documents (cursor)", cursorErr)
+			return nil, resterror.InternalServerError()
+		}
 	}
 
 	var documents []string
 	for _, result := range results {
-		documents = append(documents, fmt.Sprintf("%s", result["_id"]))
+		documents = append(documents, result.ID.Hex())
 	}
+
+	if err := cursor.Err(); err != nil {
+		logger.Error("Error getting collection documents (cursor error)", err)
+		return nil, resterror.InternalServerError()
+	}
+
+	defer cursor.Close(ctx)
 
 	return documents, nil
 }
@@ -87,13 +96,15 @@ func (r *DocumentRepo) GetDocument(projectID, collection, document string, userI
 		return nil, resterror.BadRequest("project", "not found")
 	}
 
-	var result interface{}
+	var result bson.M
 	col := r.connect.GetCollection(project.Database, collection)
-	documentOpts := options.FindOne().SetProjection(bson.D{{"_id", 1}})
+	documentOpts := options.FindOne().SetProjection(bson.D{{"_id", 0}})
 	if err := col.FindOne(ctx, bson.D{{"_id", documentId}}, documentOpts).Decode(&result); err != nil {
 		logger.Error("Error getting document", err)
 		return nil, resterror.InternalServerError()
 	}
+
+	fmt.Println("RESULT", result)
 
 	return result, nil
 }

@@ -18,7 +18,11 @@ const collectionServices = {
   },
 
   async validateCollection(projectId: string, collection: string) {
-    return request.post(endpoints.getDocuments + projectId + '/' + collection);
+    return request.post(endpoints.validateCollection + projectId + '/' + collection);
+  },
+
+  async createCollection(projectId: string, body: { name: string; field: unknown }) {
+    return request.post(endpoints.createCollection + projectId, body);
   },
 };
 
