@@ -1,15 +1,5 @@
 import { useState } from 'react';
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Dialog,
-  IconButton,
-  LinearProgress,
-  SxProps,
-  styled,
-  useTheme,
-} from '@mui/material';
+import { Box, CircularProgress, IconButton, LinearProgress, SxProps, styled, useTheme } from '@mui/material';
 import { Plus, Trash2, X } from 'lucide-react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import {
@@ -21,6 +11,11 @@ import {
   Loading,
   CollectionItem,
   Paragraph,
+  Modal,
+  BTN,
+  ButtonWrapper,
+  ModalHeading,
+  Title,
 } from './styles';
 import typography from '@component/typography';
 import { useParams } from 'react-router-dom';
@@ -101,12 +96,12 @@ const AddCollectionModal = ({ open, handleClose }: AddCollectionModalProps) => {
         ) : (
           <>
             <AddField handleEditorChange={handleEditorChange} />
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+            <ButtonWrapper>
               <BTN onClick={resetModal}>Cancel</BTN>
               <BTN onClick={handleSubmit} variant="contained" disabled={isLoading} size="large">
                 Add
               </BTN>
-            </Box>
+            </ButtonWrapper>
           </>
         )}
       </StepContent>
@@ -156,22 +151,6 @@ const CollectionsCard = ({ style, isLoading, collections, selected, handleSelect
   );
 };
 
-const Modal = styled(Dialog)({
-  '&.MuiDialog-root .MuiDialog-paper': {
-    minWidth: '532px',
-    width: '532px',
-    minHeight: '317px',
-    padding: '20px',
-  },
-});
-
-const ModalHeading = styled(Box)({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  marginBottom: '20px',
-});
-
 const Stepper = styled(Box)({
   display: 'flex',
   alignItems: 'center',
@@ -186,12 +165,6 @@ const StepContent = styled(Box)({
   marginTop: '20px',
 });
 
-const Title = styled(typography.Heading)(({ theme }) => ({
-  color: theme.palette.content.secondary,
-  fontSize: '20px',
-  fontWeight: '500',
-}));
-
 const StepTitle = styled(typography.Paragraph)(({ theme }) => ({
   color: '#9A999D',
   fontSize: '14px',
@@ -202,12 +175,5 @@ const StepTitle = styled(typography.Paragraph)(({ theme }) => ({
     color: theme.palette.primary.main,
   },
 }));
-
-const BTN = styled(Button)({
-  textTransform: 'capitalize',
-  marginTop: '20px',
-  minWidth: '100px',
-  ml: '6px',
-});
 
 export default CollectionsCard;

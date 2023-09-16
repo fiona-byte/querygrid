@@ -70,7 +70,7 @@ func (h *ProjectHandler) GetById(c *gin.Context) {
 	userID := c.MustGet("userID").(primitive.ObjectID)
 	projectId := c.Param("projectId")
 
-	project, projectErr := h.projectRepo.GetById(projectId, userID)
+	project, projectErr := h.projectRepo.GetById(projectId, userID, nil)
 	if projectErr != nil {
 		c.SecureJSON(projectErr.Status, projectErr)
 		return

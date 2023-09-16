@@ -9,7 +9,6 @@ import (
 	"github.com/devylab/querygrid/pkg/resterror"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"slices"
 	"time"
 )
@@ -26,21 +25,14 @@ func NewCollectionRepo(db *database.Database, config config.Config) *CollectionR
 	}
 }
 
-func (r *CollectionRepo) GetCollections(projectID string, userId primitive.ObjectID) ([]string, *resterror.RestError) {
+func (r *CollectionRepo) GetCollections(projectId string, userId primitive.ObjectID) ([]string, *resterror.RestError) {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
-	projectId, projectIDErr := primitive.ObjectIDFromHex(projectID)
-	if projectIDErr != nil {
-		return nil, resterror.InternalServerError()
-	}
-
-	var project models.Project
-	opts := options.FindOne().SetProjection(bson.D{{"_id", 1}, {"database", 1}})
-	filter := bson.D{{"_id", projectId}, {"members.user_id", userId}}
-	if err := r.connect.Project.FindOne(ctx, filter, opts).Decode(&project); err != nil {
-		logger.Error("Error getting project data", err)
-		return nil, resterror.BadRequest("project", "not found")
+	projectRepo := NewProjectRepo(r.connect, r.config)
+	project, projectErr := projectRepo.GetById(projectId, userId, bson.D{{"_id", 1}, {"database", 1}})
+	if projectErr != nil {
+		return nil, projectErr
 	}
 
 	db := r.connect.GetDatabase(project.Database)
@@ -68,21 +60,14 @@ func (r *CollectionRepo) ValidateCollection(projectID, collection string, userId
 	return nil
 }
 
-func (r *CollectionRepo) CreateCollection(projectID string, userId primitive.ObjectID, collection models.CreateCollection) *resterror.RestError {
+func (r *CollectionRepo) CreateCollection(projectId string, userId primitive.ObjectID, collection models.CreateCollection) *resterror.RestError {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
-	projectId, projectIDErr := primitive.ObjectIDFromHex(projectID)
-	if projectIDErr != nil {
-		return resterror.InternalServerError()
-	}
-
-	var project models.Project
-	opts := options.FindOne().SetProjection(bson.D{{"_id", 1}, {"database", 1}})
-	filter := bson.D{{"_id", projectId}, {"members.user_id", userId}}
-	if err := r.connect.Project.FindOne(ctx, filter, opts).Decode(&project); err != nil {
-		logger.Error("Error getting project data", err)
-		return resterror.BadRequest("project", "not found")
+	projectRepo := NewProjectRepo(r.connect, r.config)
+	project, projectErr := projectRepo.GetById(projectId, userId, bson.D{{"_id", 1}, {"database", 1}})
+	if projectErr != nil {
+		return projectErr
 	}
 
 	col := r.connect.GetCollection(project.Database, collection.Name)
