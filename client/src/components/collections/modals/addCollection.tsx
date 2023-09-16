@@ -20,11 +20,11 @@ type FormData = InferType<typeof schema>;
 
 type AddCollectionProps = {
   project: string;
-  handleNext: () => void;
+  handleNext: (name: string) => void;
 };
 
 const AddCollection = ({ project, handleNext }: AddCollectionProps) => {
-  const { control, handleSubmit, setError, formState } = useForm<FormData>({
+  const { control, handleSubmit, setError, formState, getValues } = useForm<FormData>({
     resolver: yupResolver(schema),
   });
   const { errors } = formState;
@@ -46,7 +46,7 @@ const AddCollection = ({ project, handleNext }: AddCollectionProps) => {
   }, [isError]);
 
   useEffect(() => {
-    if (isSuccess) handleNext();
+    if (isSuccess) handleNext(getValues('name'));
   }, [isSuccess]);
 
   return (

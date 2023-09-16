@@ -36,7 +36,7 @@ const FieldCollapse = ({ property, children, value, startSymbol, endSymbol, sx }
         {!open ? (
           <>
             :{startSymbol}
-            <Paragraph sx={{ width: '110px' }} noWrap={true}>
+            <Paragraph sx={{ maxWidth: '110px' }} noWrap={true}>
               {value}
             </Paragraph>
             {endSymbol}

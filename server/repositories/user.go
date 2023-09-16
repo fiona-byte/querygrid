@@ -39,7 +39,9 @@ func NewUserRepo(db *database.Database, config config.Config, cache *cache2.Cach
 }
 
 func (r *UserRepo) Setup(newUser models.NewUser) (*models.LoginResp, *resterror.RestError) {
-	ctxs := context.Background()
+	ctxs, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+
 	var setting models.Setting
 	if settingErr := r.connect.Setting.FindOne(ctxs, bson.D{{"name", "install"}}).Decode(&setting); settingErr != nil {
 		logger.Error("error getting install setting", settingErr)
@@ -128,7 +130,9 @@ func (r *UserRepo) Setup(newUser models.NewUser) (*models.LoginResp, *resterror.
 }
 
 func (r *UserRepo) Install() (bool, *resterror.RestError) {
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+
 	var setting models.Setting
 	if settingErr := r.connect.Setting.FindOne(ctx, bson.D{{"name", "install"}}).Decode(&setting); settingErr != nil {
 		logger.Error("error getting install setting", settingErr)
@@ -160,7 +164,9 @@ func (r *UserRepo) CreateUser(newUser models.NewUser) *resterror.RestError {
 		UpdatedAt: utils.CurrentTime(),
 	}
 
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+
 	if _, err := r.connect.User.InsertOne(ctx, user); err != nil {
 		if strings.Contains(err.Error(), "email_1") {
 			validateErrors := make(map[string]string)
@@ -178,7 +184,9 @@ func (r *UserRepo) CreateUser(newUser models.NewUser) *resterror.RestError {
 }
 
 func (r *UserRepo) Login(login models.LoginUser) (*models.LoginResp, *resterror.RestError) {
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+
 	var user models.User
 	opts := options.FindOne().SetProjection(bson.D{{"_id", 1}, {"password", 1}, {"status", 1}})
 	if err := r.connect.User.FindOne(ctx, bson.D{{"email", login.Email}}, opts).Decode(&user); err != nil {
@@ -205,7 +213,9 @@ func (r *UserRepo) CurrentUser(userID primitive.ObjectID) (models.User, *resterr
 	cacheData, err := r.cache.Get(cacheKey)
 	if err != nil {
 		// FETCH FROM DB IF NO CACHE
-		ctx := context.Background()
+		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+		defer cancel()
+
 		matchStage := bson.D{{"$match", bson.D{{"_id", userID}}}}
 		lookupStage := bson.D{{"$lookup", bson.D{
 			{"from", "roles"},
@@ -249,7 +259,7 @@ func (r *UserRepo) CurrentUser(userID primitive.ObjectID) (models.User, *resterr
 	}
 
 	if unMarshErr := json.Unmarshal(cacheData, &cacheUser); unMarshErr != nil {
-		fmt.Println("Can;t unmarshal the byte array")
+		fmt.Println("Can't unmarshal the byte array")
 		logger.Error("Error unable to unmarshal the byte array", unMarshErr)
 		return cacheUser, resterror.InternalServerError()
 	}

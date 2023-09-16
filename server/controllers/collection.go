@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/devylab/querygrid/models"
 	"github.com/devylab/querygrid/pkg/config"
+	"github.com/devylab/querygrid/pkg/resterror"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
@@ -50,6 +51,28 @@ func (h *CollectionHandler) ValidateCollection(c *gin.Context) {
 	c.SecureJSON(http.StatusOK, &gin.H{
 		"status":  http.StatusOK,
 		"message": "validate collection",
+		"data":    nil,
+	})
+}
+
+func (h *CollectionHandler) CreateCollection(c *gin.Context) {
+	userID := c.MustGet("userID").(primitive.ObjectID)
+	projectId := c.Param("projectId")
+	var newCollection models.CreateCollection
+	if err := c.ShouldBindJSON(&newCollection); err != nil {
+		restErr := resterror.BadJSONRequest()
+		c.SecureJSON(restErr.Status, restErr)
+		return
+	}
+
+	if collectionErr := h.collectionRepo.CreateCollection(projectId, userID, newCollection); collectionErr != nil {
+		c.SecureJSON(collectionErr.Status, collectionErr)
+		return
+	}
+
+	c.SecureJSON(http.StatusOK, &gin.H{
+		"status":  http.StatusOK,
+		"message": "create collection",
 		"data":    nil,
 	})
 }

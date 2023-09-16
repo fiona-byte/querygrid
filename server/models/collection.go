@@ -13,7 +13,13 @@ type Collection struct {
 	UpdatedAt time.Time          `bson:"updated_at" json:"updated_at,omitempty"`
 }
 
+type CreateCollection struct {
+	Name  string      `json:"name,omitempty"`
+	Field interface{} `bson:"field" json:"field,omitempty"`
+}
+
 type CollectionRepository interface {
 	GetCollections(projectId string, userId primitive.ObjectID) ([]string, *resterror.RestError)
 	ValidateCollection(projectId, collection string, userId primitive.ObjectID) *resterror.RestError
+	CreateCollection(projectId string, userId primitive.ObjectID, collection CreateCollection) *resterror.RestError
 }
