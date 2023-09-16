@@ -22,6 +22,7 @@ import {
 } from './styles';
 import AddField from './addFields';
 import { RequestError } from '@service/index';
+import { Can } from '@context/permissionContext';
 
 type DocumentCardProps = {
   style?: SxProps;
@@ -105,23 +106,28 @@ const DocumentsCard = ({ style, collection, project, selectedDocument, handleDoc
   return (
     <Card elevation={0} sx={style}>
       <Toaster show={isError} message={'unable to get documents'} type="error" />
-      <AddDocumentModal
-        open={open}
-        handleClose={handleClose}
-        project={project}
-        collection={collection}
-        refetch={refetch}
-      />
+      <Can I="create" a="database">
+        <AddDocumentModal
+          open={open}
+          handleClose={handleClose}
+          project={project}
+          collection={collection}
+          refetch={refetch}
+        />
+      </Can>
+
       <CardHeading>
         <CollectionHeading>{collection}</CollectionHeading>
-        <AddButton
-          onClick={handleOpen}
-          disabled={!collection}
-          sx={{ ml: 'auto' }}
-          startIcon={<Plus color={collection ? theme.palette.primary.main : 'rgba(0, 0, 0, 0.26)'} size={20} />}
-        >
-          Add
-        </AddButton>
+        <Can I="create" a="database">
+          <AddButton
+            onClick={handleOpen}
+            disabled={!collection}
+            sx={{ ml: 'auto' }}
+            startIcon={<Plus color={collection ? theme.palette.primary.main : 'rgba(0, 0, 0, 0.26)'} size={20} />}
+          >
+            Add
+          </AddButton>
+        </Can>
         <IconButton aria-label="more">
           <MoreVertical color={theme.palette.content.tetiary} size={20} />
         </IconButton>

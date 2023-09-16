@@ -81,6 +81,7 @@ export const FieldItem = styled(Box)(({ theme }) => ({
   textDecoration: 'none',
   height: '40px',
   color: theme.palette.content.tetiary,
+  cursor: 'pointer',
 }));
 
 export const Loading = styled(Box)({

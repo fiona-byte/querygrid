@@ -1,49 +1,9 @@
 import { Box, styled } from '@mui/material';
 import { NavLink, useParams } from 'react-router-dom';
 import { Sidebar as ProSidebar, Menu, MenuItem, SubMenu, MenuItemStyles } from 'react-pro-sidebar';
-import { LayoutDashboard, Server } from 'lucide-react';
 import Typography from '@component/typography';
-
-const menus = [
-  {
-    id: 'menu',
-    name: 'Menu',
-    links: [
-      {
-        id: 'overview',
-        name: 'Overview',
-        Icon: LayoutDashboard,
-        link: '',
-      },
-      {
-        id: 'collections',
-        name: 'Collections',
-        Icon: Server,
-        link: '/collections',
-      },
-      {
-        id: 'charts',
-        name: 'Charts',
-        Icon: Server,
-        link: '',
-        children: [
-          {
-            id: 'calendar2',
-            name: 'Calendar',
-            Icon: Server,
-            link: '/calendar',
-          },
-          {
-            id: 'ecommerce2',
-            name: 'E-commerce',
-            Icon: Server,
-            link: '/ecommerce',
-          },
-        ],
-      },
-    ],
-  },
-];
+import { Can } from '@context/permissionContext';
+import { menus } from './menus';
 
 type SidebarProps = {
   show: boolean;
@@ -65,27 +25,28 @@ const Sidebar = ({ show }: SidebarProps) => {
               {links.map(({ Icon, ...menu }) => {
                 if (menu.children) {
                   return (
-                    <SubMenu key={menu.id} label={menu.name}>
-                      {menu.children.map((subMenu) => (
-                        <MenuItem
-                          key={subMenu.id}
-                          icon={<Icon size={20} />}
-                          component={<NavLink end={true} to={sideLink(subMenu.link)} />}
-                        >
-                          {subMenu.name}
-                        </MenuItem>
-                      ))}
-                    </SubMenu>
+                    <Can I="read" a={menu.permission} key={menu.id}>
+                      <SubMenu label={menu.name}>
+                        {menu.children.map((subMenu) => (
+                          <Can I="read" a={subMenu.permission} key={subMenu.id}>
+                            <MenuItem
+                              icon={<Icon size={20} />}
+                              component={<NavLink end={true} to={sideLink(subMenu.link)} />}
+                            >
+                              {subMenu.name}
+                            </MenuItem>
+                          </Can>
+                        ))}
+                      </SubMenu>
+                    </Can>
                   );
                 } else {
                   return (
-                    <MenuItem
-                      key={menu.id}
-                      icon={<Icon size={20} />}
-                      component={<NavLink end={true} to={sideLink(menu.link)} />}
-                    >
-                      {menu.name}
-                    </MenuItem>
+                    <Can I="read" a={menu.permission} key={menu.id}>
+                      <MenuItem icon={<Icon size={20} />} component={<NavLink end={true} to={sideLink(menu.link)} />}>
+                        {menu.name}
+                      </MenuItem>
+                    </Can>
                   );
                 }
               })}

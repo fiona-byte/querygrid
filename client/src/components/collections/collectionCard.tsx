@@ -24,6 +24,7 @@ import AddField from './addFields';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { RequestError } from '@service/index';
 import collectionServices from '@service/collectionServices';
+import { Can } from '@context/permissionContext';
 
 type CollectionCardProps = {
   style?: SxProps;
@@ -118,12 +119,16 @@ const CollectionsCard = ({ style, isLoading, collections, selected, handleSelect
 
   return (
     <Card elevation={0} sx={style}>
-      <AddCollectionModal open={open} handleClose={handleClose} />
+      <Can I="create" a="database">
+        <AddCollectionModal open={open} handleClose={handleClose} />
+      </Can>
       <CardHeading>
         <CollectionHeading>Collections</CollectionHeading>
-        <AddButton onClick={handleOpen} startIcon={<Plus color={theme.palette.primary.main} size={20} />}>
-          Add
-        </AddButton>
+        <Can I="create" a="database">
+          <AddButton onClick={handleOpen} startIcon={<Plus color={theme.palette.primary.main} size={20} />}>
+            Add
+          </AddButton>
+        </Can>
       </CardHeading>
       <ItemsWrapper>
         {isLoading ? (
@@ -139,9 +144,11 @@ const CollectionsCard = ({ style, isLoading, collections, selected, handleSelect
                 className={selected === collection ? 'selected' : ''}
               >
                 <Paragraph>{collection}</Paragraph>
-                <IconButton aria-label="delete" className="delete-btn">
-                  <Trash2 />
-                </IconButton>
+                <Can I="delete" a="database">
+                  <IconButton aria-label="delete" className="delete-btn">
+                    <Trash2 />
+                  </IconButton>
+                </Can>
               </CollectionItem>
             ))}
           </PerfectScrollbar>
