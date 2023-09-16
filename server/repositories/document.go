@@ -110,3 +110,27 @@ func (r *DocumentRepo) CreateDocument(projectId string, userId primitive.ObjectI
 
 	return nil
 }
+
+func (r *DocumentRepo) UpdateDocument(projectId string, userId primitive.ObjectID, document models.UpdateDocument) *resterror.RestError {
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+
+	documentId, documentIdErr := primitive.ObjectIDFromHex(document.Document)
+	if documentIdErr != nil {
+		return resterror.InternalServerError()
+	}
+
+	projectRepo := NewProjectRepo(r.connect, r.config)
+	project, projectErr := projectRepo.GetById(projectId, userId, bson.D{{"_id", 1}, {"database", 1}})
+	if projectErr != nil {
+		return projectErr
+	}
+
+	col := r.connect.GetCollection(project.Database, document.Name)
+	if _, updateDocumentErr := col.ReplaceOne(ctx, bson.D{{"_id", documentId}}, document.Field); updateDocumentErr != nil {
+		logger.Error("Error updating document", updateDocumentErr)
+		return resterror.InternalServerError()
+	}
+
+	return nil
+}

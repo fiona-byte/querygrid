@@ -3,6 +3,12 @@ import request from './index';
 import endpoints from './endpoints';
 import { utils } from '@utils/index';
 
+export type UpdateDocument = {
+  name: string;
+  document: string;
+  field: unknown;
+};
+
 const DocumentsSchema = object({
   data: array().of(string().required()).required(),
   status: number().required(),
@@ -33,6 +39,10 @@ const documentServices = {
 
   async createDocument(projectId: string, body: { name: string; field: unknown }) {
     return request.post(endpoints.createDocument + projectId, body);
+  },
+
+  async updateDocument(projectId: string, body: UpdateDocument) {
+    return request.patch(endpoints.updateDocument + projectId, body);
   },
 };
 
