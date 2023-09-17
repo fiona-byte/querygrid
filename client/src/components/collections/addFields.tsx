@@ -1,4 +1,4 @@
-import Editor from '@monaco-editor/react';
+import Editor from 'react-monaco-editor';
 
 const options = {
   selectOnLineNumbers: true,
@@ -26,8 +26,8 @@ const AddField = ({ handleEditorChange, editorValue }: AddFieldProps) => {
     <Editor
       height="200px"
       options={options}
-      defaultLanguage="json"
-      defaultValue={editorValue ? JSON.stringify(editorValue, null, 2) : '{\n\t"key": "value"\n}'}
+      language="json"
+      value={editorValue ? JSON.stringify(editorValue, null, 2) : '{\n\t"key": "value"\n}'}
       onChange={(value) => handleEditorChange(value || '')}
     />
   );
