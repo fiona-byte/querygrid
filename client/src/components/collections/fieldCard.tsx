@@ -24,6 +24,7 @@ import { RequestError } from '@service/index';
 import FieldCollapse from './fieldCollapse';
 import { utils } from '@utils/index';
 import { Can } from '@context/permissionContext';
+import NotificationMessage from './notificationMessage';
 
 type FieldCardProps = {
   style?: SxProps;
@@ -209,16 +210,22 @@ const FieldCard = ({ style, project, collection, document }: FieldCardProps) => 
         </Can>
       </CardHeading>
       <ItemsWrapper>
-        {isLoading ? (
-          <Loading>
-            <CircularProgress />
-          </Loading>
+        {!document || !data?.data.length ? (
+          <NotificationMessage isEmpty={!!document && !data?.data.length} section="document" currentSection="fields" />
         ) : (
-          <PerfectScrollbar options={{ suppressScrollX: true, useBothWheelAxes: false }}>
-            {Object.entries(data?.data || {}).map(([key, value]) => (
-              <Fragment key={`${key}-${Date.now()}`}>{renderField({ key, value })}</Fragment>
-            ))}
-          </PerfectScrollbar>
+          <>
+            {isLoading ? (
+              <Loading>
+                <CircularProgress />
+              </Loading>
+            ) : (
+              <PerfectScrollbar options={{ suppressScrollX: true, useBothWheelAxes: false }}>
+                {Object.entries(data?.data || {}).map(([key, value]) => (
+                  <Fragment key={`${key}-${Date.now()}`}>{renderField({ key, value })}</Fragment>
+                ))}
+              </PerfectScrollbar>
+            )}
+          </>
         )}
       </ItemsWrapper>
     </Card>

@@ -23,6 +23,7 @@ import {
 import AddField from './addFields';
 import { RequestError } from '@service/index';
 import { Can } from '@context/permissionContext';
+import NotificationMessage from './notificationMessage';
 
 type DocumentCardProps = {
   style?: SxProps;
@@ -133,22 +134,32 @@ const DocumentsCard = ({ style, collection, project, selectedDocument, handleDoc
         </IconButton>
       </CardHeading>
       <ItemsWrapper>
-        {isLoading ? (
-          <Loading>
-            <CircularProgress />
-          </Loading>
+        {!collection || !data?.data.length ? (
+          <NotificationMessage
+            isEmpty={!!collection && !data?.data.length}
+            section="collection"
+            currentSection="documents"
+          />
         ) : (
-          <PerfectScrollbar>
-            {data?.data.map((doc) => (
-              <CollectionItem
-                key={doc}
-                onClick={() => handleDocument(doc)}
-                className={selectedDocument === doc ? 'selected' : ''}
-              >
-                <Paragraph>{doc}</Paragraph>
-              </CollectionItem>
-            ))}
-          </PerfectScrollbar>
+          <>
+            {isLoading ? (
+              <Loading>
+                <CircularProgress />
+              </Loading>
+            ) : (
+              <PerfectScrollbar>
+                {data?.data.map((doc) => (
+                  <CollectionItem
+                    key={doc}
+                    onClick={() => handleDocument(doc)}
+                    className={selectedDocument === doc ? 'selected' : ''}
+                  >
+                    <Paragraph>{doc}</Paragraph>
+                  </CollectionItem>
+                ))}
+              </PerfectScrollbar>
+            )}
+          </>
         )}
       </ItemsWrapper>
     </Card>
