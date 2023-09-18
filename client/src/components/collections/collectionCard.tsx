@@ -25,6 +25,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { RequestError } from '@service/index';
 import collectionServices from '@service/collectionServices';
 import { Can } from '@context/permissionContext';
+import NotificationMessage from './notificationMessage';
 
 type CollectionCardProps = {
   style?: SxProps;
@@ -136,22 +137,28 @@ const CollectionsCard = ({ style, isLoading, collections, selected, handleSelect
             <CircularProgress />
           </Loading>
         ) : (
-          <PerfectScrollbar>
-            {collections.map((collection) => (
-              <CollectionItem
-                onClick={() => handleSelected(collection)}
-                key={collection}
-                className={selected === collection ? 'selected' : ''}
-              >
-                <Paragraph>{collection}</Paragraph>
-                <Can I="delete" a="database">
-                  <IconButton aria-label="delete" className="delete-btn">
-                    <Trash2 />
-                  </IconButton>
-                </Can>
-              </CollectionItem>
-            ))}
-          </PerfectScrollbar>
+          <>
+            {!collections.length ? (
+              <NotificationMessage isEmpty={!collections.length} />
+            ) : (
+              <PerfectScrollbar>
+                {collections.map((collection) => (
+                  <CollectionItem
+                    onClick={() => handleSelected(collection)}
+                    key={collection}
+                    className={selected === collection ? 'selected' : ''}
+                  >
+                    <Paragraph>{collection}</Paragraph>
+                    <Can I="delete" a="database">
+                      <IconButton aria-label="delete" className="delete-btn">
+                        <Trash2 />
+                      </IconButton>
+                    </Can>
+                  </CollectionItem>
+                ))}
+              </PerfectScrollbar>
+            )}
+          </>
         )}
       </ItemsWrapper>
     </Card>
