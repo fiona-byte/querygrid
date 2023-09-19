@@ -64,11 +64,13 @@ func (r *UserRepo) Setup(newUser models.NewUser) (*models.LoginResp, *resterror.
 	defer session.EndSession(ctxs)
 
 	result, transactionErr := session.WithTransaction(ctxs, func(ctx mongo.SessionContext) (interface{}, error) {
-		filter := bson.D{{"name", "super"}}
-		update := bson.D{{"$set", bson.D{{"name", "super"}, {"permissions", constants.GetPermissions()},
-			{"created_at", utils.CurrentTime()}, {"updated_at", utils.CurrentTime()}}}}
-		opts := options.Update().SetUpsert(true)
-		roleResult, roleErr := r.connect.Setting.UpdateOne(ctx, filter, update, opts)
+		role := &models.Role{
+			Name:        "super",
+			Permissions: constants.GetPermissions(),
+			CreatedAt:   utils.CurrentTime(),
+			UpdatedAt:   utils.CurrentTime(),
+		}
+		roleResult, roleErr := r.connect.Role.InsertOne(ctx, role)
 		if roleErr != nil {
 			return nil, roleErr
 		}
@@ -83,7 +85,7 @@ func (r *UserRepo) Setup(newUser models.NewUser) (*models.LoginResp, *resterror.
 			LastName:  newUser.LastName,
 			Email:     newUser.Email,
 			Password:  hashPassword,
-			RoleID:    roleResult.UpsertedID.(primitive.ObjectID),
+			RoleID:    roleResult.InsertedID.(primitive.ObjectID),
 			Status:    constants.ACTIVE,
 			CreatedAt: utils.CurrentTime(),
 			UpdatedAt: utils.CurrentTime(),
