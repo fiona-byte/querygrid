@@ -47,6 +47,6 @@ type ProjectResponse struct {
 
 type ProjectRepository interface {
 	CreateProject(project NewProject, userID primitive.ObjectID) (*Project, *resterror.RestError)
-	GetById(projectId string, userID primitive.ObjectID, selectOptions bson.D) (*Project, *resterror.RestError)
+	GetById(projectId string, userID primitive.ObjectID, selectOptions bson.D, filterOptions bson.E) (*Project, *resterror.RestError)
 	GetAll(userID primitive.ObjectID, query ProjectQuery, paginate *paginate.Paginate) (*ProjectResponse, *resterror.RestError)
 }

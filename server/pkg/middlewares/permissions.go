@@ -1,15 +1,17 @@
 package middlewares
 
 import (
+	"net/http"
+	"slices"
+
 	cache2 "github.com/devylab/querygrid/pkg/cache"
 	"github.com/devylab/querygrid/pkg/config"
 	"github.com/devylab/querygrid/pkg/constants"
 	"github.com/devylab/querygrid/pkg/database"
 	"github.com/devylab/querygrid/repositories"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"net/http"
-	"slices"
 )
 
 type Permission struct {
@@ -43,6 +45,37 @@ func (r *Permission) HasPermission(field, permission string) gin.HandlerFunc {
 		}
 
 		permissions := user.Role.Permissions[field]
+		if hasRole := slices.Contains(permissions, permission); !hasRole {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "don't have necessary permission"})
+			return
+		}
+
+		c.Next()
+	}
+}
+
+func (r *Permission) HasProjectPermission(field, permission string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userID := c.MustGet("userID").(primitive.ObjectID)
+		projectRepo := repositories.NewProjectRepo(r.connect, r.config)
+		roleRepo := repositories.NewRoleRepo(r.connect, r.config)
+
+		selectField := bson.D{{"_id", 1}, {"members.$", 1}}
+		filterField := bson.E{"members", bson.D{{"$elemMatch", bson.D{{"user_id", userID}}}}}
+		project, projectErr := projectRepo.GetById(c.Param("projectId"), userID, selectField, filterField)
+		if projectErr != nil {
+			c.AbortWithStatusJSON(projectErr.Status, projectErr)
+			return
+		}
+
+		roleId := project.Members[0].RoleID.Hex()
+		role, roleErr := roleRepo.GetById(roleId)
+		if roleErr != nil {
+			c.AbortWithStatusJSON(roleErr.Status, roleErr)
+			return
+		}
+
+		permissions := role.Permissions[field]
 		if hasRole := slices.Contains(permissions, permission); !hasRole {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "don't have necessary permission"})
 			return

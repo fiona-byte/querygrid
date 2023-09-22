@@ -30,7 +30,7 @@ func (r *CollectionRepo) GetCollections(projectId string, userId primitive.Objec
 	defer cancel()
 
 	projectRepo := NewProjectRepo(r.connect, r.config)
-	project, projectErr := projectRepo.GetById(projectId, userId, bson.D{{"_id", 1}, {"database", 1}})
+	project, projectErr := projectRepo.GetById(projectId, userId, bson.D{{"_id", 1}, {"database", 1}}, bson.E{})
 	if projectErr != nil {
 		return nil, projectErr
 	}
@@ -65,7 +65,7 @@ func (r *CollectionRepo) CreateCollection(projectId string, userId primitive.Obj
 	defer cancel()
 
 	projectRepo := NewProjectRepo(r.connect, r.config)
-	project, projectErr := projectRepo.GetById(projectId, userId, bson.D{{"_id", 1}, {"database", 1}})
+	project, projectErr := projectRepo.GetById(projectId, userId, bson.D{{"_id", 1}, {"database", 1}}, bson.E{})
 	if projectErr != nil {
 		return projectErr
 	}
