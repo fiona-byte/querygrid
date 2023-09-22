@@ -66,7 +66,7 @@ func (r *UserRepo) Setup(newUser models.NewUser) (*models.LoginResp, *resterror.
 	result, transactionErr := session.WithTransaction(ctxs, func(ctx mongo.SessionContext) (interface{}, error) {
 		role := &models.Role{
 			Name:        "super",
-			Permissions: constants.GetPermissions(),
+			Permissions: constants.GetSuperPermissions(),
 			CreatedAt:   utils.CurrentTime(),
 			UpdatedAt:   utils.CurrentTime(),
 		}

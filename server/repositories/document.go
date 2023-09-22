@@ -30,7 +30,7 @@ func (r *DocumentRepo) GetDocuments(projectId, collection string, userId primiti
 	defer cancel()
 
 	projectRepo := NewProjectRepo(r.connect, r.config)
-	project, projectErr := projectRepo.GetById(projectId, userId, bson.D{{"_id", 1}, {"database", 1}})
+	project, projectErr := projectRepo.GetById(projectId, userId, bson.D{{"_id", 1}, {"database", 1}}, bson.E{})
 	if projectErr != nil {
 		return nil, projectErr
 	}
@@ -76,7 +76,7 @@ func (r *DocumentRepo) GetDocument(projectId, collection, document string, userI
 	}
 
 	projectRepo := NewProjectRepo(r.connect, r.config)
-	project, projectErr := projectRepo.GetById(projectId, userId, bson.D{{"_id", 1}, {"database", 1}})
+	project, projectErr := projectRepo.GetById(projectId, userId, bson.D{{"_id", 1}, {"database", 1}}, bson.E{})
 	if projectErr != nil {
 		return nil, projectErr
 	}
@@ -97,7 +97,7 @@ func (r *DocumentRepo) CreateDocument(projectId string, userId primitive.ObjectI
 	defer cancel()
 
 	projectRepo := NewProjectRepo(r.connect, r.config)
-	project, projectErr := projectRepo.GetById(projectId, userId, bson.D{{"_id", 1}, {"database", 1}})
+	project, projectErr := projectRepo.GetById(projectId, userId, bson.D{{"_id", 1}, {"database", 1}}, bson.E{})
 	if projectErr != nil {
 		return projectErr
 	}
@@ -121,7 +121,7 @@ func (r *DocumentRepo) UpdateDocument(projectId string, userId primitive.ObjectI
 	}
 
 	projectRepo := NewProjectRepo(r.connect, r.config)
-	project, projectErr := projectRepo.GetById(projectId, userId, bson.D{{"_id", 1}, {"database", 1}})
+	project, projectErr := projectRepo.GetById(projectId, userId, bson.D{{"_id", 1}, {"database", 1}}, bson.E{})
 	if projectErr != nil {
 		return projectErr
 	}

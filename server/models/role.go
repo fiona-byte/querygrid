@@ -3,6 +3,7 @@ package models
 import (
 	"time"
 
+	"github.com/devylab/querygrid/pkg/resterror"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -12,4 +13,8 @@ type Role struct {
 	Permissions map[string][]string `bson:"permissions" json:"permissions"`
 	CreatedAt   time.Time           `bson:"created_at" json:"created_at,omitempty"`
 	UpdatedAt   time.Time           `bson:"updated_at" json:"updated_at,omitempty"`
+}
+
+type RoleRepository interface {
+	GetById(roleId string) (*Role, *resterror.RestError)
 }

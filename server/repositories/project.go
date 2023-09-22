@@ -2,6 +2,9 @@ package repositories
 
 import (
 	"context"
+	"strings"
+	"time"
+
 	"github.com/devylab/querygrid/models"
 	"github.com/devylab/querygrid/pkg/config"
 	"github.com/devylab/querygrid/pkg/constants"
@@ -13,8 +16,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"strings"
-	"time"
 )
 
 type ProjectRepo struct {
@@ -38,7 +39,7 @@ func (r *ProjectRepo) CreateProject(newProject models.NewProject, userID primiti
 
 	var role models.Role
 	opts := options.FindOne().SetProjection(bson.D{{"_id", 1}})
-	if roleErr := r.connect.Role.FindOne(ctx, bson.D{{"name", "admin"}}, opts).Decode(&role); roleErr != nil {
+	if roleErr := r.connect.Role.FindOne(ctx, bson.D{{"name", "super"}}, opts).Decode(&role); roleErr != nil {
 		logger.Error("Error getting role", roleErr)
 		return nil, resterror.InternalServerError()
 	}
@@ -126,7 +127,7 @@ func (r *ProjectRepo) GetAll(userID primitive.ObjectID, query models.ProjectQuer
 	}, nil
 }
 
-func (r *ProjectRepo) GetById(projectID string, userID primitive.ObjectID, selectOptions bson.D) (*models.Project, *resterror.RestError) {
+func (r *ProjectRepo) GetById(projectID string, userID primitive.ObjectID, selectOptions bson.D, filterOptions bson.E) (*models.Project, *resterror.RestError) {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
@@ -142,8 +143,14 @@ func (r *ProjectRepo) GetById(projectID string, userID primitive.ObjectID, selec
 		selectFields = selectOptions
 	}
 
-	opts := options.FindOne().SetProjection(selectFields)
 	filter := bson.D{{"_id", projectId}, {"members.user_id", userID}}
+	if filterOptions.Key != "" {
+		filter = append(filter, filterOptions)
+	} else {
+		filter = append(filter, bson.E{"members.user_id", userID})
+	}
+
+	opts := options.FindOne().SetProjection(selectFields)
 	if err := r.connect.Project.FindOne(ctx, filter, opts).Decode(&project); err != nil {
 		logger.Error("Error getting project data", err)
 		return nil, resterror.BadRequest("project", "not found")
