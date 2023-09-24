@@ -76,3 +76,20 @@ func (h *CollectionHandler) CreateCollection(c *gin.Context) {
 		"data":    nil,
 	})
 }
+
+func (h *CollectionHandler) DeleteCollection(c *gin.Context) {
+	userID := c.MustGet("userID").(primitive.ObjectID)
+	projectId := c.Param("projectId")
+	collection := c.Param("collection")
+
+	if collectionErr := h.collectionRepo.DeleteCollection(projectId, userID, collection); collectionErr != nil {
+		c.SecureJSON(collectionErr.Status, collectionErr)
+		return
+	}
+
+	c.SecureJSON(http.StatusOK, &gin.H{
+		"status":  http.StatusOK,
+		"message": "delete collection",
+		"data":    nil,
+	})
+}

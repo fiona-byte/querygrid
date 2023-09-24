@@ -103,3 +103,26 @@ func (h *DocumentHandler) UpdateDocument(c *gin.Context) {
 		"data":    nil,
 	})
 }
+
+func (h *DocumentHandler) DeleteDocument(c *gin.Context) {
+	userID := c.MustGet("userID").(primitive.ObjectID)
+	projectId := c.Param("projectId")
+
+	var document models.DeleteDocument
+	if err := c.ShouldBindJSON(&document); err != nil {
+		restErr := resterror.BadJSONRequest()
+		c.SecureJSON(restErr.Status, restErr)
+		return
+	}
+
+	if documentErr := h.documentRepo.DeleteDocument(projectId, userID, document); documentErr != nil {
+		c.SecureJSON(documentErr.Status, documentErr)
+		return
+	}
+
+	c.SecureJSON(http.StatusOK, &gin.H{
+		"status":  http.StatusOK,
+		"message": "delete document",
+		"data":    nil,
+	})
+}
