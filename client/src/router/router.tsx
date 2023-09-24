@@ -3,19 +3,22 @@ import { Route, Routes, BrowserRouter, Navigate } from 'react-router-dom';
 import DashboardLayout from '@layout/dashboard';
 import AppLayout from '@layout/app';
 import AuthLayout from '@layout/authentication';
-import { dashboard, page, authentications } from './routes';
+import { dashboard, page, authentications, setup } from './routes';
 import PermissionProvider from '@context/permissionContext';
 import { useProjectSetup } from '@hooks/useProjectSetup';
 import { utils } from '@utils/index';
+import Loader from '@component/loader';
 
 type Props = {
   children: ReactNode;
 };
 
 const AppSetup = ({ children }: Props) => {
-  const { isSuccess, data } = useProjectSetup();
+  const { isLoading, data } = useProjectSetup();
 
-  return isSuccess && !data?.data ? <Navigate to="/setup" /> : children;
+  if (isLoading) return <Loader />;
+
+  return !data?.data ? <Navigate to="/setup" /> : children;
 };
 
 const Authenticated = ({ children }: Props) => {
@@ -46,11 +49,18 @@ const Router = () => {
     <Route key={title} path={path} element={<Element />} />
   ));
 
+  const otherRoutes = setup.map(({ path, title, element: Element }) => (
+    <Route key={title} path={path} element={<Element />} />
+  ));
+
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Navigate to="/projects" replace />} />
         <Route path="/project" element={<Navigate to="/projects" replace />} />
+        <Route path="/" element={<AuthLayout />}>
+          {otherRoutes}
+        </Route>
         <Route
           path="/"
           element={

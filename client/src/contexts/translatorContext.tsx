@@ -15,7 +15,7 @@ export const InternationalizationContext = createContext<Internationalization>({
 
 const InternationalizationProvider = ({ children }: InternationalizationProps) => {
   const { i18n } = useTranslation();
-  const { language, setLanguage } = useInternationalizationStore((state) => state);
+  const { language, setLanguage } = useInternationalizationStore();
 
   const changeLanguage = useCallback((lang: Languages) => setLanguage(lang), [language]);
 
