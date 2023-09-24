@@ -86,8 +86,7 @@ func (r *ProjectRepo) GetAll(userID primitive.ObjectID, query models.ProjectQuer
 		filter = append(filter, bson.E{"$text", bson.D{{"$search", query.Search}}})
 	}
 
-	countOpts := options.Count().SetHint("_id_")
-	projectCount, projectCountErr := r.connect.Project.CountDocuments(ctx, filter, countOpts)
+	projectCount, projectCountErr := r.connect.Project.CountDocuments(ctx, filter)
 	if projectCountErr != nil {
 		logger.Error("Error getting projects count", projectCountErr)
 		return nil, resterror.InternalServerError()
