@@ -2,7 +2,7 @@ import { ChangeEvent, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Box, Button, Container, IconButton, Input, styled } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import Typography from '@component/typography';
 import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import images from '@assets/images';
@@ -35,12 +35,18 @@ const ProjectItem = ({ name, id, status }: Project) => {
 const Project = () => {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
-  const [search, setSearch] = useState<string | undefined>();
+  const [searchParams, setSearchParams] = useSearchParams({ q: '' });
   const [page, setPage] = useState(1);
-  const debouncedValue = useDebounce(search, 500);
+  const debouncedValue = useDebounce(searchParams.get('q') || '', 500);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setSearch(event.target.value || undefined);
+    setSearchParams(
+      (prev) => {
+        prev.set('q', event.target.value);
+        return prev;
+      },
+      { replace: true },
+    );
   };
 
   const openHandler = () => setOpen(true);
@@ -75,7 +81,7 @@ const Project = () => {
         <SearchWrapper>
           <Search size={24} color="#57565C" />
           <SearchInput
-            value={search}
+            value={searchParams.get('q')}
             onChange={handleChange}
             fullWidth
             disableUnderline={true}
