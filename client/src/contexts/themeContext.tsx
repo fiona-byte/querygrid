@@ -32,7 +32,7 @@ const fontStyleOverride = {
 };
 
 const ThemeProvider = ({ children }: ThemeProps) => {
-  const { theme: themeMode, setThemeMode } = useThemeStore((state) => state);
+  const { theme: themeMode, setThemeMode } = useThemeStore();
 
   const changeTheme = useCallback((themeMode: ThemeMode) => setThemeMode(themeMode), [themeMode]);
 

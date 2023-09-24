@@ -27,15 +27,18 @@ export const page: RouterType[] = [
   },
 ];
 
+export const setup: RouterType[] = [
+  {
+    path: 'setup',
+    element: loadable(() => import('../pages/authentication/setup')),
+    title: 'setup',
+  },
+];
+
 export const authentications: RouterType[] = [
   {
     path: 'login',
     element: loadable(() => import('../pages/authentication/login')),
     title: 'login',
-  },
-  {
-    path: 'setup',
-    element: loadable(() => import('../pages/authentication/setup')),
-    title: 'setup',
   },
 ];

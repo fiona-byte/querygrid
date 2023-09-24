@@ -13,11 +13,11 @@ const Setup = () => {
   const [pageLoading, setPageLoading] = useState(true);
 
   useEffect(() => {
-    if (isSuccess && data.data) {
+    if (isSuccess && data?.data) {
       navigate('/projects');
     }
     setPageLoading(false);
-  }, []);
+  }, [isSuccess]);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
