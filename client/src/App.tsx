@@ -12,7 +12,6 @@ const queryClient = new QueryClient({
   queryCache: new QueryCache({
     onError: (error) => {
       const err = error as RequestError;
-      console.log('ERROR', err);
       if (err.response?.data?.message === 'invalid token') {
         utils.clearAuthentication();
         return window.location.replace('/login');

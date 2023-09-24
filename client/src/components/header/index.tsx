@@ -135,7 +135,13 @@ const Header = (props: HeaderProps) => {
                   closeMenu={handleCloseLangMenu}
                 >
                   {languages.map((language) => (
-                    <MenuLinkBTN key={language.short} onClick={() => changeLanguage(language.short)}>
+                    <MenuLinkBTN
+                      key={language.short}
+                      onClick={() => {
+                        changeLanguage(language.short);
+                        handleCloseLangMenu();
+                      }}
+                    >
                       <FlagImage src={images.flags[language.short]} alt={language.name} />
                       <MenuText>{language.name}</MenuText>
                     </MenuLinkBTN>

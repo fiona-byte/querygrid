@@ -61,7 +61,8 @@ const Project = () => {
       <Box sx={{ backgroundColor: '#ECF1F9' }}>
         <TopWrapper maxWidth="lg">
           <Heading variant="h5">
-            {t('translations:projects')}({projectQuery?.data.count})
+            {t('translations:projects')}
+            {!!projectQuery?.data?.count && `(${projectQuery?.data?.count})`}
           </Heading>
           <Can I="create" a="project">
             <NewProjectBTN variant="contained" onClick={openHandler}>
@@ -82,7 +83,7 @@ const Project = () => {
           />
         </SearchWrapper>
       </SearchContainer>
-      {projectQuery?.data.projects.length ? (
+      {projectQuery?.data?.projects?.length ? (
         <>
           <ProjectContainer>
             {projectQuery?.data.projects.map((project) => (

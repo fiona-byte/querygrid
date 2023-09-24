@@ -32,7 +32,7 @@ export const Input = styled(TextField)`
 
 export const Title = styled(Typography.Heading)`
   font-weight: 600;
-  font-size: 34px;
+  font-size: 32px;
   line-height: 130%;
   color: #35343c;
 `;
@@ -56,13 +56,13 @@ export const Form = styled('form')`
 `;
 
 export const SubmitButton = styled(Button)`
-  font-family: 'IBM Plex Sans';
   font-weight: 600;
   font-size: 16px;
   line-height: 21px;
   height: 57px;
   background-color: #557ecd;
   color: #ffffff;
+  text-transform: unset;
 
   &:hover {
     background-color: #557ecd;

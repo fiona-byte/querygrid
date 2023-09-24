@@ -112,7 +112,7 @@ const renderField = ({ key, value, sx }: RenderFieldProps) => {
   if (typeof value === 'number' || typeof value === 'boolean') {
     return (
       <FieldItem key={`${key}-${Date.now()}`} sx={sx}>
-        {key} : {value}
+        {key} : {`${value}`}
       </FieldItem>
     );
   }
@@ -210,8 +210,8 @@ const FieldCard = ({ style, project, collection, document }: FieldCardProps) => 
         </Can>
       </CardHeading>
       <ItemsWrapper>
-        {!document || !data?.data.length ? (
-          <NotificationMessage isEmpty={!!document && !data?.data.length} section="document" currentSection="fields" />
+        {!document ? (
+          <NotificationMessage isEmpty={false} section="document" currentSection="fields" />
         ) : (
           <>
             {isLoading ? (
