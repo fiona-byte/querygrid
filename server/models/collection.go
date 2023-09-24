@@ -22,5 +22,5 @@ type CollectionRepository interface {
 	GetCollections(projectId string, userId primitive.ObjectID) ([]string, *resterror.RestError)
 	ValidateCollection(projectId, collection string, userId primitive.ObjectID) *resterror.RestError
 	CreateCollection(projectId string, userId primitive.ObjectID, collection CreateCollection) *resterror.RestError
-	// DeleteCollection(projectId string, userId primitive.ObjectID, collection CreateCollection) *resterror.RestError
+	DeleteCollection(projectId string, userId primitive.ObjectID, collection string) *resterror.RestError
 }

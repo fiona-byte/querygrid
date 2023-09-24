@@ -134,3 +134,27 @@ func (r *DocumentRepo) UpdateDocument(projectId string, userId primitive.ObjectI
 
 	return nil
 }
+
+func (r *DocumentRepo) DeleteDocument(projectId string, userId primitive.ObjectID, document models.DeleteDocument) *resterror.RestError {
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+
+	documentId, documentIdErr := primitive.ObjectIDFromHex(document.Document)
+	if documentIdErr != nil {
+		return resterror.InternalServerError()
+	}
+
+	projectRepo := NewProjectRepo(r.connect, r.config)
+	project, projectErr := projectRepo.GetById(projectId, userId, bson.D{{"_id", 1}, {"database", 1}}, bson.E{})
+	if projectErr != nil {
+		return projectErr
+	}
+
+	col := r.connect.GetCollection(project.Database, document.Collection)
+	if _, documentErr := col.DeleteOne(ctx, bson.D{{"_id", documentId}}); documentErr != nil {
+		logger.Error("Error deleting document", documentErr)
+		return resterror.InternalServerError()
+	}
+
+	return nil
+}

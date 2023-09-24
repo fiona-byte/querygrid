@@ -78,3 +78,22 @@ func (r *CollectionRepo) CreateCollection(projectId string, userId primitive.Obj
 
 	return nil
 }
+
+func (r *CollectionRepo) DeleteCollection(projectId string, userId primitive.ObjectID, collection string) *resterror.RestError {
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+
+	projectRepo := NewProjectRepo(r.connect, r.config)
+	project, projectErr := projectRepo.GetById(projectId, userId, bson.D{{"_id", 1}, {"database", 1}}, bson.E{})
+	if projectErr != nil {
+		return projectErr
+	}
+
+	col := r.connect.GetCollection(project.Database, collection)
+	if colErr := col.Drop(ctx); colErr != nil {
+		logger.Error("Error deleting collection", colErr)
+		return resterror.InternalServerError()
+	}
+
+	return nil
+}
