@@ -1,11 +1,11 @@
 import { useForm, Controller } from 'react-hook-form';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { InferType, object, string } from 'yup';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import Typography from '@component/typography';
-import { Box, Button, Dialog, IconButton, TextField, styled } from '@mui/material';
+import { Box, Button, CircularProgress, Dialog, IconButton, TextField, styled } from '@mui/material';
 import { X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import projectServices, { type CreateProject } from '@service/projectServices';
@@ -19,10 +19,10 @@ type NewProject = {
 
 const schema = object({
   name: string()
-    .trim('project name must not start or end with empty space')
-    .min(3, 'project name must be at least 3 characters')
-    .required('project name is required')
-    .matches(/^[aA-zZ\s]+$/, 'project name must be alphabet only'),
+    .trim('Project name must not start or end with empty space')
+    .min(3, 'Project name must be at least 3 characters')
+    .required('Project name is required')
+    .matches(/^[aA-zZ\s]+$/, 'Project name must be alphabet only'),
   description: string().trim().default(''),
 });
 type FormData = InferType<typeof schema>;
@@ -33,6 +33,7 @@ const NewProject = ({ open, closeHandler }: NewProject) => {
     resolver: yupResolver(schema),
   });
   const { errors } = formState;
+  const navigate = useNavigate();
 
   const { isLoading, isSuccess, data, isError, error, mutate } = useMutation<CreateProject, RequestError, FormData>({
     mutationKey: ['create_project'],
@@ -41,9 +42,9 @@ const NewProject = ({ open, closeHandler }: NewProject) => {
 
   const onSubmit = (data: FormData) => mutate(data);
 
-  if (isSuccess) {
-    return <Navigate to={`/project/${data.data.id}`} />;
-  }
+  useEffect(() => {
+    if (isSuccess) navigate(`/project/${data.data.id}`);
+  }, [isSuccess]);
 
   useEffect(() => {
     if (isError) {
@@ -103,7 +104,11 @@ const NewProject = ({ open, closeHandler }: NewProject) => {
             />
 
             <SubmitButton disabled={isLoading} variant="contained" type="submit" size="large" fullWidth>
-              <ButtonText>{t('translations:create_project')}</ButtonText>
+              {isLoading ? (
+                <CircularProgress color="secondary" size={20} />
+              ) : (
+                <ButtonText>{t('translations:create_project')}</ButtonText>
+              )}
             </SubmitButton>
           </form>
         </ModalBox>

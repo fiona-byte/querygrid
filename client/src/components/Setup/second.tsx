@@ -15,13 +15,13 @@ const forms = [
   {
     type: 'text',
     label: 'First Name',
-    name: 'firstName',
+    name: 'first_name',
     placeholder: 'First Name',
   },
   {
     type: 'text',
     label: 'Last Name',
-    name: 'lastName',
+    name: 'last_name',
     placeholder: 'Last Name',
   },
   {
@@ -39,18 +39,18 @@ const forms = [
 ] as const;
 
 const schema = object({
-  firstName: string()
-    .trim('first name must not start or end with empty space')
-    .min(3, 'first name must be at least 3 characters')
-    .required('first name is required')
-    .matches(/^[aA-zZ\s]+$/, 'first name must be alphabet only'),
-  lastName: string()
-    .trim('last name must not start or end with empty space')
-    .min(3, 'last name must be at least 3 characters')
-    .required('last name is required')
-    .matches(/^[aA-zZ\s]+$/, 'last name must be alphabet only'),
-  email: string().email('invalid email').required('email is required'),
-  password: string().required('password is required'),
+  first_name: string()
+    .trim('First name must not start or end with empty space')
+    .min(3, 'First name must be at least 3 characters')
+    .required('First name is required')
+    .matches(/^[aA-zZ\s]+$/, 'First name must be alphabet only'),
+  last_name: string()
+    .trim('Last name must not start or end with empty space')
+    .min(3, 'Last name must be at least 3 characters')
+    .required('Last name is required')
+    .matches(/^[aA-zZ\s]+$/, 'Last name must be alphabet only'),
+  email: string().email('Invalid email').required('Email is required'),
+  password: string().required('Password is required'),
 }).required();
 type FormData = InferType<typeof schema>;
 
@@ -72,7 +72,7 @@ const Second = ({ handleBack }: SecondProps) => {
     mutationKey: ['setup_project'],
     mutationFn: (data) => userServices.setup(data),
   });
-  const errorMessage = error?.response?.data?.errors || 'something went wrong';
+  const errorMessage = error?.response?.data?.errors || 'Something went wrong';
 
   const onSubmit = (data: FormData) => mutate(data);
 

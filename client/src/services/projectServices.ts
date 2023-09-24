@@ -10,7 +10,7 @@ const ProjectsSchema = object({
         name: string().required(),
         status: string().required(),
       }),
-    ).required(),
+    ).nullable(),
     current_page: number().required(),
     total_pages: number().required(),
     count: number().required(),

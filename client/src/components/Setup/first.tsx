@@ -42,7 +42,7 @@ const First = ({ handleNext }: FirstProps) => {
         </FormControl>
       </Form>
       <SubmitButton fullWidth variant="contained" onClick={handleNext}>
-        Next
+        {t('translations:next')}
       </SubmitButton>
     </Card>
   );
